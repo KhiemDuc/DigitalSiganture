@@ -1,0 +1,74 @@
+﻿@page "/counter"
+@using Org.BouncyCastle.Crypto.Operators
+@using Org.BouncyCastle.Crypto.Prng
+@using Org.BouncyCastle.Utilities
+@using System.Numerics
+
+<h1>Create Key</h1>
+@if (!string.IsNullOrEmpty(@publicKey))
+{
+    <h2>Public Key:</h2>
+    <p class="text-break">@publicKey</p>
+}
+@if (!string.IsNullOrEmpty(privateKey))
+{
+    <h2>Private Key: </h2>
+<p class="text-break">@privateKey</p>
+}
+<button class="btn btn-primary" @onclick="GenerateKeys">Generate Keys</button>
+
+<input type="text" @bind="subjectName" class="form-control" placeholder="Subject Name" />
+<button class="btn btn-primary" @onclick="GenerateCertificate">Generate Certi</button>
+
+@code {
+    @code {
+        string publicKey;
+        string privateKey;
+        string subjectName;
+        private void GenerateKeys()
+        {
+            using (var rsa = new RSACryptoServiceProvider(2048)) // 2048 is the key size
+            {
+                rsa.PersistKeyInCsp = true; // Don't store the keys in a key container
+                publicKey = Convert.ToBase64String(rsa.ExportCspBlob(false)); // Get the public key
+                privateKey = Convert.ToBase64String(rsa.ExportCspBlob(true)); // Get the private key
+            }
+        }
+
+        public void GenerateCertificate()
+        {
+            var randomGenerator = new CryptoApiRandomGenerator();
+            var random = new SecureRandom(randomGenerator);
+            var certificateGenerator = new X509V3CertificateGenerator();
+
+            var serialNumber = BigIntegers.CreateRandomInRange(BigIntegers.Zero, BigIntegers.One, random);
+            certificateGenerator.SetSerialNumber(serialNumber);
+
+            var dirName = new X509Name("CN=" + subjectName);
+            certificateGenerator.SetIssuerDN(dirName);
+            certificateGenerator.SetSubjectDN(dirName);
+
+            certificateGenerator.SetNotBefore(DateTime.UtcNow.Date);
+            certificateGenerator.SetNotAfter(DateTime.UtcNow.Date.AddYears(1));
+
+            var keyGenerationParameters = new KeyGenerationParameters(random, 2048);
+            var keyPairGenerator = new RsaKeyPairGenerator();
+            keyPairGenerator.Init(keyGenerationParameters);
+            var subjectKeyPair = keyPairGenerator.GenerateKeyPair();
+
+            certificateGenerator.SetPublicKey(subjectKeyPair.Public);
+
+            var issuerKeyPair = subjectKeyPair;
+            var signatureFactory = new Asn1SignatureFactory("SHA256WITHRSA", issuerKeyPair.Private, random);
+
+            var certificate = certificateGenerator.Generate(signatureFactory);
+            var certStream = new MemoryStream();
+            var writer = new Org.BouncyCastle.OpenSsl.PemWriter(new StreamWriter(certStream));
+            writer.WriteObject(certificate);
+            writer.Writer.Flush();
+
+            File.WriteAllBytes("C:/Users/admin/Downloads/certificate.cer", certStream.ToArray());
+        }
+    }
+    
+}
