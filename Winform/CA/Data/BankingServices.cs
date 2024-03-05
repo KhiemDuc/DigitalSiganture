@@ -6,12 +6,12 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace CA.Data
 {
-    public class WeatherForecastService
+    public class BankingServices
     {
         private static readonly HttpClient client = new HttpClient();
         JsonSerializerOptions _serializerOptions;
 
-        public async Task<Response> GetForecastAsync()
+        public async Task<Response> GetInfoBankingAsync()
         {
             _serializerOptions = new JsonSerializerOptions();
             try
