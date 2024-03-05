@@ -1,0 +1,56 @@
+﻿@page "/fetchdata"
+
+@using CA.Data
+@inject BankingServices BankingService
+
+<h1>Danh sách giao dịch</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (body == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Số tài khoản</th>
+                <th>Mô tả</th>
+                <th>Ngày Diễn Ra</th>
+                <th>Giá trị</th>
+                <th>Số tài khoản</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var line in body)
+            {
+                <tr>
+                    <td>@line.SoTaiKhoan</td>
+                    <td>@line.MoTa</td>
+                    <td>@line.NgayDienRa</td>
+                    <td>@line.GiaTri</td>
+                    <td>@line.SoTaiKhoan</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Transaction> body;
+    private Response data;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InvokeAsync(async () =>
+       {
+           data = await BankingService.GetInfoBankingAsync();
+           body = data.data ;
+           StateHasChanged(); // Force UI to update
+       });
+       
+    }
+}
