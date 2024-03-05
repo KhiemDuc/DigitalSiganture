@@ -3,9 +3,9 @@ const helmet = require('helmet')
 const morgan = require('morgan')
 const cors = require('cors')
 
-
 const {NotFoundError} = require('./core/error.response')
-
+const db = require('./db/sequelize')
+db.sequelize.sync()
 
 const app = express() 
 
