@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "u2UqdGFITm7IkALz0Zn6Bgmq2noBTISa1f+zGf0ID0FvrNritUi58bbt9r8Rkq89ijT0615uN0IEHPgG4EYC3g==",
+  "dgSpecHash": "2ydrmaFrvGlBu7a8d2mHpZzfoA37cpv5fTTaAaW1ynxY94dJLD9pjXbC3AXYuet1QaloO5py8dZKauBTFJ2BWA==",
   "success": true,
   "projectFilePath": "D:\\WorkSpace\\Web\\DigitalSignature\\Winform\\CA\\CA.csproj",
   "expectedPackageFiles": [
@@ -39,6 +39,7 @@
     "C:\\Users\\admin\\.nuget\\packages\\microsoft.net.illink.tasks\\7.0.100-1.23211.1\\microsoft.net.illink.tasks.7.0.100-1.23211.1.nupkg.sha512",
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages\\microsoft.windows.sdk.buildtools\\10.0.22621.756\\microsoft.windows.sdk.buildtools.10.0.22621.756.nupkg.sha512",
     "C:\\Users\\admin\\.nuget\\packages\\microsoft.windowsappsdk\\1.2.221209.1\\microsoft.windowsappsdk.1.2.221209.1.nupkg.sha512",
+    "C:\\Users\\admin\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
     "C:\\Users\\admin\\.nuget\\packages\\system.io.pipelines\\7.0.0\\system.io.pipelines.7.0.0.nupkg.sha512",
     "C:\\Users\\admin\\.nuget\\packages\\system.text.encodings.web\\7.0.0\\system.text.encodings.web.7.0.0.nupkg.sha512",
     "C:\\Users\\admin\\.nuget\\packages\\system.text.json\\7.0.0\\system.text.json.7.0.0.nupkg.sha512",
