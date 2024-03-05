@@ -30,29 +30,29 @@
     <AppXManifest Include="D:\WorkSpace\Web\DigitalSignature\Winform\CA\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2024-03-05T16:40:31.534</Modified>
+      <Modified>2024-03-05T17:36:00.740</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="D:\WorkSpace\Web\DigitalSignature\Winform\CA\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\resources.pri">
       <PackagePath>resources.pri</PackagePath>
-      <Modified>2024-03-05T16:39:38.389</Modified>
+      <Modified>2024-03-05T17:36:00.370</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\WorkSpace\Web\DigitalSignature\Winform\CA\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\CA.runtimeconfig.json">
       <PackagePath>CA.runtimeconfig.json</PackagePath>
-      <Modified>2024-03-05T09:53:41.543</Modified>
+      <Modified>2024-03-05T17:36:00.132</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\WorkSpace\Web\DigitalSignature\Winform\CA\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\CA.dll">
       <PackagePath>CA.dll</PackagePath>
-      <Modified>2024-03-05T16:40:30.537</Modified>
+      <Modified>2024-03-05T17:35:58.631</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\WorkSpace\Web\DigitalSignature\Winform\CA\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\apphost.exe">
       <PackagePath>CA.exe</PackagePath>
-      <Modified>2024-03-05T16:40:30.544</Modified>
+      <Modified>2024-03-05T17:35:58.686</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\WorkSpace\Web\DigitalSignature\Winform\CA\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\CA.deps.json">
       <PackagePath>CA.deps.json</PackagePath>
-      <Modified>2024-03-05T09:53:41.372</Modified>
+      <Modified>2024-03-05T17:36:00.008</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\admin\.nuget\packages\microsoft.netcore.app.runtime.win-x64\7.0.14\runtimes\win-x64\lib\net7.0\Microsoft.CSharp.dll">
       <PackagePath>Microsoft.CSharp.dll</PackagePath>

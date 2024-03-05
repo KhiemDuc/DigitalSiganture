@@ -287,3 +287,5 @@ D:\WorkSpace\Web\DigitalSignature\Winform\CA\obj\Debug\net7.0-maccatalyst\maccat
 D:\WorkSpace\Web\DigitalSignature\Winform\CA\obj\Debug\net7.0-maccatalyst\maccatalyst-x64\CA.pdb
 D:\WorkSpace\Web\DigitalSignature\Winform\CA\obj\Debug\net7.0-maccatalyst\maccatalyst-x64\CA.genruntimeconfig.cache
 D:\WorkSpace\Web\DigitalSignature\Winform\CA\obj\Debug\net7.0-maccatalyst\maccatalyst-x64\ref\CA.dll
+D:\WorkSpace\Web\DigitalSignature\Winform\CA\bin\Debug\net7.0-maccatalyst\maccatalyst-x64\BouncyCastle.Crypto.dll
+D:\WorkSpace\Web\DigitalSignature\Winform\CA\bin\Debug\net7.0-maccatalyst\maccatalyst-x64\Newtonsoft.Json.dll

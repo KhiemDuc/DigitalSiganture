@@ -22,7 +22,7 @@ namespace CA
     		builder.Logging.AddDebug();
 #endif
 
-            builder.Services.AddSingleton<WeatherForecastService>();
+            builder.Services.AddSingleton<BankingServices>();
 
             return builder.Build();
         }
