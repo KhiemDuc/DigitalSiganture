@@ -352,3 +352,4 @@ D:\WorkSpace\Web\DigitalSignature\Winform\CA\obj\Debug\net7.0-windows10.0.19041.
 D:\WorkSpace\Web\DigitalSignature\Winform\CA\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\MultipleQualifiersPerDimensionFound.txt
 D:\WorkSpace\Web\DigitalSignature\Winform\CA\obj\Debug\net7.0-windows10.0.19041.0\win10-x64\ProjectArchitectures.txt
 D:\WorkSpace\Web\DigitalSignature\Winform\CA\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\BouncyCastle.Crypto.dll
+D:\WorkSpace\Web\DigitalSignature\Winform\CA\bin\Debug\net7.0-windows10.0.19041.0\win10-x64\Newtonsoft.Json.dll
