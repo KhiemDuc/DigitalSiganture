@@ -3,11 +3,11 @@
 @using CA.Data
 @inject WeatherForecastService ForecastService
 
-<h1>Weather forecast</h1>
+<h1>Danh sách giao dịch</h1>
 
 <p>This component demonstrates fetching data from a service.</p>
 
-@if (forecasts == null)
+@if (body == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -16,20 +16,23 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th>Số tài khoản</th>
+                <th>Mô tả</th>
+                <th>Ngày Diễn Ra</th>
+                <th>Giá trị</th>
+                <th>Số tài khoản</th>
+
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (var line in body)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>@line.SoTaiKhoan</td>
+                    <td>@line.MoTa</td>
+                    <td>@line.NgayDienRa</td>
+                    <td>@line.GiaTri</td>
+                    <td>@line.SoTaiKhoan</td>
                 </tr>
             }
         </tbody>
@@ -37,10 +40,17 @@ else
 }
 
 @code {
-    private WeatherForecast[] forecasts;
+    private List<Transaction> body;
+    private Response data;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        await InvokeAsync(async () =>
+       {
+           data = await ForecastService.GetForecastAsync();
+           body = data.data ;
+           StateHasChanged(); // Force UI to update
+       });
+       
     }
 }

@@ -1,6 +1,7 @@
 ﻿@page "/counter"
 @using Org.BouncyCastle.Crypto.Operators
 @using Org.BouncyCastle.Crypto.Prng
+@using Org.BouncyCastle.OpenSsl
 @using Org.BouncyCastle.Utilities
 @using System.Numerics
 
@@ -17,8 +18,23 @@
 }
 <button class="btn btn-primary" @onclick="GenerateKeys">Generate Keys</button>
 
-<input type="text" @bind="subjectName" class="form-control" placeholder="Subject Name" />
+<input type="text" @bind="subjectName" class="form-control mt-2" placeholder="Subject Name" />
 <button class="btn btn-primary" @onclick="GenerateCertificate">Generate Certi</button>
+
+<div style="height: 50vh;"></div>
+
+<div class="container">
+    <div class="row">
+        <div class="col justify-content-between">
+            <button type="button" class="btn btn-primary">Export Certificate(.cer)</button>
+        </div>
+        <div class="col-auto">
+            <button type="button" class="btn btn-secondary">Export Certificate With PassWord(.pfx)</button>
+        </div>
+    </div>
+</div>
+
+
 
 @code {
     @code {
@@ -68,6 +84,16 @@
             writer.Writer.Flush();
 
             File.WriteAllBytes("C:/Users/admin/Downloads/certificate.cer", certStream.ToArray());
+
+            using (var fs = new FileStream("C:/Users/admin/Downloads/certificate.cer", FileMode.Open))
+            {
+                var cert = new X509CertificateParser().ReadCertificate(fs);
+                using (var writer1 = new StreamWriter("C:/Users/admin/Downloads/certificate.pem"))
+                {
+                    var pemWriter = new PemWriter(writer1);
+                    pemWriter.WriteObject(cert);
+                }
+            }
         }
     }
     
