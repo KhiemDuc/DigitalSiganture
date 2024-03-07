@@ -1,1 +1,1 @@
-D:\WorkSpace\Web\DigitalSignature\Winform\CA\CA.csproj;x64
+D:\WorkSpace\Web\DigitalSignature\CA\CA.csproj;x64

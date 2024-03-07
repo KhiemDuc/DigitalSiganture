@@ -5,31 +5,48 @@
 @using Org.BouncyCastle.Utilities
 @using System.Numerics
 
-<h1>Create Key</h1>
-@if (!string.IsNullOrEmpty(@publicKey))
-{
-    <h2>Public Key:</h2>
-    <p class="text-break">@publicKey</p>
-}
-@if (!string.IsNullOrEmpty(privateKey))
-{
-    <h2>Private Key: </h2>
-<p class="text-break">@privateKey</p>
-}
-<button class="btn btn-primary" @onclick="GenerateKeys">Generate Keys</button>
-
-<input type="text" @bind="subjectName" class="form-control mt-2" placeholder="Subject Name" />
-<button class="btn btn-primary" @onclick="GenerateCertificate">Generate Certi</button>
-
-<div style="height: 50vh;"></div>
-
-<div class="container">
-    <div class="row">
-        <div class="col justify-content-between">
-            <button type="button" class="btn btn-primary">Export Certificate(.cer)</button>
+<div class="container-fluid justify-content-between">
+    <div class="container">
+        <div class="row">
+            <h1>Create Key</h1>
         </div>
-        <div class="col-auto">
-            <button type="button" class="btn btn-secondary">Export Certificate With PassWord(.pfx)</button>
+        @if (!string.IsNullOrEmpty(@publicKey))
+        {
+            <div class="row">
+                <h2>Public Key:</h2>
+                <p class="text-break">@publicKey</p>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(privateKey))
+        {
+            <div class="row">
+                <h2>Private Key: </h2>
+                <p class="text-break">@privateKey</p>
+            </div>
+        }
+        <div class="row mt-3">
+            <button class="btn btn-primary" @onclick="GenerateKeys">Generate Keys</button>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col justify-content-between">
+                <input type="text" @bind="subjectName" class="form-control" placeholder="Subject Name" />
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary" @onclick="GenerateCertificate">Generate Certi</button>
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="container align-self-end">
+        <div class="row align-self-end mt-3">
+            <div class="col justify-content-between">
+                <button type="button" class="btn btn-primary">Export Certificate(.cer)</button>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-secondary">Export Certificate With PassWord(.pfx)</button>
+            </div>
         </div>
     </div>
 </div>

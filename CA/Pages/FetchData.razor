@@ -1,6 +1,7 @@
 ﻿@page "/fetchdata"
 
 @using CA.Data
+@using Newtonsoft.Json
 @inject BankingServices BankingService
 
 <h1>Danh sách giao dịch</h1>
@@ -37,20 +38,37 @@ else
             }
         </tbody>
     </table>
+    <button class="btn btn-primary justify-content-end" @onclick="RefreshData">Refresh</button>
 }
 
 @code {
     private List<Transaction> body;
     private Response data;
+    string myData;
 
     protected override async Task OnInitializedAsync()
     {
-        await InvokeAsync(async () =>
-       {
-           data = await BankingService.GetInfoBankingAsync();
-           body = data.data ;
-           StateHasChanged(); // Force UI to update
-       });
-       
+
+        if (Preferences.ContainsKey("body", myData))
+        {
+            body = JsonConvert.DeserializeObject<List<Transaction>>(Preferences.Get("body", string.Empty));
+        }
+        else
+        {
+            await InvokeAsync(async () =>
+            {
+                data = await BankingService.GetInfoBankingAsync();
+                body = data.data;
+                myData = JsonConvert.SerializeObject(body);
+                Preferences.Set("body", myData);
+                StateHasChanged(); // Force UI to update
+            });
+
+        }
+
+    }
+    private Task RefreshData(MouseEventArgs e)
+    {
+        throw new NotImplementedException();
     }
 }
