@@ -7,6 +7,8 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Card from '@mui/material/Card';
+import CardMedia from '@mui/material/CardMedia';
 
 export default function Hero() {
   return (
@@ -70,19 +72,19 @@ export default function Hero() {
               hiddenLabel
               size="small"
               variant="outlined"
-              aria-label="Enter your email address"
-              placeholder="Your email address"
+              aria-label="Nhập địa chỉ email của bạn"
+              placeholder="Địa chỉ email của bạn"
               inputProps={{
                 autocomplete: 'off',
-                ariaLabel: 'Enter your email address',
+                ariaLabel: 'Nhập địa chỉ email của bạn',
               }}
             />
             <Button variant="contained" color="primary">
-              Start now
+              Bắt đầu nào
             </Button>
           </Stack>
           <Typography variant="caption" textAlign="center" sx={{ opacity: 0.8 }}>
-            By clicking &quot;Start now&quot; you agree to our&nbsp;
+            By clicking &quot;Bắt đầu&quot; you agree to our&nbsp;
             <Link href="#" color="primary">
               Terms & Conditions
             </Link>
@@ -92,14 +94,11 @@ export default function Hero() {
         <Box
           id="image"
           sx={(theme) => ({
+            overflow: 'hidden',
             mt: { xs: 8, sm: 10 },
             alignSelf: 'center',
             height: { xs: 200, sm: 700 },
             width: '100%',
-            backgroundImage:
-              theme.palette.mode === 'light'
-                ? 'url("../static/img/intro-bg.jpg")'
-                : 'url("../static/img/intro-bg.jpg")',
             backgroundSize: 'cover',
             borderRadius: '10px',
             outline: '1px solid',
@@ -112,7 +111,20 @@ export default function Hero() {
                 ? `0 0 12px 8px ${alpha('#9CCCFC', 0.2)}`
                 : `0 0 24px 12px ${alpha('#033363', 0.2)}`,
           })}
-        />
+        >
+          {/* <Card sx={{ width: '100%', height: '100%'}}>
+            <CardMedia
+              component="iframe"
+              alt="green iguana"
+              width={'100%'}
+              height={'100%'}
+              image="../static/video/burbank.mp4"
+              autoPlay
+            />
+          </Card> */}
+          <iframe width="100%" height="100%" src="https://www.youtube.com/embed/i-rtxrEz_E8" title="What is Public Key Infrastructure (PKI) by Securemetric" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </Box>
+
       </Container>
     </Box>
   );

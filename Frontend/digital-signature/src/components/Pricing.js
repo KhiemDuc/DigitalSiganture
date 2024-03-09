@@ -25,6 +25,7 @@ const tiers = [
     buttonText: 'Sign up for free',
     buttonVariant: 'outlined',
   },
+  
   {
     title: 'Professional',
     subheader: 'Recommended',
@@ -39,6 +40,18 @@ const tiers = [
     ],
     buttonText: 'Start now',
     buttonVariant: 'contained',
+  },
+  {
+    title: 'Sinh Viên Thang Long University',
+    price: '0',
+    description: [
+      '10 users included',
+      '2 GB of storage',
+      'Help center access',
+      'Email support',
+    ],
+    buttonText: 'Sign up for free',
+    buttonVariant: 'outlined',
   },
   {
     title: 'Enterprise',
@@ -75,16 +88,13 @@ export default function Pricing() {
         }}
       >
         <Typography component="h2" variant="h4" color="text.primary">
-          Pricing
+          Gói hội viên
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Quickly build an effective pricing table for your potential customers with
-          this layout. <br />
-          It&apos;s built with default Material UI components with little
-          customization.
+          Đăng ký các gói hội viên để được hưởng các mức ưu đãi khác nhau
         </Typography>
       </Box>
-      <Grid container spacing={3} alignItems="center" justifyContent="center">
+      <Grid container spacing={2} alignItems="center" justifyContent="center">
         {tiers.map((tier) => (
           <Grid
             item
@@ -98,7 +108,7 @@ export default function Pricing() {
                 p: 2,
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 4,
+                gap: 2,
                 border: tier.title === 'Professional' ? '1px solid' : undefined,
                 borderColor:
                   tier.title === 'Professional' ? 'primary.main' : undefined,

@@ -98,7 +98,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                   sx={{ py: '6px', px: '12px' }}
                 >
                   <Typography variant="body2" color="text.primary">
-                    Features
+                    Dịch Vụ
                   </Typography>
                 </MenuItem>
                 <MenuItem
@@ -106,7 +106,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                   sx={{ py: '6px', px: '12px' }}
                 >
                   <Typography variant="body2" color="text.primary">
-                    Testimonials
+                    Ý kiến phản hồi
                   </Typography>
                 </MenuItem>
                 <MenuItem
@@ -114,7 +114,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                   sx={{ py: '6px', px: '12px' }}
                 >
                   <Typography variant="body2" color="text.primary">
-                    Highlights
+                    Nổi bật
                   </Typography>
                 </MenuItem>
                 <MenuItem
@@ -122,7 +122,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                   sx={{ py: '6px', px: '12px' }}
                 >
                   <Typography variant="body2" color="text.primary">
-                    Pricing
+                    Hội Viên
                   </Typography>
                 </MenuItem>
                 <MenuItem
@@ -151,12 +151,12 @@ function AppAppBar({ mode, toggleColorMode }) {
               }}
             >
               <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-              
-              <Link to="/sign_in"   style={{ textDecoration: 'none', color: "primary"}}>Sign In</Link>
-              
-              <Link to="/sign_up" className='btn btn-primary' style={{ textDecoration: 'none', marginLeft: '8px'}}
+
+              <Link to="/sign_in" style={{ textDecoration: 'none', color: "primary" }}>Đăng Ký</Link>
+
+              <Link to="/sign_up" className='btn btn-primary' style={{ textDecoration: 'none', marginLeft: '8px' }}
               >
-                Sign up
+                Đăng Nhập
               </Link>
             </Box>
             <Box sx={{ display: { sm: '', md: 'none' } }}>
@@ -189,16 +189,16 @@ function AppAppBar({ mode, toggleColorMode }) {
                     <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
                   </Box>
                   <MenuItem onClick={() => scrollToSection('features')}>
-                    Features
+                    Dịch Vụ
                   </MenuItem>
                   <MenuItem onClick={() => scrollToSection('testimonials')}>
-                    Testimonials
+                    Đánh giá
                   </MenuItem>
                   <MenuItem onClick={() => scrollToSection('highlights')}>
-                    Highlights
+                    Nổi bật
                   </MenuItem>
                   <MenuItem onClick={() => scrollToSection('pricing')}>
-                    Pricing
+                    Hội viên
                   </MenuItem>
                   <MenuItem onClick={() => scrollToSection('team')}>
                     Team
@@ -206,28 +206,11 @@ function AppAppBar({ mode, toggleColorMode }) {
                   <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem>
                   <Divider />
                   <MenuItem>
-                    <Button
-                      color="primary"
-                      variant="contained"
-                      component="a"
-                      href="/material-ui/getting-started/templates/sign-up/"
-                      target="_blank"
-                      sx={{ width: '100%' }}
+                    <Link to="/sign_in" style={{ textDecoration: 'none', color: "primary" }}>Đăng Nhập</Link>
+                    <Link to="/sign_up" className='btn btn-primary' style={{ textDecoration: 'none', marginLeft: '8px' }}
                     >
-                      Sign up
-                    </Button>
-                  </MenuItem>
-                  <MenuItem>
-                    <Button
-                      color="primary"
-                      variant="outlined"
-                      component="a"
-                      href="/material-ui/getting-started/templates/sign-in/"
-                      target="_blank"
-                      sx={{ width: '100%' }}
-                    >
-                      Sign in
-                    </Button>
+                      Đăng Ký
+                    </Link>
                   </MenuItem>
                 </Box>
               </Drawer>
