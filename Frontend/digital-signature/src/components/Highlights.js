@@ -7,7 +7,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import AutoFixHighRoundedIcon from '@mui/icons-material/AutoFixHighRounded';
 import ConstructionRoundedIcon from '@mui/icons-material/ConstructionRounded';
-import QueryStatsRoundedIcon from '@mui/icons-material/QueryStatsRounded';
+import LockPersonIcon from '@mui/icons-material/LockPerson';
 import SettingsSuggestRoundedIcon from '@mui/icons-material/SettingsSuggestRounded';
 import SupportAgentRoundedIcon from '@mui/icons-material/SupportAgentRounded';
 import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
@@ -15,39 +15,39 @@ import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 const items = [
   {
     icon: <SettingsSuggestRoundedIcon />,
-    title: 'Adaptable performance',
+    title: 'Hiệu năng',
     description:
-      'Our product effortlessly adjusts to your needs, boosting efficiency and simplifying your tasks.',
+      'Tận hưởng hiệu suất vượt trội với sản phẩm được thiết kế để đáp ứng mọi nhu cầu của bạn.',
   },
   {
     icon: <ConstructionRoundedIcon />,
-    title: 'Built to last',
+    title: 'Giao diện',
     description:
-      'Experience unmatched durability that goes above and beyond with lasting investment.',
+      'Giao diện thân thiện, dễ dàng thao tác và sử dụng.',
   },
   {
     icon: <ThumbUpAltRoundedIcon />,
-    title: 'Great user experience',
+    title: 'Dễ dàng đăng ký và sử dụng',
     description:
-      'Integrate our product into your routine with an intuitive and easy-to-use interface.',
+      'Quy trình đăng ký và xác thực ngắn gọn nhanh chóng. ',
   },
   {
     icon: <AutoFixHighRoundedIcon />,
-    title: 'Innovative functionality',
+    title: 'Xác thực',
     description:
-      'Stay ahead with features that set new standards, addressing your evolving needs better than the rest.',
+      'Độ tin cậy cao, được tin dùng bởi trường Đại học Thăng Long.',
   },
   {
     icon: <SupportAgentRoundedIcon />,
-    title: 'Reliable support',
+    title: 'Đội ngũ hỗ trợ',
     description:
-      'Count on our responsive customer support, offering assistance that goes beyond the purchase.',
+      'Đội ngũ hỗ trợ chuyên nghiệp túc trực 24/7',
   },
   {
-    icon: <QueryStatsRoundedIcon />,
-    title: 'Precision in every detail',
+    icon: <LockPersonIcon/>,
+    title: 'Bảo mật tốt',
     description:
-      'Enjoy a meticulously crafted product where small touches make a significant impact on your overall experience.',
+      'Sử dụng mã hoá RSA và các thuật toán bảo mật mạnh để đảm bảo an toàn cho dữ liệu của bạn.',
   },
 ];
 
@@ -78,12 +78,12 @@ export default function Highlights() {
           }}
         >
           <Typography component="h2" variant="h4">
-            Highlights
+            Nổi bật
           </Typography>
           <Typography variant="body1" sx={{ color: 'grey.400' }}>
-            Explore why our product stands out: adaptability, durability,
-            user-friendly design, and innovation. Enjoy reliable customer support and
-            precision in every detail.
+          Khám phá lý do tại sao sản phẩm của chúng tôi nổi bật: khả năng thích ứng, độ bền, 
+          thiết kế thân thiện với người dùng và sự đổi mới. 
+          Tận hưởng sự hỗ trợ khách hàng đáng tin cậy và độ chính xác trong từng chi tiết.
           </Typography>
         </Box>
         <Grid container spacing={2.5}>

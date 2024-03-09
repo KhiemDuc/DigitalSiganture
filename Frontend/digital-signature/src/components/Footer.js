@@ -21,7 +21,7 @@ function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary" mt={1}>
       {'Copyright © '}
-      <Link href="https://mui.com/">Sitemark&nbsp;</Link>
+      <Link href="#">Knb </Link>
       {new Date().getFullYear()}
     </Typography>
   );
@@ -59,17 +59,17 @@ export default function Footer() {
             <Box sx={{ ml: '-15px' }}>
               <img
                 src={
-                  'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/61f12e6faf73568658154dae_SitemarkDefault.svg'
+                  '../static/img/KnB.svg'
                 }
                 style={logoStyle}
                 alt="logo of sitemark"
               />
             </Box>
             <Typography variant="body2" fontWeight={600} gutterBottom>
-              Newsletter
+              Bản tin 
             </Typography>
             <Typography variant="body2" color="text.secondary" mb={2}>
-              Subscribe to our newsletter for weekly updates and promotions.
+            Đăng ký nhận bản tin của chúng tôi để biết thông tin cập nhật và khuyến mãi hàng tuần.
             </Typography>
             <Stack direction="row" spacing={1} useFlexGap>
               <TextField
@@ -191,7 +191,7 @@ export default function Footer() {
         >
           <IconButton
             color="inherit"
-            href="https://github.com/mui"
+            href="https://github.com/KhiemDuc/DigitalSiganture"
             aria-label="GitHub"
             sx={{ alignSelf: 'center' }}
           >

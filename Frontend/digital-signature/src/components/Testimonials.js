@@ -101,12 +101,12 @@ export default function Testimonials() {
         }}
       >
         <Typography component="h2" variant="h4" color="text.primary">
-          Testimonials
+        Đánh giá từ những người đã trải nghiệm
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          See what our customers love about our products. Discover how we excel in
-          efficiency, durability, and satisfaction. Join us for quality, innovation,
-          and reliable support.
+        Xem những gì khách hàng của chúng tôi yêu thích về sản phẩm của chúng tôi. 
+        Khám phá cách chúng tôi vượt trội về hiệu quả, độ bền và sự hài lòng. 
+        Tham gia với chúng tôi để có chất lượng, đổi mới và hỗ trợ đáng tin cậy.
         </Typography>
       </Box>
       <Grid container spacing={2}>
@@ -139,11 +139,7 @@ export default function Testimonials() {
                   title={testimonial.name}
                   subheader={testimonial.occupation}
                 />
-                <img
-                  src={logos[index]}
-                  alt={`Logo ${index + 1}`}
-                  style={logoStyle}
-                />
+                
               </Box>
             </Card>
           </Grid>
