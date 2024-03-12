@@ -4,8 +4,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 
 const {NotFoundError} = require('./core/error.response')
-const db = require('./db/sequelize')
-db.sequelize.sync()
+require('./db/init.mongo')
 
 const app = express() 
 

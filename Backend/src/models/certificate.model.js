@@ -1,9 +1,13 @@
-module.exports = (sequelize, Sequelize) => {
-    const Certificate = sequelize.define('Certificate', {
-        keyPem: {
-            type: Sequelize.DataTypes.STRING,
-            allowNull: false
-        }
-    })
-    return Certificate
-}
+const mongoose = require('mongoose')
+
+const CertificateSchema = new mongoose.Schema({
+    keyPem: {
+        type: String,
+        required: true
+    }
+}, {
+    timestamps: true,
+    collection: 'Certificates'
+})
+
+module.exports = mongoose.model('Certificate', CertificateSchema)

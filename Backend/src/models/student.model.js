@@ -1,30 +1,32 @@
-module.exports = (sequelize, Sequelize) => {
-    const Student = sequelize.define('Student', {
-        id: {
-            type: Sequelize.DataTypes.UUID,
-            primaryKey: true,
-            defaultValue: Sequelize.UUIDV4
-        },
-        // fullName: {
-        //     type: Sequelize.DataTypes.STRING,
-        //     allowNull: false
-        // },
-        firstName: {
-            type: Sequelize.DataTypes.STRING,
-            allowNull: false
-        },
-        lastName: {
-            type: Sequelize.DataTypes.STRING,
-            allowNull: false
-        },
-        class: {
-            type: Sequelize.DataTypes.STRING,
-            allowNull: false
-        },
-        birthday: {
-            type: Sequelize.DataTypes.DATE,
-        },
-        gender: Sequelize.DataTypes.CHAR // M: Male, F: Female
-    })
-    return Student
-}
+const mongoose = require('mongoose')
+
+const StudentSchema = new mongoose.Schema({
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
+        type: String,
+        required: true
+    },
+    class: {
+        type: String,
+        required: true
+    },
+    birthday: {
+        type: Date,
+    },
+    gender: {
+        type: String,
+        enum: ['Male', 'Female']
+    }
+}, {
+    timestamps: true,
+    collection: 'Students'
+})
+
+
+module.exports = mongoose.model('Student', StudentSchema)
+
+
+
