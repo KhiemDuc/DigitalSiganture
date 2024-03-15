@@ -15,7 +15,7 @@ app.use(cors({
 app.use(helmet())
 app.use(morgan('dev'))
 app.use(express.json())
-app.use(express.urlencoded({extended:true}))
+app.use(express.urlencoded({extended:false}))
 
 // app routers
 app.use(require('./routers'))
@@ -32,6 +32,7 @@ app.use((err, req, res, next) => {
     const status = err.status || 500
     return res.status(status).json({
         message: err.message || 'Internal server error',
+        reason: err.reason,
         path: req.url,
         stack: status === 500 ? err.stack : undefined
     })
