@@ -2,7 +2,7 @@ const express = require('express')
 const helmet = require('helmet')
 const morgan = require('morgan')
 const cors = require('cors')
-
+const swaggerDocs = require('../swagger')
 const {NotFoundError} = require('./core/error.response')
 require('./db/init.mongo')
 
@@ -21,6 +21,9 @@ app.use(express.urlencoded({extended:false}))
 app.use(require('./routers'))
 
 // 404 error handler
+
+swaggerDocs(app)
+
 
 app.use((req, res, next) => {
     const err = new NotFoundError('Page Not Found')

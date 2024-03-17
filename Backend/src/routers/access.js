@@ -1,8 +1,8 @@
 const express = require('express')
-const AccessController = require('../../controllers/access.controller')
-const asyncHandler = require('../../utils/asyncHandler')
-const authentication = require('../../middlewares/authentication')
-const refreshTokenAuth = require('../../middlewares/refreshTokenAuth')
+const AccessController = require('../controllers/access.controller')
+const asyncHandler = require('../utils/asyncHandler')
+const authentication = require('../middlewares/authentication')
+const refreshTokenAuth = require('../middlewares/refreshTokenAuth')
 
 const router = express.Router()
 

@@ -18,7 +18,6 @@ module.exports = asyncHandler(async (req, res, next) => {
     const foundUser = await User.findById(clientId)
     if (!foundUser) throw new BadRequestError('Request failed', 'Client id is invalid')
 
-    console.log(foundUser._doc)
     let decoded, secret
     try {
         secret = crypto.createSecretKey(foundUser.secretKey)

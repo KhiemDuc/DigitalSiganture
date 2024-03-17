@@ -1,0 +1,200 @@
+{
+    "/access/signup": {
+        "post": {
+            "tags": [
+                "Access Controller"
+            ],
+            "description": "Dùng để đăng ký tài khoản trong hệ thống",
+            "requestBody": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "userName",
+                                "password",
+                                "email",
+                                "phoneNumber",
+                                "firstName",
+                                "lastName"
+                            ],
+                            "properties": {
+                                "userName": {
+                                    "type": "string",
+                                    "default": "Back2215"
+                                },
+                                "password": {
+                                    "type": "string",
+                                    "default": "1234"
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "default": "bachnd2215@gmail.com"
+                                },
+                                "phoneNumber": {
+                                    "type": "string",
+                                    "default": "0123456789"
+                                },
+                                "firstName": {
+                                    "type": "string",
+                                    "default": "Bách"
+                                },
+                                "lastName": {
+                                    "type": "string",
+                                    "default": "Bùi Văn"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "201": {
+                    "description": "Tạo tài khoản thành công",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Sign up success"
+                                    },
+                                    "data": {
+                                        "type": "object",
+                                        "properties": {
+                                            "_id": {
+                                                "type": "string",
+                                                "format": "uuid",
+                                                "description": "Id của người dùng trong hệ thống",
+                                                "example": "65f312e87eeb9329007ef443"
+                                            },
+                                            "userName": {
+                                                "type": "string",
+                                                "example": "Back2215"
+                                            },
+                                            "accessToken": {
+                                                "type": "string"
+                                            },
+                                            "refreshToken": {
+                                                "type":"string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Thất bại",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Sign up failed"
+                                    },
+                                    "reason": {
+                                        "type": "string",
+                                        "example": "Email or password existed"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "/access/signin": {
+        "post": {
+            "tag": ["Access Controller"],
+            "description": "Đăng nhập hệ thống",
+            "requestBody": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "userName",
+                                "password"
+                            ],
+                            "properties": {
+                                "userName": {
+                                    "type": "string",
+                                    "example": "Back2215"
+                                },
+                                "password": {
+                                    "type": "string",
+                                    "example": "1234"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Đăng nhập thành công",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Sign in success"
+                                    },
+                                    "data": {
+                                        "type": "object",
+                                        "properties": {
+                                            "_id": {
+                                                "type": "string",
+                                                "format": "uuid", 
+                                                "example": "65f312e87eeb9329007ef443"
+                                            },
+                                            "userName": {
+                                                "type": "string",
+                                                "example": "Back2215"
+                                            },
+                                            "accessToken": {
+                                                "type": "string"
+                                            },
+                                            "refreshToken": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Đăng nhập thất bại",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Sign in failed"
+                                    },
+                                    "reason": {
+                                        "type": "string",
+                                        "example": "User name or password is incorrect"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
