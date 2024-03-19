@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import CardActions from '@mui/material/CardActions';
@@ -11,10 +10,11 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import { Link } from 'react-router-dom';
 
 const tiers = [
   {
-    title: 'Free',
+    title: 'Miễn phí',
     price: '0',
     description: [
       '10 users included',
@@ -22,12 +22,12 @@ const tiers = [
       'Help center access',
       'Email support',
     ],
-    buttonText: 'Sign up for free',
+    buttonText: 'Đăng ký miễn phí',
     buttonVariant: 'outlined',
   },
   
   {
-    title: 'Professional',
+    title: 'Chuyên nghiệp',
     subheader: 'Recommended',
     price: '15',
     description: [
@@ -38,7 +38,7 @@ const tiers = [
       'Dedicated team',
       'Best deals',
     ],
-    buttonText: 'Start now',
+    buttonText: 'Bắt đầu ngay',
     buttonVariant: 'contained',
   },
   {
@@ -50,11 +50,11 @@ const tiers = [
       'Help center access',
       'Email support',
     ],
-    buttonText: 'Sign up for free',
+    buttonText: 'Đăng ký miễn phí',
     buttonVariant: 'outlined',
   },
   {
-    title: 'Enterprise',
+    title: 'Doanh nghiệp',
     price: '30',
     description: [
       '50 users included',
@@ -62,7 +62,7 @@ const tiers = [
       'Help center access',
       'Phone & email support',
     ],
-    buttonText: 'Contact us',
+    buttonText: 'Liên hệ với chúng tôi',
     buttonVariant: 'outlined',
   },
 ];
@@ -109,11 +109,11 @@ export default function Pricing() {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 2,
-                border: tier.title === 'Professional' ? '1px solid' : undefined,
+                border: tier.title === 'Chuyên nghiệp' ? '1px solid' : undefined,
                 borderColor:
-                  tier.title === 'Professional' ? 'primary.main' : undefined,
+                  tier.title === 'Chuyên nghiệp' ? 'primary.main' : undefined,
                 background:
-                  tier.title === 'Professional'
+                  tier.title === 'Chuyên nghiệp'
                     ? 'linear-gradient(#033363, #021F3B)'
                     : undefined,
               }}
@@ -125,13 +125,13 @@ export default function Pricing() {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    color: tier.title === 'Professional' ? 'grey.100' : '',
+                    color: tier.title === 'Chuyên nghiệp' ? 'grey.100' : '',
                   }}
                 >
                   <Typography component="h3" variant="h6">
                     {tier.title}
                   </Typography>
-                  {tier.title === 'Professional' && (
+                  {tier.title === 'Chuyên nghiệp' && (
                     <Chip
                       icon={<AutoAwesomeIcon />}
                       label={tier.subheader}
@@ -154,7 +154,7 @@ export default function Pricing() {
                   sx={{
                     display: 'flex',
                     alignItems: 'baseline',
-                    color: tier.title === 'Professional' ? 'grey.50' : undefined,
+                    color: tier.title === 'Chuyên nghiệp' ? 'grey.50' : undefined,
                   }}
                 >
                   <Typography component="h3" variant="h2">
@@ -185,7 +185,7 @@ export default function Pricing() {
                       sx={{
                         width: 20,
                         color:
-                          tier.title === 'Professional'
+                          tier.title === 'Chuyên nghiệp'
                             ? 'primary.light'
                             : 'primary.main',
                       }}
@@ -195,7 +195,7 @@ export default function Pricing() {
                       variant="subtitle2"
                       sx={{
                         color:
-                          tier.title === 'Professional' ? 'grey.200' : undefined,
+                          tier.title === 'Chuyên nghiệp' ? 'grey.200' : undefined,
                       }}
                     >
                       {line}
@@ -204,15 +204,14 @@ export default function Pricing() {
                 ))}
               </CardContent>
               <CardActions>
-                <Button
+                <Link
                   fullWidth
                   variant={tier.buttonVariant}
-                  component="a"
-                  href="/material-ui/getting-started/templates/checkout/"
-                  target="_blank"
+                  to={'/checkout'}
+                  className='btn btn-primary rounded-pill'
                 >
                   {tier.buttonText}
-                </Button>
+                </Link>
               </CardActions>
             </Card>
           </Grid>
