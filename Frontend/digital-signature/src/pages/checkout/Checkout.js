@@ -26,6 +26,9 @@ import PaymentForm from '../../components/PaymentForm';
 import Review from '../../components/Review';
 import ToggleColorMode from '../../components/ToggleColorMode';
 import getCheckoutTheme from '../../components/getCheckoutTheme';
+import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 
 
@@ -52,6 +55,13 @@ function getStepContent(step) {
 }
 
 export default function Checkout() {
+  const { id } = useParams();
+  const [checkoutID, setCheckoutId] = useState('');
+
+  useEffect(() => {
+    setCheckoutId(Number(id));
+    console.log(id);
+  }, [id]);
   const [mode, setMode] = React.useState('light');
   const defaultTheme = createTheme({ palette: { mode } });
   const [activeStep, setActiveStep] = React.useState(0);
@@ -85,34 +95,34 @@ export default function Checkout() {
             backgroundColor: 'background.paper',
             borderRight: { sm: 'none', md: '1px solid' },
             borderColor: { sm: 'none', md: 'divider' },
-            alignItems: 'start',
+            alignItems: 'center',
             pt: 4,
             px: 10,
-            gap: 4,
+
           }}
         >
           <Box
             sx={{
               display: 'flex',
-              alignItems: 'end',
+              alignItems: 'center',
               height: 150,
             }}
           >
-            <Button
-              startIcon={<ArrowBackRoundedIcon />}
+            <Link
               component="a"
-              href="/"
-              sx={{ ml: '-8px' }}
+              to="/"
+              style={{ ml: '-8px', textDecoration: 'none'}}
             >
-              Back to
+              <ArrowBackRoundedIcon />
+              Trở lại
               <img
                 src={
-                  '../../../public/static/img/bach_dev.jpg'
+                  '../../static/img/KnB.svg'
                 }
                 style={logoStyle}
                 alt="KnB logo"
               />
-            </Button>
+            </Link>
           </Box>
           <Box
             sx={{
@@ -123,7 +133,7 @@ export default function Checkout() {
               maxWidth: 500,
             }}
           >
-            <Info totalPrice={activeStep >= 2 ? '$144.97' : '$134.98'} />
+            <Info productId={checkoutID} />
           </Box>
         </Grid>
         <Grid
@@ -137,19 +147,19 @@ export default function Checkout() {
             maxWidth: '100%',
             width: '100%',
             backgroundColor: { xs: 'transparent', sm: 'background.default' },
-            alignItems: 'start',
-            pt: { xs: 2, sm: 4 },
+            alignItems: 'center',
+            pt: { xs: 3, sm: 8 },
             px: { xs: 2, sm: 10 },
-            gap: { xs: 4, md: 8 },
+            gap: { xs: 3, md: 3 },
           }}
         >
           <Box
             sx={{
               display: 'flex',
               justifyContent: { sm: 'space-between', md: 'flex-end' },
-              alignItems: 'center',
+              alignItems: 'start',
               width: '100%',
-              maxWidth: { sm: '100%', md: 600 },
+              maxWidth: { sm: '100%', md: 700 },
             }}
           >
             <Box
@@ -163,16 +173,16 @@ export default function Checkout() {
               <Button
                 startIcon={<ArrowBackRoundedIcon />}
                 component="a"
-                href="/material-ui/getting-started/templates/landing-page/"
+                href="/"
                 sx={{ alignSelf: 'start' }}
               >
-                Back to
+                Trở lại
                 <img
                   src={
-                    '../../../public/static/img/bach_dev.jpg'
+                    '../../static/img/KnB.svg'
                   }
                   style={logoStyle}
-                  alt="Sitemark's logo"
+                  alt="logo"
                 />
               </Button>
               <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
@@ -184,10 +194,9 @@ export default function Checkout() {
                 justifyContent: 'space-between',
                 alignItems: 'flex-end',
                 flexGrow: 1,
-                height: 150,
               }}
             >
-              <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+              {/* <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} /> */}
               <Stepper
                 id="desktop-stepper"
                 activeStep={activeStep}
@@ -242,7 +251,7 @@ export default function Checkout() {
               flexDirection: 'column',
               flexGrow: 1,
               width: '100%',
-              maxWidth: { sm: '100%', md: 600 },
+              maxWidth: { sm: '100%', md: 700 },
               maxHeight: '720px',
               gap: { xs: 5, md: 'none' },
             }}
@@ -297,12 +306,12 @@ export default function Checkout() {
                     display: 'flex',
                     flexDirection: { xs: 'column-reverse', sm: 'row' },
                     justifyContent: activeStep !== 0 ? 'space-between' : 'flex-end',
-                    alignItems: 'end',
+                    alignItems: 'start',
                     flexGrow: 1,
                     gap: 1,
                     pb: { xs: 12, sm: 0 },
                     mt: { xs: 2, sm: 0 },
-                    mb: '60px',
+                    
                   }}
                 >
                   {activeStep !== 0 && (

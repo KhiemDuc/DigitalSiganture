@@ -14,7 +14,7 @@ const FormGrid = styled(Grid)(() => ({
 
 export default function AddressForm() {
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={3} style={{marginTop: '20px'}}>
       <FormGrid item xs={12} md={6}>
         <FormLabel htmlFor="first-name" required>
           First name
@@ -41,21 +41,22 @@ export default function AddressForm() {
           required
         />
       </FormGrid>
-      <FormGrid item xs={12}>
-        <FormLabel htmlFor="address1" required>
-          Address line 1
+      <FormGrid item xs={12} md={6}>
+        <FormLabel htmlFor="last-name" required>
+          Số điện thoại
         </FormLabel>
         <OutlinedInput
-          id="address1"
-          name="address1"
-          type="address1"
-          placeholder="Street name and number"
-          autoComplete="shipping address-line1"
+          id="last-name"
+          name="last-name"
+          type="last-name"
+          placeholder="Snow"
+          autoComplete="last name"
           required
         />
       </FormGrid>
-      <FormGrid item xs={12}>
-        <FormLabel htmlFor="address2">Address line 2</FormLabel>
+      
+      <FormGrid item xs={6}>
+        <FormLabel htmlFor="address2">Phường/Xã</FormLabel>
         <OutlinedInput
           id="address2"
           name="address2"
@@ -66,21 +67,8 @@ export default function AddressForm() {
         />
       </FormGrid>
       <FormGrid item xs={6}>
-        <FormLabel htmlFor="city" required>
-          City
-        </FormLabel>
-        <OutlinedInput
-          id="city"
-          name="city"
-          type="city"
-          placeholder="New York"
-          autoComplete="City"
-          required
-        />
-      </FormGrid>
-      <FormGrid item xs={6}>
         <FormLabel htmlFor="state" required>
-          State
+          Quận/Huyện
         </FormLabel>
         <OutlinedInput
           id="state"
@@ -92,28 +80,29 @@ export default function AddressForm() {
         />
       </FormGrid>
       <FormGrid item xs={6}>
-        <FormLabel htmlFor="zip" required>
-          Zip / Postal code
+        <FormLabel htmlFor="city" required>
+          Tỉnh/Thành phố
         </FormLabel>
         <OutlinedInput
-          id="zip"
-          name="zip"
-          type="zip"
-          placeholder="12345"
-          autoComplete="shipping postal-code"
+          id="city"
+          name="city"
+          type="city"
+          placeholder="New York"
+          autoComplete="City"
           required
         />
       </FormGrid>
-      <FormGrid item xs={6}>
-        <FormLabel htmlFor="country" required>
-          Country
+      
+      <FormGrid item xs={12}>
+        <FormLabel htmlFor="address1" required>
+          Địa chỉ cụ thể
         </FormLabel>
         <OutlinedInput
-          id="country"
-          name="country"
-          type="country"
-          placeholder="United States"
-          autoComplete="shipping country"
+          id="address1"
+          name="address1"
+          type="address1"
+          placeholder="Street name and number"
+          autoComplete="shipping address-line1"
           required
         />
       </FormGrid>
@@ -123,6 +112,7 @@ export default function AddressForm() {
           label="Use this address for payment details"
         />
       </FormGrid>
+      
     </Grid>
   );
 }

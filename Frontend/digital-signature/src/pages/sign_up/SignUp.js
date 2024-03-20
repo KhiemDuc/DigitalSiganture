@@ -16,7 +16,12 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
-const defaultTheme = createTheme();
+const theme = createTheme({
+  typography: {
+    fontFamily: '"Be Vietnam Pro", sans-serif',
+  },
+});
+
 
 export default function SignUp() {
   const handleSubmit = (event) => {
@@ -29,7 +34,7 @@ export default function SignUp() {
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
