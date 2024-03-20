@@ -11,14 +11,18 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import getCheckoutTheme from '../../components/getCheckoutTheme';
 
 
+const theme = createTheme({
+  typography: {
+    fontFamily: '"Be Vietnam Pro", sans-serif',
+  },
+});
 
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
-const defaultTheme = createTheme(getCheckoutTheme('light'));
+
 
 export default function SignInSide() {
   const handleSubmit = (event) => {
@@ -31,7 +35,7 @@ export default function SignInSide() {
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={theme}>
       <Grid container component="main" paddingTop={10}>
         <CssBaseline />
         <Grid
@@ -74,11 +78,9 @@ export default function SignInSide() {
               alignItems: 'center',
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-              <LockOutlinedIcon />
-            </Avatar>
+            
             <Typography component="h1" variant="h5">
-            Tạo tài khoản KnB
+            Đăng Nhập
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
@@ -90,7 +92,9 @@ export default function SignInSide() {
                 name="email"
                 autoComplete="email"
                 autoFocus
-                padding={4}
+                padding={6}
+                
+                
               />
               <TextField
                 margin="normal"
@@ -101,20 +105,20 @@ export default function SignInSide() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                padding={4}
+                padding={6}
               />
               <Grid container style={{display: 'flex', justifyItems: 'center', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
               <Grid>
               <FormControlLabel
                 style={{ width: '100%', textAlign: 'left'}}
                 control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
+                label="Nhớ mật khẩu"
               />
               </Grid>
               <Grid>
-              <Link to="/sign_up" variant="body2">
-                    Forgot password?
-                    </Link>
+              <Link to="/sign_up" variant="body2" style={{textDecoration: 'none'}}>
+                    Quên Mật Khẩu?
+              </Link>
               </Grid>
               </Grid>
               <Button
@@ -122,13 +126,14 @@ export default function SignInSide() {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-                style={{backgroundColor: '#6655ff', borderRadius: '10px', padding: '10px'}}
+                style={{backgroundColor: '#6655ff', borderRadius: '15px', padding: '10px'}}
                 className='!p-3'
               >
-                Tạo tài khoản
+                Đăng Nhập
               </Button>
-                  <Link to="/sign_up" variant="body2">
-                    {"Don't have an account? Sign Up"}
+                  Nếu bạn chưa có tài khoản?
+                  <Link to="/sign_up" variant="body2" style={{textDecoration:'none'}}>
+                    {"Đăng Ký Ngay!"}
                   </Link>
             </Box>
           </Box>

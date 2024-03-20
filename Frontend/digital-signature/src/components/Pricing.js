@@ -24,6 +24,7 @@ const tiers = [
     ],
     buttonText: 'Đăng ký miễn phí',
     buttonVariant: 'outlined',
+    checkoutID: 1,
   },
   
   {
@@ -40,6 +41,7 @@ const tiers = [
     ],
     buttonText: 'Bắt đầu ngay',
     buttonVariant: 'contained',
+    checkoutID: 2,
   },
   {
     title: 'Sinh Viên Thang Long University',
@@ -64,6 +66,7 @@ const tiers = [
     ],
     buttonText: 'Liên hệ với chúng tôi',
     buttonVariant: 'outlined',
+    checkoutID: 3,
   },
 ];
 
@@ -207,7 +210,7 @@ export default function Pricing() {
                 <Link
                   fullWidth
                   variant={tier.buttonVariant}
-                  to={'/checkout'}
+                  to={'/checkout/' + tier.checkoutID}
                   className='btn btn-primary rounded-pill'
                 >
                   {tier.buttonText}

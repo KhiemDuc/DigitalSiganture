@@ -3,7 +3,7 @@ import * as React from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import { CardMedia } from '@mui/material';
+import { CardMedia, Avatar } from '@mui/material';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
 import Checkbox from '@mui/material/Checkbox';
@@ -19,6 +19,7 @@ import AccountBalanceRoundedIcon from '@mui/icons-material/AccountBalanceRounded
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
 import SimCardRoundedIcon from '@mui/icons-material/SimCardRounded';
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
+import ErrorIcon from '@mui/icons-material/Error';
 
 import { styled } from '@mui/system';
 
@@ -61,7 +62,7 @@ export default function PaymentForm() {
   };
 
   return (
-    <Stack spacing={{ xs: 3, sm: 6 }} useFlexGap>
+    <Stack spacing={{ xs: 2, sm: 4 }} useFlexGap>
       <FormControl component="fieldset" fullWidth>
         <RadioGroup
           aria-label="Payment options"
@@ -88,7 +89,7 @@ export default function PaymentForm() {
             <CardActionArea onClick={() => setPaymentType('creditCard')}>
               <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <CreditCardRoundedIcon color="primary" fontSize="small" />
-                <Typography fontWeight="medium">Card</Typography>
+                <Typography fontWeight="medium">Thẻ</Typography>
               </CardContent>
             </CardActionArea>
           </Card>
@@ -136,6 +137,9 @@ export default function PaymentForm() {
               boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.05)',
             }}
           >
+          <Alert severity='success' icon={<ErrorIcon/>}>
+            Chức năng đang được phát triển vui lòng chọn chức năng chuyển khoản ngân hàng
+          </Alert>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant="subtitle2">Credit card</Typography>
               <CreditCardRoundedIcon sx={{ color: 'text.secondary' }} />
@@ -147,6 +151,7 @@ export default function PaymentForm() {
                 color: 'text.secondary',
               }}
             />
+            
             <Box
               sx={{
                 display: 'flex',
@@ -209,10 +214,7 @@ export default function PaymentForm() {
               </FormGrid>
             </Box>
           </Box>
-          <FormControlLabel
-            control={<Checkbox name="saveCard" />}
-            label="Remember credit card details for next time"
-          />
+          
         </Box>
       )}
 
@@ -241,63 +243,80 @@ export default function PaymentForm() {
             gap: 2,
           }}
         >
-          <Card sx={{ minWidth: 250, maxWidth: 345 }}>
+          <Card sx={{ minWidth: 280, maxWidth: 345 }}>
             <CardActionArea>
               <CardMedia
                 component="img"
-                height="250"
+                height="280"
                 width={'100%'}
-                image="https://api.vietqr.io/image/970422-7600142281002-gsDIvXx.jpg?accountName=NGUYEN%20DUC%20KHIEM&amount=150000&addInfo=XNCK%20PRO"
+                image="https://api.vietqr.io/image/970422-7600142281002-gsDIvXx.jpg?accountName=NGUYEN%20DUC%20KHIEM&amount=150000&addInfo=CK%20XN%20DK%20PRO"
                 alt="green iguana"
               />
 
             </CardActionArea>
           </Card>
           <Box
+          fullWidth
           sx={{
             display: 'flex',
             flexDirection: 'column',
             gap: 2,
             alignItems: 'center',
             justifyContent: 'center',
+            width: '100%',
+            justifyItems: 'start',
+            border:'1px solid #d6e2ebcc',
+            borderRadius: '10px',
+            paddingLeft: '40px',
+            paddingTop: '10px',
           }}
         >
-          <Box sx={{ display: 'flex', gap: 1, flexDirection:'column'  }}>
-            <Typography variant="body1" color="text.secondary">
+          <Box  sx={{ display: 'flex', gap: 1, flexDirection:'row', width:'100%'  }}>
+            <Box sx={{width: '120px', height: '50px'}}>
+                <Avatar
+                alt="Remy Sharp"
+                src="../../static/img/Logo_MB_new.png"
+                sx={{ width: '100%', height: '100%' }}
+                variant="square"
+              />
+            </Box>
+            <Box sx={{ display: 'flex', gap: 1, flexDirection:'column' }}>
+            <Typography variant="body1" color="medium">
               NGUYEN DUC KHIEM
             </Typography>
             <Box sx={{ display: 'flex', gap: 1  }}>
 
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body1" color="text.secondary" textAlign='left'>
               Ngân Hàng:
             </Typography>
             <Typography variant="body1" fontWeight="medium">
               MB Bank
             </Typography>
             </Box>
+            </Box>
           </Box>
 
-          <Box sx={{ display: 'flex', gap: 1, flexDirection:'column'}}>
-            <Typography variant="body1" color="text.secondary">
+          <Box sx={{ display: 'flex', gap: 1, flexDirection:'column', width:'100%'}}>
+            <Typography variant="body1" color="text.secondary" textAlign='left'>
               Số tài khoản:
             </Typography>
-            <Typography variant="body1" fontWeight="medium">
+            <Typography variant="body1" fontWeight="medium" textAlign='left'>
               7600142281002
             </Typography>
           </Box>
-          <Box sx={{ display: 'flex', gap: 1, flexDirection:'column', justifyContent:'flex-start' }}>
-            <Typography variant="body1" color="text.secondary">
+          <Box sx={{ display: 'flex', gap: 1, flexDirection:'column', justifyContent:'flex-start',width:'100%' }}>
+            <Typography variant="body1" color="text.secondary" textAlign='left'>
               Số tiền:
             </Typography>
-            <Typography variant="body1" fontWeight="medium">
+            <Typography variant="body1" fontWeight="medium" textAlign='left'>
               150.000 VND
             </Typography>
           </Box>
-          <Box sx={{ display: 'flex', gap: 1, flexDirection:'column', justifyContent:'flex-start' }}>
-            <Typography variant="body1" color="text.secondary">
+          <Box sx={{ display: 'flex', gap: 1, flexDirection:'column', justifyContent:'flex-start',width:'100%' }}>
+            <Typography variant="body1" color="text.secondary" textAlign='left'>
               Nội Dung:
             </Typography>
-            <Typography variant="body1" fontWeight="medium">
+            <Typography variant="body1" fontWeight="medium" textAlign='left'>
               CK XN DK PRO
             </Typography>
           </Box>
