@@ -43,7 +43,12 @@ const UserInfoSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    
+    avatar: {
+        type: String,
+    },
+    background: {
+        type: String,
+    }
 }, {
     timestamps: true,
     collection: 'UserInfo'
