@@ -30,6 +30,13 @@ class AccessController {
             data: await accessService.refreshToken(req.user)
         }).send(res)
     }
+
+    static async getUserInfo (req, res) {
+        new SuccessResponse({
+            message: 'Get user information success',
+            data: await accessService.getUserInfo(req.user, req.params.id)
+        }).send(res)
+    }
     
 }
 

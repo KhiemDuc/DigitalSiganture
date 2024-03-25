@@ -32,7 +32,7 @@ module.exports = asyncHandler(async (req, res, next) => {
             throw new ForbiddenError('Request failed', 'Some thing wrong, please login again')
         }
         
-        throw new ForbiddenError('Request failed', 'Access denied - 1')
+        throw new ForbiddenError('Request failed', 'Access denied')
     }
     if (decoded._id !== foundUser._id.toString()) throw new ForbiddenError('Request failed', 'Access denied')
  

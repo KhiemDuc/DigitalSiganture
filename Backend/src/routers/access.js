@@ -14,8 +14,9 @@ router.use('/refresh-token', refreshTokenAuth)
 router.get('/refresh-token', asyncHandler(AccessController.refreshToken))
 
 router.use(authentication)
+router.get('/:id', asyncHandler(AccessController.getUserInfo))
 router.post('/logout', asyncHandler(AccessController.logout))
-
+// router.put('/:id', asyncHandler(AccessController.))
 
 
 

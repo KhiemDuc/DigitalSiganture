@@ -14,7 +14,7 @@ module.exports = asyncHandler(async (req, res, next) => {
     const accessToken = req.headers[HEADERS.Authentication]
 
     const foundUser = await User.findById(clientId)
-    if (!foundUser) throw new BadRequestError('Request failed', 'User id is invalid')
+    if (!foundUser) throw new BadRequestError('Request failed', 'Client id is invalid')
 
     let decoded, secret
     try {

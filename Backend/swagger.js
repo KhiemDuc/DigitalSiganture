@@ -9,7 +9,6 @@ const options = {
     contact: {
       name: "Bách Bùi",
       email: "bachnd2215@gmail.com",
-      url: "https://www.facebook.com/profile.php?id=100009417933352"
     },
     version: '1.0.0',
   },

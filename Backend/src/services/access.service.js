@@ -1,10 +1,10 @@
 const { BadRequestError } = require('../core/error.response')
 const User = require('../models/user.model')
-const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 const {createTokens, createSecretKey} = require('../utils/keyToken')
 const pickFields = require('../utils/pickFields')
 const UserInfo = require('../models/userInfo.model')
+const omitFields = require('../utils/omitFields')
 class AccessService {
     static singUp = async ({ email, userName, password, phoneNumber, firstName, lastName }) => {
 
@@ -50,10 +50,8 @@ class AccessService {
         }
     }
     static signIn = async (userName, password) => {
-        console.log(userName, password)
         const foundUser = await User.findOne({userName}).populate('userInfo')
         if ( !foundUser ) throw new BadRequestError('Sign in failed', 'User name or password is incorrect')
-        // console.log(foundUser)
         const result = bcrypt.compareSync(password, foundUser.password)
 
         if ( !result ) throw new BadRequestError('Sign in failed', 'User name or password is incorrect')
@@ -114,6 +112,31 @@ class AccessService {
         }
 
     }
+
+    static getUserInfo = async (user, id) => {
+        if ( user._id.toString() !== id) throw new BadRequestError('Get user information failed','client id is invalid')
+        const userInfo = await UserInfo.findById(user.userInfo)
+        user.userInfo = userInfo
+        return {
+            ...pickFields(user, [ '_id', 'userName']),
+            ...omitFields(userInfo._doc, ['_id', '__v', 'createdAt', 'updatedAt'])
+        }
+    }
+
+    static changeUserInfo = async (id, payload) => {
+        const {firstName, lastName, address, gender, dateOfBirth, placeOfOrigin} = payload
+        
+    }
+
+    static changePassword = async (user, newPass) => {
+        const newHashedPass = bcrypt.hashSync(newPass,10)
+
+        user.password = newHashedPass
+        await user.save()
+
+        return true
+    }
+
 }
 
 
