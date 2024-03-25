@@ -1,8 +1,7 @@
 const mongoose = require('mongoose')
 const config = require('../configs/mongo.config')
-
-const connectionString = `mongodb://${config.host}:${config.port}/${config.dbName}`
-
+const isLocalHost = config.host === '127.0.0.1'
+const connectionString = `mongodb${ isLocalHost ? '' : '+srv' }://${isLocalHost ? config.host + config.port : config.host}/${config.dbName}?retryWrites=true&w=majority&appName=Back2215`
 
 mongoose.connect(connectionString)
     .then(() => {
