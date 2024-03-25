@@ -7,6 +7,34 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    secretKey: {
+        type: Buffer,
+        default: null
+    },
+    refreshToken: {
+        type: String,
+        default: null
+    }, 
+    refreshTokenUsed: {
+        type: [String],
+        default: []
+    },
+    isStudent: {
+        type: Boolean,
+        default: false
+    },
+    userInfo: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'UserInfo'
+    },
+    certificate: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Certificate'
+    },
+    studentInfo: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Student'
     }
 }, {
     timestamps: true,

@@ -1,56 +1,13 @@
-// module.exports = (sequelize, Sequelize) => {
-//     const UserInfo = sequelize.define('UserInfo', {
-//         firstName: {
-//             type: Sequelize.DataTypes.STRING,
-//         },
-//         lastName: {
-//             type: Sequelize.DataTypes.STRING
-//         },
-//         email: {
-//             type: Sequelize.DataTypes.STRING,
-//             validate: {
-//                 is: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
-//             }
-//         },
-//         phoneNumber: {
-//             type: Sequelize.DataTypes.STRING,
-//             validate: {
-//                 is: /^0\d{9}$/
-//             }
-//         },
-//         address: {
-//             type: Sequelize.DataTypes.STRING,
-//         },
-//         CCCD: {
-//             type: Sequelize.DataTypes.STRING,
-//             validate: {
-//                 is: /^0\d{11}$/ 
-//             }
-//         },
-//         gender: {
-//             type: Sequelize.DataTypes.CHAR,
-//         },
-//         dateOfBirth: {
-//             type: Sequelize.DataTypes.DATE
-//         },
-//         nationality: {
-//             type: Sequelize.DataTypes.STRING
-//         },
-//         placeOfOrigin: {
-//             type: Sequelize.DataTypes.STRING
-//         }
-//     })
-//     return UserInfo
-// }
-
 const mongoose = require('mongoose')
 
 const UserInfoSchema = new mongoose.Schema({
     firstName: {
         type: String,
+        required: true
     },
     lastName: {
-        type: String
+        type: String,
+        required: true
     },
     email: {
         type: String,
@@ -62,23 +19,35 @@ const UserInfoSchema = new mongoose.Schema({
     },
     address: {
         type: String,
+        default: null
     },
     CCCD: {
         type: String,
-        match: /^0\d{11}$/
+        match: /^0\d{11}$/,
+        default: ''
     },
     gender: {
         type: String,
-        enum: ['Male', 'Female']
+        enum: ['Male', 'Female'],
+        default: null
     },
     dateOfBirth: {
-        type: Date
+        type: Date,
+        default: null
     },
     nationality: {
-        type: String
+        type: String,
+        default: 'Việt Nam'
     },
     placeOfOrigin: {
-        type: String
+        type: String,
+        default: null
+    },
+    avatar: {
+        type: String,
+    },
+    background: {
+        type: String,
     }
 }, {
     timestamps: true,
