@@ -152,11 +152,11 @@ function AppAppBar({ mode, toggleColorMode }) {
             >
               <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
 
-              <Link to="/sign_in" style={{ textDecoration: 'none', color: "primary" }}>Đăng Ký</Link>
+              <Link to="/sign_in" style={{ textDecoration: 'none', color: "primary" }}>Đăng Nhập</Link>
 
               <Link to="/sign_up" className='btn btn-primary' style={{ textDecoration: 'none', marginLeft: '8px' }}
               >
-                Đăng Nhập
+                Đăng Ký
               </Link>
             </Box>
             <Box sx={{ display: { sm: '', md: 'none' } }}>
@@ -203,7 +203,9 @@ function AppAppBar({ mode, toggleColorMode }) {
                   <MenuItem onClick={() => scrollToSection('team')}>
                     Team
                   </MenuItem>
-                  <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem>
+                  <MenuItem onClick={() => scrollToSection('faq')}>
+                    FAQ
+                  </MenuItem>
                   <Divider />
                   <MenuItem>
                     <Link to="/sign_in" style={{ textDecoration: 'none', color: "primary" }}>Đăng Nhập</Link>

@@ -19,7 +19,7 @@ const items = [
     icon: <CreateIcon />,
     title: 'Đăng ký chứng chỉ số',
     description:
-      'This item could provide a snapshot of the most important metrics or data points related to the product.',
+      'Điền thông tin cá nhân và xác thực mặt và căn cước công dân để đăng ký chữ ký số và chứng chỉ số.',
     imageLight: 'url("/static/images/templates/templates-images/dash-light.png")',
     imageDark: 'url("/static/images/templates/templates-images/dash-dark.png")',
   },
@@ -27,7 +27,7 @@ const items = [
     icon: <FingerprintIcon />,
     title: 'Xác Thực Thông Tin Chứng Chỉ',
     description:
-      'This item could provide information about the mobile app version of the product.',
+      'Gửi chứng chỉ lên hệ thống để xem chứng chỉ có hợp lệ hay không.',
     imageLight: 'url("/static/images/templates/templates-images/mobile-light.png")',
     imageDark: 'url("/static/images/templates/templates-images/mobile-dark.png")',
   },
@@ -35,7 +35,7 @@ const items = [
     icon: <KeyOffIcon />,
     title: 'Gia hạn và thu hồi chứng chỉ hết hạn',
     description:
-      'This item could let users know the product is available on all platforms, such as web, mobile, and desktop.',
+      'Gia hạn những chứng chỉ hết hạn, thu hồi và cấp lại chứng chỉ khi người dùng cảm thấy vấn đề liên quan đến bảo mật.',
     imageLight: 'url("/static/images/templates/templates-images/devices-light.png")',
     imageDark: 'url("/static/images/templates/templates-images/devices-dark.png")',
   },
