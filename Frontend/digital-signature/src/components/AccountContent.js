@@ -1,7 +1,5 @@
 import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
-
 import AccountSettings from './AccountSettings'
-import Actions from './Action'
 
 const Content = () => {
 
@@ -42,7 +40,6 @@ const Content = () => {
           </TabPanel>
         </TabPanels>
       </Tabs>
-      <Actions />
     </Box>
   )
 }
