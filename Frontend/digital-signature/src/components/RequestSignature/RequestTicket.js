@@ -55,9 +55,7 @@ function RequestTicket() {
           <option value="netherland">Netherland</option>
           <option value="poland">Poland</option>
         </Select>
-      </FormControl>
-
-      
+      </FormControl>      
     </Grid>
   )
 }

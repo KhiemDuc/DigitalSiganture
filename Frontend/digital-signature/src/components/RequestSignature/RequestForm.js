@@ -1,4 +1,5 @@
 import { FormControl, FormLabel, Grid, Input, Select } from '@chakra-ui/react'
+import { Box, Button } from '@chakra-ui/react'
 
 function RequestForm() {
   return (
@@ -67,6 +68,14 @@ function RequestForm() {
           <option value="poland">Poland</option>
         </Select>
       </FormControl>
+      <FormControl id="cccd_img">
+        <FormLabel>Ảnh Căn Cước Công Dân</FormLabel>
+        <Input focusBorderColor="brand.blue" type="file" />
+      </FormControl>
+      <Box mt={5} py={5} px={8} borderTopWidth={1} borderColor="brand.light">
+      <Button>Update</Button>
+    </Box>
+      
       
     </Grid>
   )
