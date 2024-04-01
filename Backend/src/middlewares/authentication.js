@@ -22,6 +22,9 @@ module.exports = asyncHandler(async (req, res, next) => {
         secret = crypto.createSecretKey(foundUser.secretKey)
         decoded = verifyToken(accessToken, secret)
     } catch (err) {
+        if (err.message === 'jwt expired') {
+            throw new BadRequestError('Request failed', 'Token expired')
+        }
         throw new ForbiddenError('Request failed', 'Token is invalid')
     }
     

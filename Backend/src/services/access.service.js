@@ -5,29 +5,32 @@ const {createTokens, createSecretKey} = require('../utils/keyToken')
 const pickFields = require('../utils/pickFields')
 const UserInfo = require('../models/userInfo.model')
 const omitFields = require('../utils/omitFields')
+const checkNotNull = require('../utils/checkNotNull')
+const { generateOTP } = require('./otp.service')
+const OTP = require('../models/otp.model')
+const { sendMail } = require('./email.service')
+const block = require('../utils/blockGenOTP')
+const blockAttempts = require('../utils/blockVerifyOTP')
 class AccessService {
     static singUp = async ({ email, userName, password, phoneNumber, firstName, lastName }) => {
 
-        if (!email || !userName || !password || !phoneNumber || !firstName || !lastName) throw new BadRequestError('Sign up failed', 'Missing information')
+        if (!email || !userName || !password || !firstName || !lastName) throw new BadRequestError('Sign up failed', 'Missing information')
 
-        const foundUser = await User.find({
+        const foundUser = await User.findOne({
             userName: userName
         })
-        if (foundUser.length > 0 ) throw new BadRequestError('Sign up failed', 'User name existed')
+        if (foundUser) throw new BadRequestError('Sign up failed', 'User name existed')
 
-        const foundInfo = await UserInfo.find({
-            $or : [
-                {email: email},
-                {phoneNumber: phoneNumber}
-            ]
+        const foundInfo = await UserInfo.findOne({
+            email: email
         })
-        if (foundInfo.length > 0) throw new BadRequestError('Sign up failed', 'Email or password existed')
+        if (foundInfo) throw new BadRequestError('Sign up failed', 'Email or password existed')
 
         const secret = createSecretKey()
         
         password = await bcrypt.hash(password, 10)
         const newUser = await User.create({
-            email, userName, password, phoneNumber, secretKey: secret.export()
+            email, userName, password, secretKey: secret.export()
         })
 
         const tokens = createTokens({
@@ -39,13 +42,15 @@ class AccessService {
             key: secret 
         })
         const userInfo = await UserInfo.create({
-            email, phoneNumber, firstName, lastName
+            email, firstName, lastName, phoneNumber
         })
+        const cert = await Certificate({userId: newUser._id})
         newUser.userInfo = userInfo._id
         newUser.refreshToken = tokens.refreshToken
+        newUser.certificate = cert
         await newUser.save()
         return {
-            ...pickFields(newUser, ['_id', 'userName']),
+            ...pickFields(newUser, ['_id', 'userName', 'userInfo.verified']),
             ...tokens
         }
     }
@@ -71,7 +76,7 @@ class AccessService {
         await foundUser.save()
 
         return {
-            ...pickFields(foundUser, ['_id', 'userName']),
+            ...pickFields(foundUser, ['_id', 'userName', 'foundUser.verified']),
             ...tokens
         }
     }
@@ -123,9 +128,30 @@ class AccessService {
         }
     }
 
-    static changeUserInfo = async (id, payload) => {
-        const {firstName, lastName, address, gender, dateOfBirth, placeOfOrigin} = payload
+    static changeUserInfo = async (user, payload) => {
+        const {firstName, lastName, CCCD ,address, gender, dateOfBirth, placeOfOrigin, nationality, avatar, background} = payload
+        if (!checkNotNull(firstName, lastName, address, CCCD, gender, dateOfBirth, placeOfOrigin, nationality, avatar, background)) throw new BadRequestError('Change user info failed', 'Missing information')
+        const foundInfo = await UserInfo.findById(user.UserInfo)
+        // check CCCD
+
+        //end check
+        foundInfo.firstName = firstName
+        foundInfo.lastName = lastName
+        foundInfo.CCCD = CCCD
+        foundInfo.address = address
+        foundInfo.gender = gender
+        foundInfo.dateOfBirth = dateOfBirth
+        foundInfo.placeOfOrigin = placeOfOrigin
+        foundInfo.nationality = nationality
+        foundInfo.avatar = avatar
+        foundInfo.background = background
+        try {
+            await foundInfo.save()
+        } catch(err) {
+            throw new BadRequestError('Change user info failed', 'Some thing wrong, please check inputs again')
+        }
         
+        return 'Change user info success'
     }
 
     static changePassword = async (user, newPass) => {
@@ -136,7 +162,64 @@ class AccessService {
 
         return true
     }
+    static createOTP = async (user) => {
+        const OTPgen = generateOTP();
+        let foundOTP = await OTP.findOne({userId: user._id})
+        if (!foundOTP) {
+            foundOTP = new OTP({userId: user._id})
+        }
+        if (foundOTP.retry > 2) {
+            block.set(foundOTP._id)
+            throw new BadRequestError('Create OTP failed', 'Too many attemps')
+        }
+        foundOTP.type= 'Verify email'
+        foundOTP.value= OTPgen
+        foundOTP.exp= new Date(Date.now() + (300 * 1000))
+        foundOTP.retry = foundOTP.retry + 1;
 
+        await foundOTP.save()
+        const foundInfo = await UserInfo.findById(user.userInfo)
+        sendMail({
+            to: foundInfo.email,
+            OTP: OTPgen
+        })
+        return 'Create OTP success'
+    }
+
+    static verifyOTP = async (user, otp) => {
+        const foundOTP = await OTP.findOne({userId: user._id})
+        if (!foundOTP) throw new BadRequestError('Verify OTP failed', 'otp is not exist')
+        if (foundOTP.attempts > 2) {
+            blockAttempts.set(foundOTP._id)
+            throw new BadRequestError('Verify OTP failed', 'Too many attempts, try again later')
+        } 
+        if (otp !== foundOTP.value || foundOTP.exp < new Date()) {
+            console.log(foundOTP.attempts)
+            foundOTP.attempts++
+            await foundOTP.save()
+            throw new BadRequestError('Verify OTP failed', 'OTP is not valid')
+        } 
+            
+        foundOTP.type = null
+        foundOTP.value = null
+        foundOTP.exp = null
+        foundOTP.retry = 0
+        foundOTP.attempts = 0
+        await foundOTP.save()
+        await UserInfo.findByIdAndUpdate(user.userInfo, {
+            $set: {
+                verified: true
+            }
+        })
+
+        return 'Verify OTP success'
+    }
+
+    static resetPassword = async (email) => {
+        
+
+
+    }
 }
 
 

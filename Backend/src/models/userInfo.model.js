@@ -48,6 +48,10 @@ const UserInfoSchema = new mongoose.Schema({
     },
     background: {
         type: String,
+    }, 
+    verified : {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true,

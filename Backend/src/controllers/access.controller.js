@@ -37,6 +37,18 @@ class AccessController {
             data: await accessService.getUserInfo(req.user, req.params.id)
         }).send(res)
     }
+
+    static async getOTP(req, res) {
+        new SuccessResponse({
+            message: await accessService.createOTP(req.user)
+        }).send(res)
+    }
+
+    static async verifyOTP(req, res) {
+        new SuccessResponse({
+            message: await accessService.verifyOTP(req.user, req.body.otp)
+        }).send(res)
+    }
     
 }
 

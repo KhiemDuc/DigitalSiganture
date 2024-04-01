@@ -1,8 +1,11 @@
 const mongoose = require('mongoose')
 
 const CertificateSchema = new mongoose.Schema({
-    keyPem: {
+    certPem: {
         type: String,
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
         required: true
     }
 }, {
