@@ -5,7 +5,7 @@ import RequestForm from './RequestForm'
 import RequestTicket from './RequestTicket'
 
 const RequestNavigate = () => {
-  const tabs = ['RequestForm', 'RequestTicket']
+  const tabs = ['Đăng Ký Chứng Chỉ Số', 'Xem vé yêu cầu']
 
   return (
     <Box

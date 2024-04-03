@@ -1,17 +1,17 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import { Link } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+import * as React from "react";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import { Link } from "react-router-dom";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import * as Yup from "yup";
+import { Formik, Form } from "formik";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
 
 const theme = createTheme({
   typography: {
@@ -19,42 +19,38 @@ const theme = createTheme({
   },
 });
 
-
 // TODO remove, this demo shouldn't need to reset the theme.
-
-
 
 export default function SignInSide() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+      email: data.get("email"),
+      password: data.get("password"),
     });
+  };
+  const [showPassword, setShowPassword] = React.useState(false);
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
     <ThemeProvider theme={theme}>
       <Grid container component="main" paddingTop={10}>
         <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={6}
-        >
+        <Grid item xs={false} sm={4} md={6}>
           <Box
-          id="image"
-          sx={(theme) => ({
-            overflow: 'hidden',
-            mt: { xs: 8, sm: 10 },
-            alignSelf: 'center',
-            width: '100%',
-            backgroundSize: 'cover',
-          })}
-        >
-          {/* <Card sx={{ width: '100%', height: '100%'}}>
+            id="image"
+            sx={(theme) => ({
+              overflow: "hidden",
+              mt: { xs: 8, sm: 10 },
+              alignSelf: "center",
+              width: "100%",
+              backgroundSize: "cover",
+            })}
+          >
+            {/* <Card sx={{ width: '100%', height: '100%'}}>
             <CardMedia
               component="iframe"
               alt="green iguana"
@@ -64,78 +60,137 @@ export default function SignInSide() {
               autoPlay
             />
           </Card> */}
-            <img width="60%" height="60%" src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp" />
+            <img
+              width="60%"
+              height="60%"
+              src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+            />
           </Box>
-          </Grid>
-        
+        </Grid>
+
         <Grid item xs={12} sm={8} md={5} elevation={6} square>
           <Box
             sx={{
               my: 8,
               mx: 4,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
             }}
           >
-            
             <Typography component="h1" variant="h5">
-            Đăng Nhập
+              Đăng Nhập
             </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                padding={6}
-                
-                
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                padding={6}
-              />
-              <Grid container style={{display: 'flex', justifyItems: 'center', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
-              <Grid>
-              <FormControlLabel
-                style={{ width: '100%', textAlign: 'left'}}
-                control={<Checkbox value="remember" color="primary" />}
-                label="Nhớ mật khẩu"
-              />
-              </Grid>
-              <Grid>
-              <Link to="/sign_up" variant="body2" style={{textDecoration: 'none'}}>
-                    Quên Mật Khẩu?
-              </Link>
-              </Grid>
-              </Grid>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-                style={{backgroundColor: '#6655ff', borderRadius: '15px', padding: '10px'}}
-                className='!p-3'
-              >
-                Đăng Nhập
-              </Button>
+
+            <Formik
+              initialValues={{ email: "", password: "" }}
+              validationSchema={Yup.object({
+                password: Yup.string().min(
+                  12,
+                  "Mật khẩu phải có nhiều hơn 12 ký tự"
+                ),
+              })}
+              onSubmit={(values, { setSubmitting }) => {
+                setTimeout(() => {
+                  setSubmitting(false);
+                  console.log({
+                    email: values.email,
+                    password: values.password,
+                  });
+                }, 400);
+              }}
+            >
+              {(formik) => (
+                <Form onSubmit={formik.handleSubmit}>
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    autoFocus
+                    padding={6}
+                    type="email"
+                    {...formik.getFieldProps("email")}
+                  />
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    autoComplete="current-password"
+                    padding={6}
+                    {...formik.getFieldProps("password")}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={handleClickShowPassword}>
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  {formik.touched.password && formik.errors.password ? (
+                    <div
+                      className="form-text"
+                      style={{ textAlign: "start", color: "red" }}
+                    >
+                      {formik.errors.password}
+                    </div>
+                  ) : null}
+                  <Grid
+                    container
+                    style={{
+                      display: "flex",
+                      justifyItems: "center",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Grid></Grid>
+                    <Grid>
+                      <Link
+                        to="/sign_up"
+                        variant="body2"
+                        style={{ textDecoration: "none" }}
+                      >
+                        Quên Mật Khẩu?
+                      </Link>
+                    </Grid>
+                  </Grid>
+                  <button
+                    style={{
+                      margin: "20px",
+                      backgroundColor: "#6655ff",
+                      borderRadius: "15px",
+                      padding: "10px",
+                      color: "white",
+                      width: "100%",
+                      border: "none",
+                    }}
+                    className="!p-3 button-hover"
+                    type="submit"
+                  >
+                    Đăng Nhập
+                  </button>
                   Nếu bạn chưa có tài khoản?
-                  <Link to="/sign_up" variant="body2" style={{textDecoration:'none'}}>
+                  <Link
+                    to="/sign_up"
+                    variant="body2"
+                    style={{ textDecoration: "none" }}
+                  >
                     {"Đăng Ký Ngay!"}
                   </Link>
-            </Box>
+                </Form>
+              )}
+            </Formik>
           </Box>
         </Grid>
       </Grid>
