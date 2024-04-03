@@ -12,7 +12,7 @@ class AccessController {
     static async verifySignup(req, res) {
         new SuccessResponse({
             message: 'Verify email success',
-            data: await accessService.verifySignup(req.headers.token, res.body.otp)
+            data: await accessService.verifySignup(req.headers.token, req.body.otp)
         }).send(res)
     }
 

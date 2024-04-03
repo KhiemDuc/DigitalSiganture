@@ -13,6 +13,7 @@ const block = require('../utils/blockGenOTP')
 const blockAttempts = require('../utils/blockVerifyOTP')
 const Certificate = require('../models/certificate.model')
 const cacheService = require('./cache.service')
+const crypto = require('crypto')
 class AccessService {
     static singUp = async ({ email, userName, password, phoneNumber, firstName, lastName }) => {
 
@@ -28,11 +29,12 @@ class AccessService {
         })
         if (foundInfo) throw new BadRequestError('Sign up failed', 'Email or password existed')
 
-        const signUpToken = crypto.randomBytes(256).toString('hex');
+        const signUpToken = crypto.randomBytes(32).toString('hex');
         const OTPgen = generateOTP()
         try {
-            await sendMail(email, OTPgen)
+            await sendMail({to: email, OTP: OTPgen})
         } catch(err) {
+            console.log(err)
             throw new BadRequestError('Sign up failed', 'unknown reason')
         }
         if (cacheService.putOTP(signUpToken,{ 
@@ -42,16 +44,16 @@ class AccessService {
         return { signUpToken: signUpToken };
     }
 
-    static verifySignup = async ({token, otp}) => {
+    static verifySignup = async (token, otp) => {
         const foundOTP = cacheService.getOTP(token)
         if ( !foundOTP || !foundOTP.OTP || foundOTP.OTP !== otp) throw new BadRequestError('Verify failed', 'OTP is invalid') 
         const {email, userName, password, phoneNumber, firstName, lastName} = foundOTP;
         
         const secret = createSecretKey()
         
-        password = await bcrypt.hash(password, 10)
-        const newUser = await User.create({
-            email, userName, password, secretKey: secret.export()
+        let passwordHash = await bcrypt.hash(password, 10)
+        const newUser = new User({
+            email, userName, password: passwordHash, secretKey: secret.export()
         })
 
         const tokens = createTokens({

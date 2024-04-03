@@ -3,13 +3,13 @@ const cache = new NodeCache();
 
 
 const putOTP = (token, value) => {
-    const otpCache = cache.get('OTPs');
+    let otpCache = cache.get('OTPs');
     if (otpCache === undefined) otpCache = {}
     otpCache[token] = value
-    return cache.set('OTPs', value, 180000);
+    return cache.set('OTPs', otpCache, 180000);
 }
 const getOTP = (token) => {
-    const otpCache = cache.get('OTPs')
+    let otpCache = cache.get('OTPs')
     if (otpCache === undefined) otpCache = {}
     return otpCache[token]
 }

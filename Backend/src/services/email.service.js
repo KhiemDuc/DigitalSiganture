@@ -10,7 +10,6 @@ const MAIL_SETTINGS = {
   const transporter = nodemailer.createTransport(MAIL_SETTINGS);
   
   module.exports.sendMail = async ({to, OTP}) => {
-    try {
       let info = await transporter.sendMail({
         from: MAIL_SETTINGS.auth.user,
         to: to,
@@ -28,8 +27,4 @@ const MAIL_SETTINGS = {
       `,
       });
       return info;
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
   };
