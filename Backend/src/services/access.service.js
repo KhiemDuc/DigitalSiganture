@@ -11,6 +11,8 @@ const OTP = require('../models/otp.model')
 const { sendMail } = require('./email.service')
 const block = require('../utils/blockGenOTP')
 const blockAttempts = require('../utils/blockVerifyOTP')
+const Certificate = require('../models/certificate.model')
+const cacheService = require('./cache.service')
 class AccessService {
     static singUp = async ({ email, userName, password, phoneNumber, firstName, lastName }) => {
 
@@ -26,6 +28,25 @@ class AccessService {
         })
         if (foundInfo) throw new BadRequestError('Sign up failed', 'Email or password existed')
 
+        const signUpToken = crypto.randomBytes(256).toString('hex');
+        const OTPgen = generateOTP()
+        try {
+            await sendMail(email, OTPgen)
+        } catch(err) {
+            throw new BadRequestError('Sign up failed', 'unknown reason')
+        }
+        if (cacheService.putOTP(signUpToken,{ 
+            email, userName, password, phoneNumber, firstName, lastName, 
+            OTP: OTPgen
+        }))
+        return { signUpToken: signUpToken };
+    }
+
+    static verifySignup = async ({token, otp}) => {
+        const foundOTP = cacheService.getOTP(token)
+        if ( !foundOTP || !foundOTP.OTP || foundOTP.OTP !== otp) throw new BadRequestError('Verify failed', 'OTP is invalid') 
+        const {email, userName, password, phoneNumber, firstName, lastName} = foundOTP;
+        
         const secret = createSecretKey()
         
         password = await bcrypt.hash(password, 10)
@@ -54,6 +75,7 @@ class AccessService {
             ...tokens
         }
     }
+
     static signIn = async (userName, password) => {
         const foundUser = await User.findOne({userName}).populate('userInfo')
         if ( !foundUser ) throw new BadRequestError('Sign in failed', 'User name or password is incorrect')
@@ -130,8 +152,10 @@ class AccessService {
 
     static changeUserInfo = async (user, payload) => {
         const {firstName, lastName, CCCD ,address, gender, dateOfBirth, placeOfOrigin, nationality, avatar, background} = payload
-        if (!checkNotNull(firstName, lastName, address, CCCD, gender, dateOfBirth, placeOfOrigin, nationality, avatar, background)) throw new BadRequestError('Change user info failed', 'Missing information')
-        const foundInfo = await UserInfo.findById(user.UserInfo)
+        if (!checkNotNull(firstName, lastName, address, CCCD, gender, dateOfBirth, placeOfOrigin, nationality, avatar, background)) {
+            throw new BadRequestError('Change user info failed', 'Missing information')
+        } 
+        const foundInfo = await UserInfo.findById(user.userInfo)
         // check CCCD
 
         //end check

@@ -7,6 +7,7 @@ const refreshTokenAuth = require('../middlewares/refreshTokenAuth')
 const router = express.Router()
 
 router.post('/signup', asyncHandler(AccessController.signUp))
+router.post('/signup/verify', asyncHandler(AccessController.verifySignup))
 // router.get('/se/:id', asyncHandler(AccessController.getKey))
 router.post('/signin', asyncHandler(AccessController.signIn))
 
