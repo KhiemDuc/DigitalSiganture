@@ -12,6 +12,8 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../../redux/authSlice";
 
 const theme = createTheme({
   typography: {
@@ -22,13 +24,27 @@ const theme = createTheme({
 // TODO remove, this demo shouldn't need to reset the theme.
 
 export default function SignInSide() {
-  const handleSubmit = (event) => {
+  const dispatch = useDispatch();
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    const email = data.get("email");
+    const password = data.get("password");
+
+    // Replace this with your actual login logic
+    const response = await fetch("http://localhost:3001/auth/login");
+
+    if (response.success) {
+      const { accessToken, refreshToken, id } = response.data;
+
+      // Save tokens and id in localStorage
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("id", id);
+
+      // Dispatch loginSuccess action
+      dispatch(loginSuccess({ accessToken, refreshToken, id }));
+    }
   };
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => {

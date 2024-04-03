@@ -8,11 +8,11 @@ import UserInfo from "./pages/user_info/UserInfo";
 import RequestSignature from "./pages/request_sign/RequestSignature";
 import ForgotPassword from "./pages/forgot_password/ForgotPass";
 import { Provider } from "react-redux";
-import { Store } from "./redux/Store";
+import { store } from "./redux/store";
 
 function App() {
   return (
-    <Provider store={Store}>
+    <Provider store={store}>
       <div className="App">
         <Routes>
           <Route path="/" element={<LandingPage />} />
