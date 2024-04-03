@@ -93,10 +93,12 @@ function RequestForm() {
         <FormLabel>Tên</FormLabel>
         <Input focusBorderColor="brand.blue" type="text" placeholder="Tim" />
       </FormControl>
+
       <FormControl id="lastName">
         <FormLabel>Họ</FormLabel>
         <Input focusBorderColor="brand.blue" type="text" placeholder="Cook" />
       </FormControl>
+
       <FormControl id="gender">
         <FormLabel>Giới tính</FormLabel>
         <Select focusBorderColor="brand.blue" placeholder="Chọn giới tính">
@@ -104,10 +106,12 @@ function RequestForm() {
           <option value="female">Nữ</option>
         </Select>
       </FormControl>
+
       <FormControl id="dateOfbirth">
         <FormLabel>Ngày Sinh</FormLabel>
         <Input focusBorderColor="brand.blue" type="date" placeholder="" />
       </FormControl>
+
       <FormControl id="phoneNumber">
         <FormLabel>Số Điện Thoại</FormLabel>
         <Input
@@ -116,6 +120,7 @@ function RequestForm() {
           placeholder="(408) 996–1010"
         />
       </FormControl>
+
       <FormControl id="emailAddress">
         <FormLabel>Email Address</FormLabel>
         <Input
@@ -150,6 +155,7 @@ function RequestForm() {
           <option value="poland">Poland</option>
         </Select>
       </FormControl>
+
       <FormControl id="cccd_img">
         <FormLabel>Ảnh Căn Cước Công Dân</FormLabel>
         <Input focusBorderColor="brand.blue" type="file" value={imgCCCD} onChange={changeProfileImage} accept="image/png, image/jpeg" style={{padding: '5px'}}></Input>
@@ -174,9 +180,9 @@ function RequestForm() {
             <Button onClick={fileValidate.onClose}>Close</Button>
           </ModalFooter>
         </ModalContent>
-      </Modal>
-        
+        </Modal>
       </FormControl>
+
       <FormControl id="img_authen">
         <FormLabel>Ảnh Chụp</FormLabel>
         <Button onClick={openModal} >Mở camera</Button>
@@ -203,13 +209,13 @@ function RequestForm() {
               </ModalFooter>
             </ModalContent>
           </Modal>
-        </FormControl>
+      </FormControl>
+
       <Box mt={5} py={5} px={8} borderTopWidth={1} borderColor="brand.light">
-      <Button>Update</Button>
-    </Box>
-      
-      
+      <Button>Tạo</Button>
+      </Box>
     </Grid>
+    
   )
 }
 
