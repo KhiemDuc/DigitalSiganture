@@ -53,7 +53,6 @@ export default function SignUp() {
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -73,10 +72,15 @@ export default function SignUp() {
               firstname: "",
               lastname: "",
               email: "",
+              username: "",
               password: "",
               confirmPassword: "",
             }}
             validationSchema={Yup.object({
+              username: Yup.string().min(
+                12,
+                "Tài khoản phải có ít nhất 8 ký tự"
+              ),
               password: Yup.string().min(
                 12,
                 "Mật khẩu phải có nhiều hơn 12 ký tự"
@@ -144,6 +148,25 @@ export default function SignUp() {
                     >
                       Chúng tôi sẽ không chia sẻ email của bạn cho bất kỳ ai.
                     </div>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      id="username"
+                      label="Tên Tài Khoản"
+                      name="username"
+                      autoComplete="userName"
+                      {...formik.getFieldProps("username")}
+                    />
+                    {formik.touched.username && formik.errors.username ? (
+                      <div
+                        className="form-text"
+                        style={{ textAlign: "start", color: "red" }}
+                      >
+                        {formik.errors.username}
+                      </div>
+                    ) : null}
                   </Grid>
                   <Grid item xs={12}>
                     <TextField

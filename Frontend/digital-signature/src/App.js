@@ -9,6 +9,8 @@ import RequestSignature from "./pages/request_sign/RequestSignature";
 import ForgotPassword from "./pages/forgot_password/ForgotPass";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
+import PageNotFound from "./pages/page_not_found/PageNotFound";
+import OTPVerifi from "./pages/otp_verifi/OtpVerifi";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
           <Route path="/user_info" element={<UserInfo />} />
           <Route path="/request_sign" element={<RequestSignature />} />
           <Route path="/forgot_password" element={<ForgotPassword />} />
+          <Route path="/otp_verifi" element={<OTPVerifi />} />
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
       </div>
     </Provider>
