@@ -11,6 +11,10 @@ import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import BackHome from "../../components/BackHome";
+import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { clearMessage } from "../../redux/message";
+import { verifyOtp } from "../../redux/authSlice";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -20,20 +24,40 @@ export default function OTPVerifi() {
   const [OTP, setOTP] = React.useState("");
   const [disableResend, setDisableResend] = React.useState(false);
   const [countdown, setCountdown] = React.useState(null);
+  const { tokenSignUp } = useParams();
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    dispatch(clearMessage());
+  }, [dispatch]);
 
   const handleResendOTP = () => {
     setDisableResend(true);
     setCountdown(30);
     // Logic to resend OTP goes here
   };
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+  const handleVerify = () => {
+    console.log(OTP);
+    const verify = {
+      otp: OTP,
+      token: tokenSignUp,
+    };
+    dispatch(verifyOtp(verify))
+      .unwrap()
+      .then((response) => {
+        console.log(response.data);
+        // setSuccessful(true);
+        navigate({
+          pathname: "/",
+        });
+      })
+      .catch(() => {
+        // setSuccessful(false);
+      });
   };
+
   React.useEffect(() => {
     let timer;
     if (disableResend) {
@@ -88,7 +112,6 @@ export default function OTPVerifi() {
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
             sx={{ mt: 3, width: "500px", padding: "20px 20px 0 20px" }}
           >
             <Grid container spacing={2}>
@@ -98,6 +121,7 @@ export default function OTPVerifi() {
                   required
                   fullWidth
                   value={OTP}
+                  name="OTP"
                   onChange={(e) => setOTP(e.target.value)}
                   InputProps={{
                     endAdornment: (
@@ -146,7 +170,6 @@ export default function OTPVerifi() {
               Huỷ
             </Button>
             <Button
-              type="submit"
               sx={{ mt: 1, mb: 2 }}
               style={{
                 backgroundColor: "#6655ff",
@@ -155,6 +178,7 @@ export default function OTPVerifi() {
                 color: "white",
                 border: "none",
               }}
+              onClick={handleVerify}
             >
               Tiếp Tục
             </Button>

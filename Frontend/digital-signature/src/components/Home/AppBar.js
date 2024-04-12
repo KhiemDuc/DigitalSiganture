@@ -11,13 +11,11 @@ import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 import Drawer from "@mui/material/Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
-import ToggleColorMode from "./ToggleColorMode";
+import ToggleColorMode from "../ToggleColorMode";
 import { Link } from "react-router-dom";
 import { Avatar } from "@mui/material";
-import Menu from "@mui/material/Menu";
-import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
-import Paper from "@mui/material/Paper";
 import AccountMenu from "./AccountMenu";
+import { useSelector } from "react-redux";
 
 const logoStyle = {
   width: "140px",
@@ -27,6 +25,7 @@ const logoStyle = {
 
 function AppAppBar({ mode, toggleColorMode }) {
   const [open, setOpen] = React.useState(false);
+  const { user: currentUser } = useSelector((state) => state.auth);
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -153,21 +152,25 @@ function AppAppBar({ mode, toggleColorMode }) {
               }}
             >
               <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-
-              {/* <Link
-                to="/sign_in"
-                style={{ textDecoration: "none", color: "primary" }}
-              >
-                Đăng Nhập
-              </Link>
-              <Link
-                to="/sign_up"
-                className="btn btn-primary"
-                style={{ textDecoration: "none", marginLeft: "8px" }}
-              >
-                Đăng Ký
-              </Link> */}
-              <AccountMenu />
+              {currentUser ? (
+                <AccountMenu />
+              ) : (
+                <>
+                  <Link
+                    to="/sign_in"
+                    style={{ textDecoration: "none", color: "primary" }}
+                  >
+                    Đăng Nhập
+                  </Link>
+                  <Link
+                    to="/sign_up"
+                    className="btn btn-primary"
+                    style={{ textDecoration: "none", marginLeft: "8px" }}
+                  >
+                    Đăng Ký
+                  </Link>
+                </>
+              )}
             </Box>
 
             <Box sx={{ display: { sm: "", md: "none" } }}>

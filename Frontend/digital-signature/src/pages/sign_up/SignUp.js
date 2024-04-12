@@ -3,12 +3,9 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import { Link } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -18,8 +15,10 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
-
-// TODO remove, this demo shouldn't need to reset the theme.
+import { useDispatch, useSelector } from "react-redux";
+import { signUp } from "../../redux/authSlice";
+import { clearMessage } from "../../redux/message";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const theme = createTheme({
   typography: {
@@ -28,16 +27,19 @@ const theme = createTheme({
 });
 
 export default function SignUp() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  };
-
+  const [successful, setSuccessful] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
+
+  const { message } = useSelector((state) => state.message);
+  const { isLoggedIn } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    dispatch(clearMessage());
+  }, [dispatch]);
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -46,6 +48,60 @@ export default function SignUp() {
   const handleClickShowPasswordC = () => {
     setShowPasswordC(!showPasswordC);
   };
+
+  const handleSignUp = (values) => {
+    const value = {
+      email: values.email,
+      userName: values.userName,
+      password: values.password,
+      phoneNumber: values.phoneNumber,
+      firstName: values.firstName,
+      lastName: values.lastName,
+    };
+
+    setSuccessful(false);
+
+    dispatch(signUp(value))
+      .unwrap()
+      .then((response) => {
+        console.log(response.data);
+        const token = response.data.signUpToken; // Lấy token từ response
+        setSuccessful(true);
+        navigate({
+          pathname: "/sign_up/otp_verifi/" + token,
+        });
+      })
+      .catch(() => {
+        setSuccessful(false);
+      });
+  };
+
+  const validationSchema = Yup.object({
+    username: Yup.string().min(8, "Tài khoản phải có ít nhất 8 ký tự"),
+    password: Yup.string().min(12, "Mật khẩu phải có nhiều hơn 12 ký tự"),
+    confirmPassword: Yup.string().min(
+      12,
+      "Mật khẩu phải có nhiều hơn 12 ký tự"
+    ),
+    confirmPassword: Yup.string().oneOf(
+      [Yup.ref("password"), null],
+      "Mật khẩu không khớp"
+    ),
+  });
+
+  const initial = {
+    firstname: "",
+    lastname: "",
+    email: "",
+    phoneNumber: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+  };
+
+  if (isLoggedIn) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -68,41 +124,12 @@ export default function SignUp() {
             Đăng Ký Tài Khoản
           </Typography>
           <Formik
-            initialValues={{
-              firstname: "",
-              lastname: "",
-              email: "",
-              username: "",
-              password: "",
-              confirmPassword: "",
-            }}
-            validationSchema={Yup.object({
-              username: Yup.string().min(
-                12,
-                "Tài khoản phải có ít nhất 8 ký tự"
-              ),
-              password: Yup.string().min(
-                12,
-                "Mật khẩu phải có nhiều hơn 12 ký tự"
-              ),
-              confirmPassword: Yup.string().min(
-                12,
-                "Mật khẩu phải có nhiều hơn 12 ký tự"
-              ),
-              confirmPassword: Yup.string().oneOf(
-                [Yup.ref("password"), null],
-                "Mật khẩu không khớp"
-              ),
-            })}
+            initialValues={initial}
+            validationSchema={validationSchema}
             onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
+              setTimeout(async () => {
                 setSubmitting(false);
-                console.log({
-                  firstname: values.firstname,
-                  lastname: values.lastname,
-                  email: values.email,
-                  password: values.password,
-                });
+                handleSignUp(values);
               }, 400);
             }}
           >
@@ -118,6 +145,7 @@ export default function SignUp() {
                       id="firstName"
                       label="Tên"
                       autoFocus
+                      {...formik.getFieldProps("firstName")}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -128,6 +156,7 @@ export default function SignUp() {
                       label="Họ"
                       name="lastName"
                       autoComplete="family-name"
+                      {...formik.getFieldProps("lastName")}
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -140,24 +169,35 @@ export default function SignUp() {
                       autoComplete="email"
                       {...formik.getFieldProps("email")}
                     />
-
-                    <div
-                      id="emailHelp"
-                      className="form-text"
-                      style={{ textAlign: "start" }}
-                    >
-                      Chúng tôi sẽ không chia sẻ email của bạn cho bất kỳ ai.
-                    </div>
                   </Grid>
+                  {/* <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      id="phoneNumber"
+                      label="Số điện thoại"
+                      name="phoneNumber"
+                      autoComplete="phoneNumber"
+                      {...formik.getFieldProps("phoneNumber")}
+                    />
+                    {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
+                      <div
+                        className="form-text"
+                        style={{ textAlign: "start", color: "red" }}
+                      >
+                        {formik.errors.phoneNumber}
+                      </div>
+                    ) : null}
+                  </Grid> */}
                   <Grid item xs={12}>
                     <TextField
                       required
                       fullWidth
                       id="username"
                       label="Tên Tài Khoản"
-                      name="username"
+                      name="userName"
                       autoComplete="userName"
-                      {...formik.getFieldProps("username")}
+                      {...formik.getFieldProps("userName")}
                     />
                     {formik.touched.username && formik.errors.username ? (
                       <div
@@ -236,15 +276,21 @@ export default function SignUp() {
                       </div>
                     ) : null}
                   </Grid>
-                  <Grid item xs={12}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox value="allowExtraEmails" color="primary" />
-                      }
-                      label="Tôi muốn nhận được khuyến mãi qua email."
-                    />
-                  </Grid>
                 </Grid>
+                {message && (
+                  <div className="form-group">
+                    <div
+                      className={
+                        successful
+                          ? "alert alert-success"
+                          : "alert alert-danger"
+                      }
+                      role="alert"
+                    >
+                      {message}
+                    </div>
+                  </div>
+                )}
                 <Button
                   type="submit"
                   fullWidth

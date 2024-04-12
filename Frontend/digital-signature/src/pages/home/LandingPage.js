@@ -8,17 +8,17 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
-import AppAppBar from "../../components/AppBar";
-import Hero from "../../components/Hero";
+import AppAppBar from "../../components/Home/AppBar";
+import Hero from "../../components/Home/Hero";
 import LogoCollection from "../../components/LogoCollection";
-import Highlights from "../../components/Highlights";
-import Pricing from "../../components/Pricing";
-import Features from "../../components/Features";
-import Testimonials from "../../components/Testimonials";
-import FAQ from "../../components/FAQ";
-import Footer from "../../components/Footer";
+import Highlights from "../../components/Home/Highlights";
+import Pricing from "../../components/Home/Pricing";
+import Features from "../../components/Home/Features";
+import Testimonials from "../../components/Home/Testimonials";
+import FAQ from "../../components/Home/FAQ";
+import Footer from "../../components/Home/Footer";
 import getLPTheme from "../../helpers/getLPTheme";
-import { Team } from "../../components/Team";
+import { Team } from "../../components/Home/Team";
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
   return (
@@ -70,10 +70,6 @@ export default function LandingPage() {
 
   const toggleColorMode = () => {
     setMode((prev) => (prev === "dark" ? "light" : "dark"));
-  };
-
-  const toggleCustomTheme = () => {
-    setShowCustomTheme((prev) => !prev);
   };
 
   return (

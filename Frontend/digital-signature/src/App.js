@@ -21,10 +21,13 @@ function App() {
           <Route path="/sign_in" element={<SignIn />} />
           <Route path="/sign_up" element={<SignUp />} />
           <Route path="/checkout/:id" element={<Checkout />} />
-          <Route path="/user_info" element={<UserInfo />} />
+          <Route path="/user_info/:id" element={<UserInfo />} />
           <Route path="/request_sign" element={<RequestSignature />} />
           <Route path="/forgot_password" element={<ForgotPassword />} />
-          <Route path="/otp_verifi" element={<OTPVerifi />} />
+          <Route
+            path="/sign_up/otp_verifi/:tokenSignUp"
+            element={<OTPVerifi />}
+          />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </div>

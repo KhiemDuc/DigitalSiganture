@@ -13,8 +13,11 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useDispatch } from "react-redux";
-import { loginSuccess } from "../../redux/authSlice";
-import axios from "axios";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Navigate, useNavigate } from "react-router-dom";
+import { login } from "../../redux/authSlice";
+import { clearMessage } from "../../redux/message";
 
 const theme = createTheme({
   typography: {
@@ -26,10 +29,44 @@ const theme = createTheme({
 
 export default function SignInSide() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const { message } = useSelector((state) => state.message);
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
+  useEffect(() => {
+    dispatch(clearMessage());
+  }, [dispatch]);
+
+  const handleLogin = (formValue) => {
+    const user = {
+      userName: formValue.userName,
+      password: formValue.password,
+    };
+    console.log(user);
+
+    setLoading(true);
+
+    dispatch(login(user))
+      .unwrap()
+      .then(() => {
+        navigate("/");
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  };
+
+  if (isLoggedIn) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -79,7 +116,7 @@ export default function SignInSide() {
             </Typography>
 
             <Formik
-              initialValues={{ email: "", password: "" }}
+              initialValues={{ username: "", password: "" }}
               validationSchema={Yup.object({
                 // password: Yup.string().min(
                 //   12,
@@ -89,40 +126,8 @@ export default function SignInSide() {
               onSubmit={(values, { setSubmitting }) => {
                 setTimeout(async () => {
                   setSubmitting(false);
-                  try {
-                    const response = await axios.post(
-                      "http://localhost:8080/access/signin",
-                      {
-                        userName: values.email,
-                        password: values.password,
-                      }
-                    );
-                    console.log({
-                      email: values.email,
-                      password: values.password,
-                    });
-
-                    console.log(response.data);
-                    const {
-                      accessToken,
-                      refreshToken,
-                      _id: id,
-                    } = response.data.data;
-
-                    // Save tokens and id in localStorage
-                    const userKNB = {
-                      accessToken,
-                      refreshToken,
-                      _id: id,
-                    };
-
-                    localStorage.setItem("userKNB", JSON.stringify(userKNB));
-
-                    // Dispatch loginSuccess action
-                    dispatch(loginSuccess({ accessToken, refreshToken, id }));
-                  } catch (err) {
-                    console.log(err);
-                  }
+                  handleLogin(values);
+                  console.log(values);
                 }, 400);
               }}
             >
@@ -135,7 +140,6 @@ export default function SignInSide() {
                     id="userName"
                     label="Tài Khoản"
                     name="userName"
-                    autoComplete="userName"
                     autoFocus
                     padding={6}
                     type="text"
@@ -149,7 +153,6 @@ export default function SignInSide() {
                     label="Mật Khẩu"
                     type={showPassword ? "text" : "password"}
                     id="password"
-                    autoComplete="current-password"
                     padding={6}
                     {...formik.getFieldProps("password")}
                     InputProps={{
@@ -191,6 +194,14 @@ export default function SignInSide() {
                       </Link>
                     </Grid>
                   </Grid>
+                  {message && (
+                    <div
+                      className="form-text"
+                      style={{ textAlign: "center", color: "red" }}
+                    >
+                      {message}
+                    </div>
+                  )}
                   <button
                     style={{
                       margin: "20px",
@@ -205,6 +216,9 @@ export default function SignInSide() {
                     type="submit"
                   >
                     Đăng Nhập
+                    {loading && (
+                      <span className="spinner-border spinner-border-sm"></span>
+                    )}
                   </button>
                   Nếu bạn chưa có tài khoản?
                   <Link
