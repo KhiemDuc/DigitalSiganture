@@ -3,11 +3,7 @@ const {SuccessResponse} = require('../core/success.response')
 const router = express.Router() 
 
 
-
-router.get('/', (req, res) => {
-    new SuccessResponse({message: 'Hello'}).send(res)
-})
 router.use('/access', require('./access'))
-
+router.use('/certificate', require('./certificate'))
 
 module.exports = router

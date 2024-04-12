@@ -13,7 +13,11 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useDispatch } from "react-redux";
-import { loginSuccess } from "../../redux/authSlice";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Navigate, useNavigate } from "react-router-dom";
+import { login } from "../../redux/authSlice";
+import { clearMessage } from "../../redux/message";
 
 const theme = createTheme({
   typography: {
@@ -25,31 +29,44 @@ const theme = createTheme({
 
 export default function SignInSide() {
   const dispatch = useDispatch();
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const email = data.get("email");
-    const password = data.get("password");
+  const navigate = useNavigate();
 
-    // Replace this with your actual login logic
-    const response = await fetch("http://localhost:3001/auth/login");
-
-    if (response.success) {
-      const { accessToken, refreshToken, id } = response.data;
-
-      // Save tokens and id in localStorage
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("id", id);
-
-      // Dispatch loginSuccess action
-      dispatch(loginSuccess({ accessToken, refreshToken, id }));
-    }
-  };
   const [showPassword, setShowPassword] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const { message } = useSelector((state) => state.message);
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
+  useEffect(() => {
+    dispatch(clearMessage());
+  }, [dispatch]);
+
+  const handleLogin = (formValue) => {
+    const user = {
+      userName: formValue.userName,
+      password: formValue.password,
+    };
+    console.log(user);
+
+    setLoading(true);
+
+    dispatch(login(user))
+      .unwrap()
+      .then(() => {
+        navigate("/");
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  };
+
+  if (isLoggedIn) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -99,20 +116,18 @@ export default function SignInSide() {
             </Typography>
 
             <Formik
-              initialValues={{ email: "", password: "" }}
+              initialValues={{ username: "", password: "" }}
               validationSchema={Yup.object({
-                password: Yup.string().min(
-                  12,
-                  "Mật khẩu phải có nhiều hơn 12 ký tự"
-                ),
+                // password: Yup.string().min(
+                //   12,
+                //   "Mật khẩu phải có nhiều hơn 12 ký tự"
+                // ),
               })}
               onSubmit={(values, { setSubmitting }) => {
-                setTimeout(() => {
+                setTimeout(async () => {
                   setSubmitting(false);
-                  console.log({
-                    email: values.email,
-                    password: values.password,
-                  });
+                  handleLogin(values);
+                  console.log(values);
                 }, 400);
               }}
             >
@@ -122,24 +137,22 @@ export default function SignInSide() {
                     margin="normal"
                     required
                     fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
+                    id="userName"
+                    label="Tài Khoản"
+                    name="userName"
                     autoFocus
                     padding={6}
-                    type="email"
-                    {...formik.getFieldProps("email")}
+                    type="text"
+                    {...formik.getFieldProps("userName")}
                   />
                   <TextField
                     margin="normal"
                     required
                     fullWidth
                     name="password"
-                    label="Password"
+                    label="Mật Khẩu"
                     type={showPassword ? "text" : "password"}
                     id="password"
-                    autoComplete="current-password"
                     padding={6}
                     {...formik.getFieldProps("password")}
                     InputProps={{
@@ -173,7 +186,7 @@ export default function SignInSide() {
                     <Grid></Grid>
                     <Grid>
                       <Link
-                        to="/sign_up"
+                        to="/forgot_password"
                         variant="body2"
                         style={{ textDecoration: "none" }}
                       >
@@ -181,6 +194,14 @@ export default function SignInSide() {
                       </Link>
                     </Grid>
                   </Grid>
+                  {message && (
+                    <div
+                      className="form-text"
+                      style={{ textAlign: "center", color: "red" }}
+                    >
+                      {message}
+                    </div>
+                  )}
                   <button
                     style={{
                       margin: "20px",
@@ -195,6 +216,9 @@ export default function SignInSide() {
                     type="submit"
                   >
                     Đăng Nhập
+                    {loading && (
+                      <span className="spinner-border spinner-border-sm"></span>
+                    )}
                   </button>
                   Nếu bạn chưa có tài khoản?
                   <Link

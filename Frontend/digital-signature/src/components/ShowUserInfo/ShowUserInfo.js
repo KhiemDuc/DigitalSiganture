@@ -1,6 +1,6 @@
-import { Box } from '@chakra-ui/react'
-import Data from './Data'
-import Profile from './Profile'
+import { Box } from "@chakra-ui/react";
+import Data from "./Data";
+import Profile from "./Profile";
 
 function ShowUserInfo() {
   return (
@@ -13,12 +13,12 @@ function ShowUserInfo() {
       rounded="md"
       borderWidth={1}
       borderColor="brand.light"
-      style={{ transform: 'translateY(-100px)' }}
+      style={{ transform: "translateY(-100px)" }}
     >
       <Profile />
       <Data />
     </Box>
-  )
+  );
 }
 
-export default ShowUserInfo
+export default ShowUserInfo;
