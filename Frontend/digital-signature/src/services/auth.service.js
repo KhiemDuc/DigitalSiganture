@@ -39,6 +39,14 @@ const verifyOtp = (otp, token) => {
     });
 };
 
+const resendOtp = (token) => {
+  return axios.post("access/signup/resend-otp", {
+    headers: {
+      token,
+    },
+  });
+};
+
 const login = (userName, password) => {
   return axios
     .post("access/signin", {
@@ -81,6 +89,7 @@ const getCurrentUser = () => {
 
 const AuthService = {
   verifyOtp,
+  resendOtp,
   signup,
   login,
   logout,

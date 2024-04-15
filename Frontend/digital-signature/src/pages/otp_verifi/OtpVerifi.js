@@ -15,6 +15,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { clearMessage } from "../../redux/message";
 import { verifyOtp } from "../../redux/authSlice";
+import AuthService from "../../services/auth.service";
+import { useSelector } from "react-redux";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -22,20 +24,44 @@ const defaultTheme = createTheme();
 
 export default function OTPVerifi() {
   const [OTP, setOTP] = React.useState("");
+  const { message } = useSelector((state) => state.message);
   const [disableResend, setDisableResend] = React.useState(false);
   const [countdown, setCountdown] = React.useState(null);
   const { tokenSignUp } = useParams();
+  const [successful, setSuccessful] = React.useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const handleUnload = (event) => {
+    event.preventDefault();
+    // Chrome requires returnValue to be set.const handleUnload = (event) => {
+  };
 
   React.useEffect(() => {
     dispatch(clearMessage());
   }, [dispatch]);
 
+  React.useEffect(() => {
+    window.addEventListener("beforeunload", handleUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  }, []);
+
   const handleResendOTP = () => {
     setDisableResend(true);
     setCountdown(30);
+    AuthService.resendOtp(tokenSignUp)
+      .then((response) => {
+        setSuccessful(true);
+      })
+      .catch((error) => {
+        setCountdown(120);
+        setDisableResend(true);
+        setSuccessful(false);
+      });
     // Logic to resend OTP goes here
   };
   const handleVerify = () => {
@@ -48,13 +74,13 @@ export default function OTPVerifi() {
       .unwrap()
       .then((response) => {
         console.log(response.data);
-        // setSuccessful(true);
+
         navigate({
           pathname: "/",
         });
       })
-      .catch(() => {
-        // setSuccessful(false);
+      .catch((error) => {
+        setSuccessful(false);
       });
   };
 
@@ -110,10 +136,7 @@ export default function OTPVerifi() {
           <Typography component="h3" variant="body1">
             Vui lòng kiểm tra mã trong email của bạn. Mã này gồm 6 số.
           </Typography>
-          <Box
-            component="form"
-            sx={{ mt: 3, width: "500px", padding: "20px 20px 0 20px" }}
-          >
+          <Box component="form" sx={{ mt: 3, width: "500px", padding: "20px" }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
@@ -141,10 +164,50 @@ export default function OTPVerifi() {
                 />
               </Grid>
             </Grid>
+            {message ? (
+              !successful ? (
+                <div
+                  className="form-text"
+                  style={{
+                    textAlign: "center",
+                    color: "red",
+                    marginTop: "10px",
+                  }}
+                >
+                  Xác thực không thành công. Vui lòng kiểm tra lại mã xác thực.
+                </div>
+              ) : (
+                <div
+                  className="form-text"
+                  style={{
+                    textAlign: "center",
+                    color: "red",
+                    marginTop: "10px",
+                  }}
+                >
+                  Mã xác thực đã được gửi lại tới thư của bạn.
+                </div>
+              )
+            ) : (
+              successful && (
+                <div
+                  className="form-text"
+                  style={{
+                    textAlign: "center",
+                    color: "red",
+                    marginTop: "10px",
+                  }}
+                >
+                  Mã xác thực đã được gửi lại tới thư của bạn.
+                </div>
+              )
+            )}
           </Box>
+
           <Grid
             style={{
-              marginTop: "40px",
+              // marginTop: "40px",
+
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
@@ -164,6 +227,7 @@ export default function OTPVerifi() {
                 border: "none",
               }}
               onClick={() => {
+                navigate("/");
                 // Logic to navigate to home goes here
               }}
             >
