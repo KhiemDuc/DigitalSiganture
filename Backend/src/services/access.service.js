@@ -12,7 +12,7 @@ const Certificate = require('../models/certificate.model')
 const cacheService = require('./cache.service')
 const crypto = require('crypto')
 class AccessService {
-    static singUp = async ({ email, userName, password, phoneNumber, firstName, lastName }) => {
+    static singUp = async ({ email, userName, password, firstName, lastName }) => {
 
         if (!email || !userName || !password || !firstName || !lastName) throw new BadRequestError('Sign up failed', 'Missing information')
 
@@ -28,14 +28,16 @@ class AccessService {
 
         const signUpToken = crypto.randomBytes(32).toString('hex');
         const OTPgen = generateOTP()
-        try {
-            await sendMail({to: email, OTP: OTPgen})
-        } catch(err) {
-            console.log(err)
-            throw new BadRequestError('Sign up failed', 'unknown reason')
-        }
+        sendMail({to: email, OTP: OTPgen})
+        .catch(err => console.log(err))
+        // try {
+        //     await sendMail({to: email, OTP: OTPgen})
+        // } catch(err) {
+        //     console.log(err)
+        //     throw new BadRequestError('Sign up failed', 'unknown reason')
+        // }
         cacheService.putOTP(signUpToken,{ 
-            email, userName, password, phoneNumber, firstName, lastName, 
+            email, userName, password, firstName, lastName, 
             OTP: OTPgen
         }, 'verify')
         return { signUpToken: signUpToken };
@@ -202,12 +204,8 @@ class AccessService {
         if (!foundUser) throw new BadRequestError('Reset password failed', 'User id not found')
         const token = crypto.randomBytes(32).toString('hex')
         const resetPassOTP = generateOTP()
-        try {
-            await sendMail({to: foundUser.userInfo.email, OTP: resetPassOTP})
-        } catch (err) {
-            console.log(err)
-        }
-        cacheService.putOTP(token, {userId, OTP: resetPassOTP}, 'reset')
+        sendMail({to: foundUser.userInfo.email, OTP: resetPassOTP})
+        cacheService.putOTP(token, {userId, OTP: resetPassOTP, email: foundUser.userInfo.email}, 'reset')
 
         return {token}
     }
@@ -224,10 +222,19 @@ class AccessService {
     }
     static acceptNewPassword = async ({userId, token, newPassword}) => {
         const cachedToken = cacheService.getToken(token)
-        if (!cachedToken || !cachedToken.userId|| cachedToken.userId !== userId) throw new BadRequestError('Reset password failed', 'OTP is incorrect')
+        if (!cachedToken || !cachedToken.userId || cachedToken.userId !== userId) throw new BadRequestError('Reset password failed', 'OTP is incorrect')
         const user = User.findById(userId)
         await this.changePassword(user, newPassword)
         return 'Change password success' 
+    }
+    static resendOTP = async (token) => {
+        const foundOTP = cache.getOTP(token, 'verify') || cache.getOTP(token, 'reset')
+        if ( !foundOTP ) throw new BadRequestError('Resend OTP failed', 'OTP is not found')
+        const newOTP = generateOTP()
+        sendMail({to: foundOTP.email, OTP: newOTP}).catch( err => console.log(err))
+        const {type, ...newOTPCache} = foundOTP
+        cache.putOTP(token, newOTPCache, type)
+        return 'Resend OTP success'
     }
 }
 

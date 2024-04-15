@@ -44,18 +44,6 @@ class AccessController {
         }).send(res)
     }
 
-    static async getOTP(req, res) {
-        new SuccessResponse({
-            message: await accessService.createOTP(req.user)
-        }).send(res)
-    }
-
-    static async verifyOTP(req, res) {
-        new SuccessResponse({
-            message: await accessService.verifyOTP(req.user, req.body.otp)
-        }).send(res)
-    }
-
     static async findAccount(req, res) {
         new SuccessResponse({
             message: 'Find account success',
@@ -78,6 +66,12 @@ class AccessController {
     static async newPassword(req, res) {
         new SuccessResponse({
             message: await accessService.acceptNewPassword(req.body)
+        }).send(res)
+    }
+
+    static async resendOTP(req, res) {
+        new SuccessResponse({
+            message: await accessService.resendOTP(req.headers.token)
         }).send(res)
     }
 }
