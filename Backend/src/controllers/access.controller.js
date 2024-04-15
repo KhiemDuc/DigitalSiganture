@@ -60,7 +60,7 @@ class AccessController {
     static async confirmOTP(req, res) {
         new SuccessResponse({
             message: 'Confirm OTP success',
-            data: await accessService.confirmResetPasswordOTP(req.body)
+            data: await accessService.confirmResetPasswordOTP({token: req.headers.token, OTP: req.body.otp})
         }).send(res)
     }
     static async newPassword(req, res) {
@@ -72,6 +72,12 @@ class AccessController {
     static async resendOTP(req, res) {
         new SuccessResponse({
             message: await accessService.resendOTP(req.headers.token)
+        }).send(res)
+    }
+
+    static async changePassword(req, res) {
+        new SuccessResponse({
+            message: await accessService.changePassword(req.user, req.body.newPassword)
         }).send(res)
     }
 }

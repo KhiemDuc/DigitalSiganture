@@ -11,7 +11,7 @@ const putOTP = (token, value, type) => {
 const getOTP = (token, type) => {
     let otpCache = cache.get('OTPs')
     if (otpCache === undefined) otpCache = {}
-    if (otpCache[token].type === type)
+    if (otpCache[token]?.type === type)
         return {...otpCache[token]}
     return null
 }

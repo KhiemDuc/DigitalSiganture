@@ -30,6 +30,6 @@ router.use(authentication)
 router.get('/:id', asyncHandler(AccessController.getUserInfo))
 router.post('/logout', asyncHandler(AccessController.logout))
 // router.put('/:id', asyncHandler(AccessController.))
-
+router.post('/change-password', asyncHandler(AccessController.changePassword))
 
 module.exports = router
