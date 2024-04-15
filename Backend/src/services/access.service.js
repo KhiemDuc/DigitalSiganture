@@ -7,10 +7,7 @@ const UserInfo = require('../models/userInfo.model')
 const omitFields = require('../utils/omitFields')
 const checkNotNull = require('../utils/checkNotNull')
 const { generateOTP } = require('./otp.service')
-const OTP = require('../models/otp.model')
 const { sendMail } = require('./email.service')
-const block = require('../utils/blockGenOTP')
-const blockAttempts = require('../utils/blockVerifyOTP')
 const Certificate = require('../models/certificate.model')
 const cacheService = require('./cache.service')
 const crypto = require('crypto')
@@ -37,15 +34,15 @@ class AccessService {
             console.log(err)
             throw new BadRequestError('Sign up failed', 'unknown reason')
         }
-        if (cacheService.putOTP(signUpToken,{ 
+        cacheService.putOTP(signUpToken,{ 
             email, userName, password, phoneNumber, firstName, lastName, 
             OTP: OTPgen
-        }))
+        }, 'verify')
         return { signUpToken: signUpToken };
     }
 
     static verifySignup = async (token, otp) => {
-        const foundOTP = cacheService.getOTP(token)
+        const foundOTP = cacheService.getOTP(token, 'verify')
         if ( !foundOTP || !foundOTP.OTP || foundOTP.OTP !== otp) throw new BadRequestError('Verify failed', 'OTP is invalid') 
         const {email, userName, password, phoneNumber, firstName, lastName} = foundOTP;
         
@@ -139,7 +136,6 @@ class AccessService {
             userName: foundUser.userName,
             ...newTokens
         }
-
     }
 
     static getUserInfo = async (user, id) => {
@@ -188,63 +184,50 @@ class AccessService {
 
         return true
     }
-    static createOTP = async (user) => {
-        const OTPgen = generateOTP();
-        let foundOTP = await OTP.findOne({userId: user._id})
-        if (!foundOTP) {
-            foundOTP = new OTP({userId: user._id})
-        }
-        if (foundOTP.retry > 2) {
-            block.set(foundOTP._id)
-            throw new BadRequestError('Create OTP failed', 'Too many attemps')
-        }
-        foundOTP.type= 'Verify email'
-        foundOTP.value= OTPgen
-        foundOTP.exp= new Date(Date.now() + (300 * 1000))
-        foundOTP.retry = foundOTP.retry + 1;
 
-        await foundOTP.save()
-        const foundInfo = await UserInfo.findById(user.userInfo)
-        sendMail({
-            to: foundInfo.email,
-            OTP: OTPgen
-        })
-        return 'Create OTP success'
+    static findUser = async (search) => {
+        let foundUser = await User.find({userName: search})
+        if (!foundUser) {
+            const foundInfo = UserInfo.find({email: search})
+            if (!foundInfo) throw new BadRequestError('Find user failed', 'User is not found')
+            foundUser = await User.find({userInfo: foundInfo._id})
+        }
+        return {
+            ...pickFields(foundUser._doc, ['_id', 'userName'])
+        }
     }
 
-    static verifyOTP = async (user, otp) => {
-        const foundOTP = await OTP.findOne({userId: user._id})
-        if (!foundOTP) throw new BadRequestError('Verify OTP failed', 'otp is not exist')
-        if (foundOTP.attempts > 2) {
-            blockAttempts.set(foundOTP._id)
-            throw new BadRequestError('Verify OTP failed', 'Too many attempts, try again later')
-        } 
-        if (otp !== foundOTP.value || foundOTP.exp < new Date()) {
-            console.log(foundOTP.attempts)
-            foundOTP.attempts++
-            await foundOTP.save()
-            throw new BadRequestError('Verify OTP failed', 'OTP is not valid')
-        } 
-            
-        foundOTP.type = null
-        foundOTP.value = null
-        foundOTP.exp = null
-        foundOTP.retry = 0
-        foundOTP.attempts = 0
-        await foundOTP.save()
-        await UserInfo.findByIdAndUpdate(user.userInfo, {
-            $set: {
-                verified: true
-            }
-        })
+    static resetPassword = async (userId) => {
+        const foundUser = await User.findById(userId).populate('userInfo')
+        if (!foundUser) throw new BadRequestError('Reset password failed', 'User id not found')
+        const token = crypto.randomBytes(32).toString('hex')
+        const resetPassOTP = generateOTP()
+        try {
+            await sendMail({to: foundUser.userInfo.email, OTP: resetPassOTP})
+        } catch (err) {
+            console.log(err)
+        }
+        cacheService.putOTP(token, {userId, OTP: resetPassOTP}, 'reset')
 
-        return 'Verify OTP success'
+        return {token}
     }
 
-    static resetPassword = async (email) => {
+    static confirmResetPasswordOTP =  async ({token, OTP, userId}) => {
+        const cache = cacheService.getOTP(token, 'reset')
+        if (!cache || !cache.OTP || cache.OTP !== OTP || cache.userId !== userId) throw new BadRequestError('Reset password failed', 'OTP is invalid')
+        cacheService.delOTP(token)
         
+        const newToken = crypto.randomBytes(32).toString('hex');
+        cacheService.putToken(newToken, userId)
 
-
+        return {token: newToken}
+    }
+    static acceptNewPassword = async ({userId, token, newPassword}) => {
+        const cachedToken = cacheService.getToken(token)
+        if (!cachedToken || !cachedToken.userId|| cachedToken.userId !== userId) throw new BadRequestError('Reset password failed', 'OTP is incorrect')
+        const user = User.findById(userId)
+        await this.changePassword(user, newPassword)
+        return 'Change password success' 
     }
 }
 

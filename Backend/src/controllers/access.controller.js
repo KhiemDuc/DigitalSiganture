@@ -55,7 +55,31 @@ class AccessController {
             message: await accessService.verifyOTP(req.user, req.body.otp)
         }).send(res)
     }
-    
+
+    static async findAccount(req, res) {
+        new SuccessResponse({
+            message: 'Find account success',
+            data: await accessService.findUser(req.params.search)
+        }).send(res)
+    }
+
+    static async resetPassword(req, res) {
+        new SuccessResponse({
+            message: 'Request reset password success',
+            data: await accessService.resetPassword(req.params.id)
+        }).send(res)
+    }
+    static async confirmOTP(req, res) {
+        new SuccessResponse({
+            message: 'Confirm OTP success',
+            data: await accessService.confirmResetPasswordOTP(req.body)
+        }).send(res)
+    }
+    static async newPassword(req, res) {
+        new SuccessResponse({
+            message: await accessService.acceptNewPassword(req.body)
+        }).send(res)
+    }
 }
 
 module.exports = AccessController

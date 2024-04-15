@@ -11,6 +11,11 @@ router.post('/signup/verify', asyncHandler(AccessController.verifySignup))
 // router.get('/se/:id', asyncHandler(AccessController.getKey))
 router.post('/signin', asyncHandler(AccessController.signIn))
 
+router.get('/find/:search', asyncHandler(AccessController.findAccount))
+router.get('/reset/:id', asyncHandler(AccessController.resetPassword))
+router.post('/confirm', asyncHandler(AccessController.confirmOTP))
+router.post('/new-pass', asyncHandler(AccessController.newPassword))
+
 router.use('/refresh-token', refreshTokenAuth)
 router.get('/refresh-token', asyncHandler(AccessController.refreshToken))
 
