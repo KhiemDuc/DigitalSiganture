@@ -56,9 +56,23 @@ const login = (userName, password) => {
 
 const logout = () => {
   localStorage.removeItem("user");
-  return axios.post("signout").then((response) => {
+  return axios.post("access/logout").then((response) => {
     return response.data;
   });
+};
+
+const refreshToken = (refreshToken, id) => {
+  return axios
+    .post("/access/refresh-token", {
+      headers: {
+        "x-client-id": id,
+        "refresh-token": refreshToken,
+      },
+    })
+    .then((response) => {
+      localStorage.setItem("user", JSON.stringify(response.data.data));
+      return response.data;
+    });
 };
 
 const getCurrentUser = () => {
@@ -71,6 +85,7 @@ const AuthService = {
   login,
   logout,
   getCurrentUser,
+  refreshToken,
 };
 
 export default AuthService;

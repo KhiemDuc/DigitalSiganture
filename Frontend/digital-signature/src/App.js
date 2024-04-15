@@ -8,7 +8,7 @@ import UserInfo from "./pages/user_info/UserInfo";
 import RequestSignature from "./pages/request_sign/RequestSignature";
 import ForgotPassword from "./pages/forgot_password/ForgotPass";
 import { Provider } from "react-redux";
-import { store } from "./redux/store";
+import { store } from "./redux/Store";
 import PageNotFound from "./pages/page_not_found/PageNotFound";
 import OTPVerifi from "./pages/otp_verifi/OtpVerifi";
 

@@ -1,75 +1,67 @@
-import { FormControl, FormLabel, Grid, Input, Select } from '@chakra-ui/react'
+import React, { useState, useEffect } from "react";
+import { FormControl, FormLabel, Grid, Input, Select } from "@chakra-ui/react";
+import UserService from "../services/user.service";
+import { useSelector } from "react-redux";
 
 function AccountSettings() {
+  const { user } = useSelector((state) => state.auth);
+  console.log(user);
+  const [userData, setUserData] = useState({});
+
+  useEffect(() => {
+    UserService.getUserInfo(user.accessToken, user._id).then((response) => {
+      console.log(response.data);
+      setUserData(response.data.data);
+    });
+  }, []);
+
   return (
     <Grid
-      templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
+      templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(2, 1fr)" }}
       gap={6}
     >
       <FormControl id="firstName">
         <FormLabel>Tên</FormLabel>
-        <Input focusBorderColor="brand.blue" type="text" placeholder="Tim" />
+        <Input
+          focusBorderColor="brand.blue"
+          type="text"
+          placeholder={userData.firstName}
+        />
       </FormControl>
       <FormControl id="lastName">
         <FormLabel>Họ</FormLabel>
-        <Input focusBorderColor="brand.blue" type="text" placeholder="Cook" />
+        <Input
+          focusBorderColor="brand.blue"
+          type="text"
+          value={userData.lastName}
+        />
       </FormControl>
       <FormControl id="gender">
         <FormLabel>Giới tính</FormLabel>
-        <Select focusBorderColor="brand.blue" placeholder="Chọn giới tính">
+        <Select focusBorderColor="brand.blue" value={userData.gender}>
           <option value="male">Nam</option>
           <option value="female">Nữ</option>
         </Select>
       </FormControl>
       <FormControl id="dateOfbirth">
         <FormLabel>Ngày Sinh</FormLabel>
-        <Input focusBorderColor="brand.blue" type="date" placeholder="" />
-      </FormControl>
-      <FormControl id="phoneNumber">
-        <FormLabel>Số Điện Thoại</FormLabel>
         <Input
           focusBorderColor="brand.blue"
-          type="tel"
-          placeholder="(408) 996–1010"
+          type="text"
+          value={userData.dateOfBirth}
         />
       </FormControl>
-      <FormControl id="emailAddress">
-        <FormLabel>Email Address</FormLabel>
+      <FormControl id="dateOfbirth">
+        <FormLabel>Ngày Sinh</FormLabel>
         <Input
           focusBorderColor="brand.blue"
-          type="email"
-          placeholder="tcook@apple.com"
+          type="text"
+          value={userData.email}
         />
       </FormControl>
-      
-      <FormControl id="city">
-        <FormLabel>City</FormLabel>
-        <Select focusBorderColor="brand.blue" placeholder="Select city">
-          <option value="california">California</option>
-          <option value="washington">Washington</option>
-          <option value="toronto">Toronto</option>
-          <option value="newyork" selected>
-            New York
-          </option>
-          <option value="london">London</option>
-          <option value="netherland">Netherland</option>
-          <option value="poland">Poland</option>
-        </Select>
-      </FormControl>
-
-      <FormControl id="country">
-        <FormLabel>Country</FormLabel>
-        <Select focusBorderColor="brand.blue" placeholder="Select country">
-          <option value="america" selected>
-            America
-          </option>
-          <option value="england">England</option>
-          <option value="poland">Poland</option>
-        </Select>
-      </FormControl>
-      
+      {/* Add more fields as needed */}
     </Grid>
-  )
+  );
 }
 
-export default AccountSettings
+export default AccountSettings;
