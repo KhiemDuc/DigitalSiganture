@@ -3,7 +3,7 @@ import { setMessage } from "./message";
 
 import AuthService from "../services/auth.service";
 
-const user = JSON.parse(localStorage.getItem("user"));
+const user = AuthService.getCurrentUser();
 
 console.log(user);
 export const signUp = createAsyncThunk(
@@ -77,6 +77,23 @@ export const login = createAsyncThunk(
   }
 );
 
+export const refreshToken = createAsyncThunk(
+  "auth/refreshToken",
+  async ({ refreshToken, id }, thunkAPI) => {
+    try {
+      const data = await AuthService.refreshToken(refreshToken, id);
+      return { user: data.data };
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.reason) ||
+        error.message ||
+        error.toString();
+      thunkAPI.dispatch(setMessage(message));
+      return thunkAPI.rejectWithValue();
+    }
+  }
+);
+
 export const logout = createAsyncThunk("auth/logout", async () => {
   await AuthService.logout();
 });
@@ -115,6 +132,14 @@ const authSlice = createSlice({
         state.user = null;
       })
       .addCase(logout.fulfilled, (state, action) => {
+        state.isLoggedIn = false;
+        state.user = null;
+      })
+      .addCase(refreshToken.fulfilled, (state, action) => {
+        state.isLoggedIn = true;
+        state.user = action.payload.user;
+      })
+      .addCase(refreshToken.rejected, (state, action) => {
         state.isLoggedIn = false;
         state.user = null;
       });
