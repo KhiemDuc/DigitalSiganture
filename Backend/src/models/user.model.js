@@ -35,6 +35,10 @@ const UserSchema = new mongoose.Schema({
     studentInfo: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Student'
+    }, 
+    subscription: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Subscription'
     }
 }, {
     timestamps: true,

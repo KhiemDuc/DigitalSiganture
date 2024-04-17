@@ -9,6 +9,7 @@ const checkNotNull = require('../utils/checkNotNull')
 const { generateOTP } = require('./otp.service')
 const { sendMail } = require('./email.service')
 const Certificate = require('../models/certificate.model')
+const Subscription = require('../models/subscription.model')
 const cacheService = require('./cache.service')
 const crypto = require('crypto')
 class AccessService {
@@ -30,12 +31,6 @@ class AccessService {
         const OTPgen = generateOTP()
         sendMail({to: email, OTP: OTPgen})
         .catch(err => console.log(err))
-        // try {
-        //     await sendMail({to: email, OTP: OTPgen})
-        // } catch(err) {
-        //     console.log(err)
-        //     throw new BadRequestError('Sign up failed', 'unknown reason')
-        // }
         cacheService.putOTP(signUpToken,{ 
             email, userName, password, firstName, lastName, 
             OTP: OTPgen
@@ -66,10 +61,12 @@ class AccessService {
         const userInfo = await UserInfo.create({
             email, firstName, lastName, phoneNumber
         })
-        const cert = await Certificate({userId: newUser._id})
+        const cert = await Certificate.create({userId: newUser._id})
+        const subscription = await Subscription.create()
         newUser.userInfo = userInfo._id
         newUser.refreshToken = tokens.refreshToken
         newUser.certificate = cert
+        newUser.subscription = subscription
         await newUser.save()
         return {
             ...pickFields(newUser, ['_id', 'userName', 'userInfo.verified']),
@@ -178,7 +175,7 @@ class AccessService {
         return 'Change user info success'
     }
 
-    static changePassword = async (user, newPass) => {
+    static saveNewPassword = async (user, newPass) => {
         const newHashedPass = bcrypt.hashSync(newPass,10)
 
         user.password = newHashedPass
@@ -199,7 +196,8 @@ class AccessService {
         return {
             ...pickFields(foundUser._doc, ['_id', 'userName']),
             firstName: foundInfo.firstName, 
-            lastName: foundInfo.lastName
+            lastName: foundInfo.lastName,
+            email: foundInfo.email
         }
     }
 
@@ -224,12 +222,12 @@ class AccessService {
 
         return {token: newToken}
     }
-    static acceptNewPassword = async ({token, newPassword}) => {
+    static acceptNewPassword = async (token, newPassword) => {
         const cachedToken = cacheService.getToken(token)
         console.log(cachedToken);
         if (!cachedToken ) throw new BadRequestError('Reset password failed', 'OTP is incorrect')
         const user = await User.findById(cachedToken)
-        return await this.changePassword(user, newPassword)
+        return await this.saveNewPassword(user, newPassword)
     }
     static resendOTP = async (token) => {
         const foundOTP = cacheService.getOTP(token, 'verify') || cacheService.getOTP(token, 'reset')
@@ -240,6 +238,12 @@ class AccessService {
         cacheService.putOTP(token, {...newOTPCache, OTP: newOTP}, type)
 
         return 'Resend OTP success'
+    }
+    static async changePassword(user, {password, newPassword}) {
+        const result = bcrypt.compareSync(password, user.password);
+        if (!result) throw new BadRequestError('Change password failed', 'Password is incorrect')
+        return this.saveNewPassword(user, newPassword)
+        
     }
 }
 

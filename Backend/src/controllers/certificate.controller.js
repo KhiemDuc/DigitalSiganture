@@ -5,14 +5,14 @@ class CertificateController {
     static async requestCertificate(req, res) {
         new SuccessResponse({
             message: 'Request sign certificate success',
-            data: await CertificateService.certificateRequest(req.user, req.body)
+            data: await CertificateService.certificateRequest(req.user, req.body, req.files)
         }).send(res)
     }
 
-    static async getCertirequests(req, res) {
+    static async getCertRequests(req, res) {
         new SuccessResponse({
             message: 'Get certificate requests success',
-            data: await CertificateService.getCertiRequests()
+            data: await CertificateService.getCertRequests()
         }).send(res)
     }
 

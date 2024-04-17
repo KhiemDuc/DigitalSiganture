@@ -65,7 +65,7 @@ class AccessController {
     }
     static async newPassword(req, res) {
         new SuccessResponse({
-            message: await accessService.acceptNewPassword(req.body)
+            message: await accessService.acceptNewPassword(req.headers.token, req.body.newPassword)
         }).send(res)
     }
 
@@ -77,7 +77,7 @@ class AccessController {
 
     static async changePassword(req, res) {
         new SuccessResponse({
-            message: await accessService.changePassword(req.user, req.body.newPassword)
+            message: await accessService.changePassword(req.user, req.body)
         }).send(res)
     }
 }
