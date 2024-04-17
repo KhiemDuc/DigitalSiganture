@@ -1,22 +1,19 @@
 import axios from "axios";
 import AuthService from "../services/auth.service";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { refreshToken } from "../../redux/authSlice";
-import { clearMessage } from "../../redux/message";
+import { refreshToken } from "../redux/authSlice";
 
 const instance = axios.create({
   baseURL: "http://localhost:8080/",
   timeout: 5000,
 });
 
-const navigate = useNavigate();
-const dispatch = useDispatch();
+// const navigate = useNavigate();
 
 instance.interceptors.request.use(
   (config) => {
     const user = localStorage.getItem("user");
-    if (token) {
+    if (user) {
       config.headers["authentication"] = user.accessToken;
       config.headers["x-client-id"] = user._id;
     }
@@ -35,6 +32,7 @@ instance.interceptors.response.use(
     const originalConfig = error.config;
     if (error.response && error.response.status === 419) {
       try {
+        const dispatch = useDispatch();
         const user = AuthService.getCurrentUser();
         dispatch(
           refreshToken({ refreshToken: user.refreshToken, id: user._id })
@@ -49,7 +47,7 @@ instance.interceptors.response.use(
         return instance(originalConfig);
       } catch (err) {
         if (err.response && err.response.status === 400) {
-          navigate("/");
+          window.location.href = "/";
         }
         return Promise.reject(err);
       }

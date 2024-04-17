@@ -36,8 +36,20 @@ export default function SignUp() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const handleUnload = (event) => {
+    event.preventDefault();
+    // Chrome requires returnValue to be set.
+    event.returnValue = "Bạn có muốn lưu lại biểu mẫu không?";
+  };
+
   React.useEffect(() => {
     dispatch(clearMessage());
+
+    window.addEventListener("beforeunload", handleUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleUnload);
+    };
   }, [dispatch]);
 
   const handleClickShowPassword = () => {
