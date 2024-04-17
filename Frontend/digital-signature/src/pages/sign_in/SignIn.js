@@ -186,7 +186,7 @@ export default function SignInSide() {
                     <Grid></Grid>
                     <Grid>
                       <Link
-                        to="/forgot_password"
+                        to="/forgot_password/search_user"
                         variant="body2"
                         style={{ textDecoration: "none" }}
                       >

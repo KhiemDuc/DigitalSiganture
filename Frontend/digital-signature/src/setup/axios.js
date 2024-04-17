@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { refreshToken } from "../redux/authSlice";
 
 const instance = axios.create({
-  baseURL: "http://localhost:8080/",
+  baseURL: process.env.API_URL,
   timeout: 5000,
 });
 

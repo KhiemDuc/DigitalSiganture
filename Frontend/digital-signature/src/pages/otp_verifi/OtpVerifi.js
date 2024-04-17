@@ -13,7 +13,7 @@ import AutorenewIcon from "@mui/icons-material/Autorenew";
 import BackHome from "../../components/BackHome";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { clearMessage } from "../../redux/message";
+import { clearMessage, setMessage } from "../../redux/message";
 import { verifyOtp } from "../../redux/authSlice";
 import AuthService from "../../services/auth.service";
 import { useSelector } from "react-redux";
@@ -22,12 +22,12 @@ import { useSelector } from "react-redux";
 
 const defaultTheme = createTheme();
 
-export default function OTPVerifi() {
+export default function OTPVerifi({ otpHandle }) {
   const [OTP, setOTP] = React.useState("");
   const { message } = useSelector((state) => state.message);
   const [disableResend, setDisableResend] = React.useState(false);
   const [countdown, setCountdown] = React.useState(null);
-  const { tokenSignUp } = useParams();
+  const { tokenSignUp, tokenForgot } = useParams();
   const [successful, setSuccessful] = React.useState(false);
 
   const dispatch = useDispatch();
@@ -53,7 +53,7 @@ export default function OTPVerifi() {
   const handleResendOTP = () => {
     setDisableResend(true);
     setCountdown(30);
-    AuthService.resendOtp(tokenSignUp)
+    AuthService.resendOtp(tokenSignUp || tokenForgot)
       .then((response) => {
         setSuccessful(true);
       })
@@ -65,23 +65,41 @@ export default function OTPVerifi() {
     // Logic to resend OTP goes here
   };
   const handleVerify = () => {
-    console.log(OTP);
     const verify = {
       otp: OTP,
-      token: tokenSignUp,
+      token: tokenSignUp || tokenForgot,
     };
-    dispatch(verifyOtp(verify))
-      .unwrap()
-      .then((response) => {
-        console.log(response.data);
+    console.log(verify);
+    switch (otpHandle) {
+      case "otp_signup":
+        dispatch(verifyOtp(verify))
+          .unwrap()
+          .then((response) => {
+            console.log(response.data);
 
-        navigate({
-          pathname: "/",
-        });
-      })
-      .catch((error) => {
-        setSuccessful(false);
-      });
+            navigate({
+              pathname: "/",
+            });
+          })
+          .catch((error) => {
+            setSuccessful(false);
+          });
+        break;
+      case "otp_forgot_password":
+        AuthService.confirmOtpResetPassword(verify.token, verify.otp)
+          .then((response) => {
+            console.log(response.data);
+            navigate(
+              "/forgot_password/new_password/" + response.data.data.token
+            );
+          })
+          .catch((error) => {
+            dispatch(setMessage(error.response.data.message));
+            setSuccessful(false);
+          });
+        break;
+      default:
+    }
   };
 
   React.useEffect(() => {
@@ -129,6 +147,7 @@ export default function OTPVerifi() {
             component="h1"
             variant="h5"
             padding={"10px"}
+            style={{ textAlign: "left" }}
             // borderBottom={"1px solid #ccc"}
           >
             Nhập mã xác thực
@@ -180,12 +199,13 @@ export default function OTPVerifi() {
                 <div
                   className="form-text"
                   style={{
-                    textAlign: "center",
-                    color: "red",
+                    textAlign: "left",
+                    color: "blue",
                     marginTop: "10px",
                   }}
                 >
-                  Mã xác thực đã được gửi lại tới thư của bạn.
+                  Mã xác thực đã được gửi lại tới thư của bạn. Nếu không tìm
+                  thấy hãy kiểm tra ở thư mục spam
                 </div>
               )
             ) : (
@@ -193,12 +213,13 @@ export default function OTPVerifi() {
                 <div
                   className="form-text"
                   style={{
-                    textAlign: "center",
-                    color: "red",
+                    textAlign: "left",
+                    color: "blue",
                     marginTop: "10px",
                   }}
                 >
-                  Mã xác thực đã được gửi lại tới thư của bạn.
+                  Mã xác thực đã được gửi lại tới thư của bạn.Nếu không tìm thấy
+                  hãy kiểm tra ở thư mục spam
                 </div>
               )
             )}
