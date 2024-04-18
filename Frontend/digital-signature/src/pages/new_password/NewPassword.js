@@ -16,7 +16,6 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useSelector } from "react-redux";
 import { Divider } from "@mui/material";
-import { useParams } from "react-router-dom";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -25,7 +24,6 @@ const defaultTheme = createTheme();
 export default function NewPassword() {
   const { message } = useSelector((state) => state.message);
   const [successful, setSuccessful] = React.useState(false);
-  const { tokenForgot } = useParams();
 
   const handleSubmit = (event) => {
     event.preventDefault();

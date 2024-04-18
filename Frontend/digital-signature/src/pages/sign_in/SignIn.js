@@ -97,6 +97,7 @@ export default function SignInSide() {
               width="60%"
               height="60%"
               src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+              alt="login"
             />
           </Box>
         </Grid>
