@@ -29,6 +29,14 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => {
+    // const { user } = store.getState().auth;
+    // const result = instance.get("/access/refresh-token", {
+    //   headers: {
+    //     "refresh-token": user.refreshToken,
+    //     "x-client-id": user._id,
+    //   },
+    // });
+    // console.log(result);
     return response;
   },
   async (error) => {
@@ -36,16 +44,18 @@ instance.interceptors.response.use(
     if (error.response) {
       try {
         const { user } = store.getState().auth;
-        const result = instance.post("/auth/refresh_token", {
+        const result = await instance.get("/access/refresh-token", {
           headers: {
             "refresh-token": user.refreshToken,
             "x-client-id": user._id,
           },
         });
         store.dispatch(refreshToken(result.data.data));
+        originalConfig.headers["authentication"] = result.data.data.accessToken;
         return instance(originalConfig);
       } catch (err) {
         if (err) {
+          localStorage.removeItem("user");
           window.location.href = "/";
         }
         return Promise.reject(err);
