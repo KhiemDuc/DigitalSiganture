@@ -16,6 +16,12 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useSelector } from "react-redux";
 import { Divider } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+import AuthService from "../../services/auth.service";
+import { setMessage, clearMessage } from "../../redux/message";
+import { useDispatch } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -24,15 +30,50 @@ const defaultTheme = createTheme();
 export default function NewPassword() {
   const { message } = useSelector((state) => state.message);
   const [successful, setSuccessful] = React.useState(false);
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+  const { tokenNewPass } = useParams();
+  const navigate = useNavigate();
+  const notify = () => {
+    toast.success("Đổi mật khẩu thành công", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      // transition: Bounce,
     });
   };
+
+  const dispatch = useDispatch();
+
+  const handleSubmit = (values) => {
+    if (successful) {
+      navigate("/sign_in");
+    } else {
+      AuthService.resetPassword(tokenNewPass, values.password)
+        .then((response) => {
+          console.log(response.data);
+          setSuccessful(true);
+          notify();
+        })
+        .catch((error) => {
+          const resMessage =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          setSuccessful(false);
+          dispatch(setMessage(resMessage));
+        });
+    }
+  };
+
+  React.useEffect(() => {
+    dispatch(clearMessage());
+  }, [dispatch]);
 
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => {
@@ -63,6 +104,20 @@ export default function NewPassword() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      {/* Same as */}
+      <ToastContainer />
       <Container
         component="main"
         style={{
@@ -201,7 +256,7 @@ export default function NewPassword() {
                         }
                         role="alert"
                       >
-                        {message}
+                        Có lỗi xảy ra, vui lòng thử lại sau !!
                       </div>
                     </div>
                   )}
@@ -241,9 +296,9 @@ export default function NewPassword() {
                         color: "white",
                         border: "none",
                       }}
-                      onClick={() => {}}
+                      type="submit"
                     >
-                      Tiếp Tục
+                      {successful ? "Đi tới màn hình đăng nhập" : "Tiếp Tục"}
                     </Button>
                   </Grid>
                 </Grid>

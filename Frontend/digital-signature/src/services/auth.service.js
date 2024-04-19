@@ -69,19 +69,6 @@ const logout = () => {
   });
 };
 
-const refreshToken = (refreshToken, id) => {
-  return axios
-    .post("/access/refresh-token", {
-      headers: {
-        "x-client-id": id,
-        "refresh-token": refreshToken,
-      },
-    })
-    .then((response) => {
-      localStorage.setItem("user", JSON.stringify(response.data.data));
-      return response.data;
-    });
-};
 const acceptResetPassword = (id) => {
   return axios.get("access/reset/" + id);
 };
@@ -101,10 +88,17 @@ const confirmOtpResetPassword = (token, otp) => {
 };
 
 const resetPassword = (token, newPassword) => {
-  return axios.post("access/new-pass", {
-    token,
-    newPassword,
-  });
+  return axios.post(
+    "access/new-pass",
+    {
+      newPassword,
+    },
+    {
+      headers: {
+        token: token,
+      },
+    }
+  );
 };
 
 const getCurrentUser = () => {
@@ -121,7 +115,6 @@ const AuthService = {
   login,
   logout,
   getCurrentUser,
-  refreshToken,
 };
 
 export default AuthService;

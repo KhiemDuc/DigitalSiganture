@@ -29,7 +29,7 @@ export default function AccountMenu() {
     setAnchorEl(null);
   };
   const handleCloseProfile = () => {
-    navigate("/user_info");
+    navigate("/user_info/" + currentUser._id);
     setAnchorEl(null);
   };
 

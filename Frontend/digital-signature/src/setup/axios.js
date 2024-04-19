@@ -1,11 +1,11 @@
 import axios from "axios";
-import AuthService from "../services/auth.service";
-import { useDispatch } from "react-redux";
+import { store } from "../redux/Store";
+import { useRef } from "react";
 import { refreshToken } from "../redux/authSlice";
 
 const instance = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
-  timeout: 5000,
+  // timeout: 5000,
 });
 
 // const navigate = useNavigate();
@@ -13,7 +13,9 @@ console.log(process.env.REACT_APP_API_URL);
 
 instance.interceptors.request.use(
   (config) => {
-    const user = localStorage.getItem("user");
+    // const user = JSON.parse(localStorage.getItem("user"));
+    const { user } = store.getState().auth;
+    console.log(user);
     if (user) {
       config.headers["authentication"] = user.accessToken;
       config.headers["x-client-id"] = user._id;
@@ -31,23 +33,19 @@ instance.interceptors.response.use(
   },
   async (error) => {
     const originalConfig = error.config;
-    if (error.response && error.response.status === 419) {
+    if (error.response) {
       try {
-        const dispatch = useDispatch();
-        const user = AuthService.getCurrentUser();
-        dispatch(
-          refreshToken({ refreshToken: user.refreshToken, id: user._id })
-        )
-          .unwrap()
-          .then((result) => {
-            console.log(result);
-            originalConfig.headers["authentication"] = result.accessToken;
-            originalConfig.headers["x-client-id"] = result._id;
-          });
-
+        const { user } = store.getState().auth;
+        const result = instance.post("/auth/refresh_token", {
+          headers: {
+            "refresh-token": user.refreshToken,
+            "x-client-id": user._id,
+          },
+        });
+        store.dispatch(refreshToken(result.data.data));
         return instance(originalConfig);
       } catch (err) {
-        if (err.response && err.response.status === 400) {
+        if (err) {
           window.location.href = "/";
         }
         return Promise.reject(err);

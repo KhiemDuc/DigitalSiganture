@@ -58,6 +58,7 @@ export default function SignInSide() {
       .unwrap()
       .then(() => {
         navigate("/");
+        window.location.reload();
       })
       .catch(() => {
         setLoading(false);

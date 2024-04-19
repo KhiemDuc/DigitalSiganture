@@ -9,7 +9,7 @@ function AccountSettings() {
   const [userData, setUserData] = useState({});
 
   useEffect(() => {
-    UserService.getUserInfo(user.accessToken, user._id).then((response) => {
+    UserService.getUserInfo(user._id).then((response) => {
       console.log(response.data);
       setUserData(response.data.data);
     });
