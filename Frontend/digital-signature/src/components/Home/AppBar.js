@@ -239,13 +239,6 @@ function AppAppBar({ mode, toggleColorMode }) {
                       Đăng Ký
                     </Link>
                   </MenuItem>
-                  <MenuItem>
-                    <Avatar
-                      alt="Remy Sharp"
-                      src="../../static/img/bach_dev.jpg"
-                      sx={{ width: 24, height: 24 }}
-                    />
-                  </MenuItem>
                 </Box>
               </Drawer>
             </Box>

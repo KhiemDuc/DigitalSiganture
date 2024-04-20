@@ -1,71 +1,61 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Chip from '@mui/material/Chip';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
-import { Link } from 'react-router-dom';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Chip from "@mui/material/Chip";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import Container from "@mui/material/Container";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import { Link } from "react-router-dom";
 
 const tiers = [
   {
-    title: 'Miễn phí',
-    price: '0',
-    description: [
-      '10 users included',
-      '2 GB of storage',
-      'Help center access',
-      'Email support',
-    ],
-    buttonText: 'Đăng ký miễn phí',
-    buttonVariant: 'outlined',
+    title: "Miễn phí",
+    price: "0",
+    description: ["1 Chứng chỉ số", "Thời hạn 1 tháng"],
+    buttonText: "Đăng ký miễn phí",
+    buttonVariant: "outlined",
     checkoutID: 1,
   },
-  
+
   {
-    title: 'Chuyên nghiệp',
-    subheader: 'Recommended',
-    price: '15',
+    title: "Chuyên nghiệp",
+    subheader: "Recommended",
+    price: "15",
     description: [
-      '20 users included',
-      '10 GB of storage',
-      'Help center access',
-      'Priority email support',
-      'Dedicated team',
-      'Best deals',
+      "2 Chứng chỉ số",
+      "Cấp lại ngay khi chứng chỉ hết hạn",
+      "Hỗ trợ tận nơi",
+      "Priority email support",
+      "Dedicated team",
+      "Best deals",
     ],
-    buttonText: 'Bắt đầu ngay',
-    buttonVariant: 'contained',
+    buttonText: "Bắt đầu ngay",
+    buttonVariant: "contained",
     checkoutID: 2,
   },
   {
-    title: 'Sinh Viên Thang Long University',
-    price: '0',
+    title: "Sinh Viên Thang Long University",
+    price: "0",
     description: [
-      '10 users included',
-      '2 GB of storage',
-      'Help center access',
-      'Email support',
+      "1 Chứng chỉ số",
+      "Thời hạn đến khi ra trường",
+      "Trung tâm hỗ trợ sinh viên",
+      "Hỗ trợ qua email",
     ],
-    buttonText: 'Đăng ký miễn phí',
-    buttonVariant: 'outlined',
+    buttonText: "Đăng ký xác nhận sinh viên",
+    buttonVariant: "outlined",
   },
   {
-    title: 'Doanh nghiệp',
-    price: '30',
-    description: [
-      '50 users included',
-      '30 GB of storage',
-      'Help center access',
-      'Phone & email support',
-    ],
-    buttonText: 'Liên hệ với chúng tôi',
-    buttonVariant: 'outlined',
+    title: "Doanh nghiệp",
+    price: "30",
+    description: ["Liên hệ với chúng tôi để nhận thông tin chi tiết"],
+    buttonText: "Liên hệ với chúng tôi",
+    buttonVariant: "outlined",
     checkoutID: 3,
   },
 ];
@@ -77,17 +67,17 @@ export default function Pricing() {
       sx={{
         pt: { xs: 4, sm: 12 },
         pb: { xs: 8, sm: 16 },
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
         gap: { xs: 3, sm: 6 },
       }}
     >
       <Box
         sx={{
-          width: { sm: '100%', md: '60%' },
-          textAlign: { sm: 'left', md: 'center' },
+          width: { sm: "100%", md: "60%" },
+          textAlign: { sm: "left", md: "center" },
         }}
       >
         <Typography component="h2" variant="h4" color="text.primary">
@@ -103,21 +93,22 @@ export default function Pricing() {
             item
             key={tier.title}
             xs={12}
-            sm={tier.title === 'Enterprise' ? 12 : 6}
+            sm={tier.title === "Enterprise" ? 12 : 6}
             md={4}
           >
             <Card
               sx={{
                 p: 2,
-                display: 'flex',
-                flexDirection: 'column',
+                display: "flex",
+                flexDirection: "column",
                 gap: 2,
-                border: tier.title === 'Chuyên nghiệp' ? '1px solid' : undefined,
+                border:
+                  tier.title === "Chuyên nghiệp" ? "1px solid" : undefined,
                 borderColor:
-                  tier.title === 'Chuyên nghiệp' ? 'primary.main' : undefined,
+                  tier.title === "Chuyên nghiệp" ? "primary.main" : undefined,
                 background:
-                  tier.title === 'Chuyên nghiệp'
-                    ? 'linear-gradient(#033363, #021F3B)'
+                  tier.title === "Chuyên nghiệp"
+                    ? "linear-gradient(#033363, #021F3B)"
                     : undefined,
               }}
             >
@@ -125,29 +116,29 @@ export default function Pricing() {
                 <Box
                   sx={{
                     mb: 1,
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    color: tier.title === 'Chuyên nghiệp' ? 'grey.100' : '',
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    color: tier.title === "Chuyên nghiệp" ? "grey.100" : "",
                   }}
                 >
                   <Typography component="h3" variant="h6">
                     {tier.title}
                   </Typography>
-                  {tier.title === 'Chuyên nghiệp' && (
+                  {tier.title === "Chuyên nghiệp" && (
                     <Chip
                       icon={<AutoAwesomeIcon />}
                       label={tier.subheader}
                       size="small"
                       sx={{
                         background: (theme) =>
-                          theme.palette.mode === 'light' ? '' : 'none',
-                        backgroundColor: 'primary.contrastText',
-                        '& .MuiChip-label': {
-                          color: 'primary.dark',
+                          theme.palette.mode === "light" ? "" : "none",
+                        backgroundColor: "primary.contrastText",
+                        "& .MuiChip-label": {
+                          color: "primary.dark",
                         },
-                        '& .MuiChip-icon': {
-                          color: 'primary.dark',
+                        "& .MuiChip-icon": {
+                          color: "primary.dark",
                         },
                       }}
                     />
@@ -155,9 +146,10 @@ export default function Pricing() {
                 </Box>
                 <Box
                   sx={{
-                    display: 'flex',
-                    alignItems: 'baseline',
-                    color: tier.title === 'Chuyên nghiệp' ? 'grey.50' : undefined,
+                    display: "flex",
+                    alignItems: "baseline",
+                    color:
+                      tier.title === "Chuyên nghiệp" ? "grey.50" : undefined,
                   }}
                 >
                   <Typography component="h3" variant="h2">
@@ -171,7 +163,7 @@ export default function Pricing() {
                   sx={{
                     my: 2,
                     opacity: 0.2,
-                    borderColor: 'grey.500',
+                    borderColor: "grey.500",
                   }}
                 />
                 {tier.description.map((line) => (
@@ -179,18 +171,18 @@ export default function Pricing() {
                     key={line}
                     sx={{
                       py: 1,
-                      display: 'flex',
+                      display: "flex",
                       gap: 1.5,
-                      alignItems: 'center',
+                      alignItems: "center",
                     }}
                   >
                     <CheckCircleRoundedIcon
                       sx={{
                         width: 20,
                         color:
-                          tier.title === 'Chuyên nghiệp'
-                            ? 'primary.light'
-                            : 'primary.main',
+                          tier.title === "Chuyên nghiệp"
+                            ? "primary.light"
+                            : "primary.main",
                       }}
                     />
                     <Typography
@@ -198,7 +190,9 @@ export default function Pricing() {
                       variant="subtitle2"
                       sx={{
                         color:
-                          tier.title === 'Chuyên nghiệp' ? 'grey.200' : undefined,
+                          tier.title === "Chuyên nghiệp"
+                            ? "grey.200"
+                            : undefined,
                       }}
                     >
                       {line}
@@ -210,8 +204,8 @@ export default function Pricing() {
                 <Link
                   fullWidth
                   variant={tier.buttonVariant}
-                  to={'/checkout/' + tier.checkoutID}
-                  className='btn btn-primary rounded-pill'
+                  to={"/checkout/" + tier.checkoutID}
+                  className="btn btn-primary rounded-pill"
                 >
                   {tier.buttonText}
                 </Link>

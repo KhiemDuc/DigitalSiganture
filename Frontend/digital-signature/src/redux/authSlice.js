@@ -79,10 +79,10 @@ export const login = createAsyncThunk(
 
 export const refreshToken = createAsyncThunk(
   "auth/refreshToken",
-  async ({ refreshToken, id }, thunkAPI) => {
+  async (user, thunkAPI) => {
     try {
-      const data = await AuthService.refreshToken(refreshToken, id);
-      return { user: data.data };
+      localStorage.setItem("user", JSON.stringify(user));
+      return { user };
     } catch (error) {
       const message =
         (error.response && error.response.data && error.response.data.reason) ||

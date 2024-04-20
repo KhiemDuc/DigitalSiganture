@@ -40,7 +40,7 @@ const verifyOtp = (otp, token) => {
 };
 
 const resendOtp = (token) => {
-  return axios.post("access/signup/resend-otp", {
+  return axios.get("access/resend-otp", {
     headers: {
       token,
     },
@@ -69,18 +69,36 @@ const logout = () => {
   });
 };
 
-const refreshToken = (refreshToken, id) => {
-  return axios
-    .post("/access/refresh-token", {
+const acceptResetPassword = (id) => {
+  return axios.get("access/reset/" + id);
+};
+
+const confirmOtpResetPassword = (token, otp) => {
+  return axios.post(
+    "access/confirm",
+    {
+      otp,
+    },
+    {
       headers: {
-        "x-client-id": id,
-        "refresh-token": refreshToken,
+        token: token,
       },
-    })
-    .then((response) => {
-      localStorage.setItem("user", JSON.stringify(response.data.data));
-      return response.data;
-    });
+    }
+  );
+};
+
+const resetPassword = (token, newPassword) => {
+  return axios.post(
+    "access/new-pass",
+    {
+      newPassword,
+    },
+    {
+      headers: {
+        token: token,
+      },
+    }
+  );
 };
 
 const getCurrentUser = () => {
@@ -90,11 +108,13 @@ const getCurrentUser = () => {
 const AuthService = {
   verifyOtp,
   resendOtp,
+  acceptResetPassword,
+  confirmOtpResetPassword,
+  resetPassword,
   signup,
   login,
   logout,
   getCurrentUser,
-  refreshToken,
 };
 
 export default AuthService;

@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { logout } from "../../redux/authSlice";
 import EventBus from "../../common/EventBus";
+import instance from "../../setup/axios";
 
 export default function AccountMenu() {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function AccountMenu() {
     setAnchorEl(null);
   };
   const handleCloseProfile = () => {
-    navigate("/user_info");
+    navigate("/user_info/" + currentUser._id);
     setAnchorEl(null);
   };
 

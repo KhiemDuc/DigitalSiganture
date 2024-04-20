@@ -58,6 +58,7 @@ export default function SignInSide() {
       .unwrap()
       .then(() => {
         navigate("/");
+        window.location.reload();
       })
       .catch(() => {
         setLoading(false);
@@ -65,7 +66,7 @@ export default function SignInSide() {
   };
 
   if (isLoggedIn) {
-    return <Navigate to="/" />;
+    return <Navigate to="/home" />;
   }
 
   return (
@@ -97,6 +98,7 @@ export default function SignInSide() {
               width="60%"
               height="60%"
               src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+              alt="login"
             />
           </Box>
         </Grid>
@@ -186,7 +188,7 @@ export default function SignInSide() {
                     <Grid></Grid>
                     <Grid>
                       <Link
-                        to="/forgot_password"
+                        to="/forgot_password/search_user"
                         variant="body2"
                         style={{ textDecoration: "none" }}
                       >
