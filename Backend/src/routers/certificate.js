@@ -24,10 +24,10 @@ const upload = multer({
 
 
 router.use('/', authentication)
-router.post('/', upload.fields([{name: 'avatar', maxCount: 1}, {name: 'background', maxCount: 1}]) ,asyncHandler(CertificateController.requestCertificate))
+router.post('/', upload.fields([{name: 'CCCD', maxCount: 1}, {name: 'face', maxCount: 1}]) ,asyncHandler(CertificateController.requestCertificate))
 
 // router.use('/ca')
 router.get('/ca', asyncHandler(CertificateController.getCertRequests))
 router.post('/ca', asyncHandler(CertificateController.signCertificate))
 
-module.exports = router
+module.exports = {upload, router}

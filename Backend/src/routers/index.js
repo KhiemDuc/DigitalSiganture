@@ -4,6 +4,6 @@ const router = express.Router()
 
 
 router.use('/access', require('./access'))
-router.use('/certificate', require('./certificate'))
+router.use('/certificate', require('./certificate').router)
 router.use('/subscription', require('./subscription'))
 module.exports = router

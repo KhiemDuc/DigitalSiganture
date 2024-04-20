@@ -148,8 +148,8 @@ class AccessService {
     }
 
     static changeUserInfo = async (user, payload) => {
-        const {firstName, lastName, CCCD ,address, gender, dateOfBirth, placeOfOrigin, nationality, avatar, background} = payload
-        if (!checkNotNull(firstName, lastName, address, CCCD, gender, dateOfBirth, placeOfOrigin, nationality, avatar, background)) {
+        const {firstName, lastName, CCCD ,address, gender, dateOfBirth, placeOfOrigin, nationality} = payload
+        if (!checkNotNull(firstName, lastName, address, CCCD, gender, dateOfBirth, placeOfOrigin, nationality)) {
             throw new BadRequestError('Change user info failed', 'Missing information')
         } 
         const foundInfo = await UserInfo.findById(user.userInfo)
@@ -164,8 +164,6 @@ class AccessService {
         foundInfo.dateOfBirth = dateOfBirth
         foundInfo.placeOfOrigin = placeOfOrigin
         foundInfo.nationality = nationality
-        foundInfo.avatar = avatar
-        foundInfo.background = background
         try {
             await foundInfo.save()
         } catch(err) {
@@ -243,8 +241,24 @@ class AccessService {
         const result = bcrypt.compareSync(password, user.password);
         if (!result) throw new BadRequestError('Change password failed', 'Password is incorrect')
         return this.saveNewPassword(user, newPassword)
-        
     }
+
+    static async uploadAvt(user, avatar) {
+        const fileName = avatar.filename
+
+        user.avatar = fileName
+        await user.save()
+        return fileName
+    }
+
+    static async uploadBackground(user, background) {
+        const fileName = background.filename
+
+        user.background = fileName
+        await user.save()
+        return fileName
+    }
+
 }
 
 

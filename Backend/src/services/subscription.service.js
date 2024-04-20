@@ -32,9 +32,13 @@ class SubscriptionService {
         const result = data.find(e => e[ROW_FIELD.description] === token.token)
         let valid = false
         if (!result) return false
-        if (PRICE[token.plan] <= result[ROW_FIELD.value]) valid = true 
+        if (PRICE[token.plan] <= result[ROW_FIELD.value]) 
+        {
+            valid = true 
+            
+        }
         //valid: push to db
-
+        
         //return
         return valid
         // return (data.data.findIndex(e => e['Mô tả'] === token.token) !== -1)

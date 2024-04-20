@@ -3,7 +3,7 @@ const AccessController = require("../controllers/access.controller");
 const asyncHandler = require("../utils/asyncHandler");
 const authentication = require("../middlewares/authentication");
 const refreshTokenAuth = require("../middlewares/refreshTokenAuth");
-
+const {upload} = require('./certificate')
 const router = express.Router();
 
 //routers for sign up
@@ -30,6 +30,7 @@ router.get("/:id", asyncHandler(AccessController.getUserInfo));
 router.post("/logout", asyncHandler(AccessController.logout));
 // router.put('/:id', asyncHandler(AccessController.))
 router.post('/change-password', asyncHandler(AccessController.changePassword))
-
+router.post('/avatar', upload.single('avatar'), asyncHandler(AccessController.changeAvatar))
+router.post('/background', upload.single('background'), asyncHandler(AccessController.changeAvatar))
 module.exports = router
 
