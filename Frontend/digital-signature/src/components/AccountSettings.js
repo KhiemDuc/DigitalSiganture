@@ -52,7 +52,7 @@ function AccountSettings() {
         />
       </FormControl>
       <FormControl id="dateOfbirth">
-        <FormLabel>Ngày Sinh</FormLabel>
+        <FormLabel>Thông Tin Liên Hệ</FormLabel>
         <Input
           focusBorderColor="brand.blue"
           type="text"

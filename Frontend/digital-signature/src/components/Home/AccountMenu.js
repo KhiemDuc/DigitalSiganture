@@ -59,7 +59,9 @@ export default function AccountMenu() {
           aria-haspopup="true"
           aria-expanded={open ? "true" : undefined}
         >
-          <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+          <Avatar sx={{ width: 32, height: 32 }}>
+            {currentUser.userName[0]}
+          </Avatar>
         </IconButton>
       </Tooltip>
       <Menu
@@ -98,7 +100,7 @@ export default function AccountMenu() {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem onClick={handleCloseProfile}>
-          <Avatar />
+          <Avatar>{currentUser.userName[0]}</Avatar>
           Profile
         </MenuItem>
         <Divider />
