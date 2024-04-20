@@ -6,8 +6,12 @@ const PublicKeyUsed = require('../models/publicKeyUsed.model')
 const crypto = require('crypto')
 const pickFields = require('../utils/pickFields')
 class CertificateService {
-    static certificateRequest = async (user, info, {avatar, background}) => {
-        await changeUserInfo(user, {...info, avatar: avatar[0].filename, background: background[0].filename})        
+    static certificateRequest = async (user, info, {CCCD, face}) => {
+        // check face and CCCD
+        
+        //end
+        await changeUserInfo(user, {...info})        
+        // avatar: avatar[0].filename, background: background[0].filename
         const hash = crypto.createHash('sha256')
         hash.update(info.publicKey)
         const result = hash.digest('hex')

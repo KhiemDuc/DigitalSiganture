@@ -80,6 +80,20 @@ class AccessController {
             message: await accessService.changePassword(req.user, req.body)
         }).send(res)
     }
+
+    static async changeAvatar(req, res) {
+        new SuccessResponse({
+            message: 'Change avatar success',
+            data: await accessService.uploadAvt(req.user, req.file)
+        }).send(res)
+    }
+
+    static async changeBackground(req, res) {
+        new SuccessResponse({
+            message: 'Change background image success',
+            data: await accessService.uploadBackground(req.user, req.file)
+        }).send(res)
+    }
 }
 
 module.exports = AccessController

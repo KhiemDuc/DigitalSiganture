@@ -1,7 +1,8 @@
 const ERROR_CODE = {
     NOT_FOUND: 404,
     BAD_REQUEST: 400,
-    FORBIDDEN: 403
+    FORBIDDEN: 403,
+    INTERNAL_SERVER: 500
 }
 class ResponseError extends Error {
     constructor(status, message, reason) {
@@ -29,8 +30,15 @@ class ForbiddenError extends ResponseError {
     }
 }
 
+class InternalServerError extends ResponseError {
+    constructor(message, reason ) {
+        super(ERROR_CODE.INTERNAL_SERVER, message, reason)
+    }
+}
+
 module.exports = {
     NotFoundError,
     BadRequestError,
-    ForbiddenError
+    ForbiddenError,
+    InternalServerError
 }
