@@ -46,7 +46,7 @@ const delToken = (token) => {
         tokens = {} 
         cache.set('tokens', tokens)
     }
-    if (!tokens[token]) {
+    if (tokens[token]) {
         tokens[token] = undefined
         cache.set('tokens', tokens) 
         return false
@@ -54,11 +54,37 @@ const delToken = (token) => {
     return true
 }
 
+const getSubToken = (userId) =>  {
+    let cached = cache.get('subscription')
+    if (cached === undefined) cached = {}
+    return cached[userId]
+}
+
+const putSubToken = (userId, token, plan) => {
+    let cached = cache.get('subscription')
+    if (cached === undefined) cached = {} 
+    cached[userId] = {token, plan};
+    cache.set('subscription', {...cached})
+    return true
+}
+
+const delSubToken = (userId) => {
+    let cached = cache.get('subscription')
+    if (cached === undefined) cached = {} 
+    delete cached[userId]
+    cache.set('subscription', {...cached})
+    return true
+}
+
+
 module.exports = {
     putOTP,
     getOTP,
     delOTP,
     putToken,
     getToken,
-    delToken
+    delToken,
+    getSubToken,
+    delSubToken,
+    putSubToken
 }
