@@ -10,6 +10,7 @@ import OTPVerifi from "../pages/otp_verifi/OtpVerifi";
 import UserInfo from "../pages/user_info/UserInfo";
 import Checkout from "../pages/checkout/Checkout";
 import SearchUser from "../pages/search_user/SearchUser";
+import RequestSignature from "./../pages/request_sign/RequestSignature";
 
 const Routes = () => {
   const { isLoggedIn } = useSelector((state) => state.auth);
@@ -27,6 +28,10 @@ const Routes = () => {
     {
       path: "*",
       element: <PageNotFound />,
+    },
+    {
+      path: "request",
+      element: <RequestSignature />,
     },
   ];
 
