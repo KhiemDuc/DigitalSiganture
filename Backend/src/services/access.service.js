@@ -143,7 +143,7 @@ class AccessService {
         user.userInfo = userInfo
         return {
             ...pickFields(user, [ '_id', 'userName']),
-            ...omitFields(userInfo._doc, ['_id', '__v', 'createdAt', 'updatedAt'])
+            ...omitFields(userInfo._doc, ['_id', '__v', 'createdAt', 'updatedAt', 'avatar', 'background'])
         }
     }
 
