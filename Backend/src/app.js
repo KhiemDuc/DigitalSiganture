@@ -13,6 +13,10 @@ app.use(cors({
     origin: '*'
 }))
 app.use(helmet())
+app.use(function (req, res, next) {
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-site')
+    next()
+})
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))

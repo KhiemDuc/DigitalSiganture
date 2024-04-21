@@ -246,9 +246,9 @@ class AccessService {
     static async uploadAvt(user, avatar) {
         const fileName = avatar.filename
 
-        user.avatar = fileName
-        await user.save()
-        return fileName
+        const newInfo  = await UserInfo.findByIdAndUpdate(user.userInfo, { avatar: fileName }, {new: true})
+
+        return newInfo._doc.avatar
     }
 
     static async uploadBackground(user, background) {
