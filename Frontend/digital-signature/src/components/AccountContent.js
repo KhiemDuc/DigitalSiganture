@@ -2,7 +2,7 @@ import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import AccountSettings from "./AccountSettings";
 import ChangeCurrentPassword from "./changeCurrentPassword";
 
-const Content = () => {
+const Content = ({ userData }) => {
   return (
     <Box
       as="main"
@@ -47,7 +47,7 @@ const Content = () => {
 
         <TabPanels px={3} mt={5}>
           <TabPanel>
-            <AccountSettings />
+            <AccountSettings userData={userData} />
           </TabPanel>
           <TabPanel>
             <ChangeCurrentPassword />

@@ -12,10 +12,19 @@ const changeCurrentPasssword = ({ password, newPassword }) => {
   return axios.post("access/change-password/", { password, newPassword });
 };
 
+const uploadAvatar = (formData) => {
+  return axios.post("access/avatar", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
 const UserService = {
   getUserInfo,
   searchUser,
   changeCurrentPasssword,
+  uploadAvatar,
 };
 
 export default UserService;
