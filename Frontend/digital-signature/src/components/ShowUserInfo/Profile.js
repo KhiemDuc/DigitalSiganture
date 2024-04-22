@@ -17,10 +17,11 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
+import UserService from "../../services/user.service";
 
-function Profile() {
+function Profile({ user }) {
+  console.log(process.env.REACT_APP_API_URL + "public/" + user.avatar);
   const [userProfile, setUserProfile] = useState(null);
-
   const { isOpen, onOpen, onClose } = useDisclosure();
   const profileImage = useRef(null);
 
@@ -35,6 +36,9 @@ function Profile() {
     if (selected && ALLOWED_TYPES.includes(selected.type)) {
       let reader = new FileReader();
       reader.onloadend = () => setUserProfile(reader.result);
+      let formData = new FormData();
+      formData.append("avatar", selected);
+      UserService.uploadAvatar(formData);
       return reader.readAsDataURL(selected);
     }
 
@@ -48,7 +52,11 @@ function Profile() {
         name="Bách"
         cursor="pointer"
         onClick={openChooseImage}
-        src={userProfile ? userProfile : "/img/tim-cook.jpg"}
+        src={
+          userProfile
+            ? userProfile
+            : process.env.REACT_APP_API_URL + "public/" + user.avatar
+        }
       >
         <AvatarBadge bg="brand.blue" boxSize="1em">
           <svg width="0.4em" fill="currentColor" viewBox="0 0 20 20">
@@ -90,7 +98,7 @@ function Profile() {
       </Modal>
       <VStack spacing={1}>
         <Heading as="h3" fontSize="xl" color="brand.dark">
-          Bách
+          {user.firstName} {user.lastName}
         </Heading>
         <Text color="brand.gray" fontSize="sm">
           Founder of KnB

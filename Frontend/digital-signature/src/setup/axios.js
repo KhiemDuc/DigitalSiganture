@@ -1,6 +1,5 @@
 import axios from "axios";
 import { store } from "../redux/Store";
-import { useRef } from "react";
 import { refreshToken } from "../redux/authSlice";
 
 const instance = axios.create({
@@ -29,19 +28,11 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => {
-    // const { user } = store.getState().auth;
-    // const result = instance.get("/access/refresh-token", {
-    //   headers: {
-    //     "refresh-token": user.refreshToken,
-    //     "x-client-id": user._id,
-    //   },
-    // });
-    // console.log(result);
     return response;
   },
   async (error) => {
     const originalConfig = error.config;
-    if (error.response) {
+    if (error.response.data.reason === "Token expired") {
       try {
         const { user } = store.getState().auth;
         const result = await instance.get("/access/refresh-token", {
@@ -50,11 +41,13 @@ instance.interceptors.response.use(
             "x-client-id": user._id,
           },
         });
-        store.dispatch(refreshToken(result.data.data));
+        // store.dispatch(refreshToken(result.data.data));
         originalConfig.headers["authentication"] = result.data.data.accessToken;
+        originalConfig.headers["x-client-id"] = result.data.data._id;
         return instance(originalConfig);
       } catch (err) {
-        if (err) {
+        console.log(err.response);
+        if (err.response) {
           localStorage.removeItem("user");
           window.location.href = "/";
         }

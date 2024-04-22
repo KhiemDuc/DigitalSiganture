@@ -3,18 +3,8 @@ import { FormControl, FormLabel, Grid, Input, Select } from "@chakra-ui/react";
 import UserService from "../services/user.service";
 import { useSelector } from "react-redux";
 
-function AccountSettings() {
-  const { user } = useSelector((state) => state.auth);
-  console.log(user);
-  const [userData, setUserData] = useState({});
-
-  useEffect(() => {
-    UserService.getUserInfo(user._id).then((response) => {
-      console.log(response.data);
-      setUserData(response.data.data);
-    });
-  }, []);
-
+function AccountSettings({ userData }) {
+  console.log(userData);
   return (
     <Grid
       templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(2, 1fr)" }}

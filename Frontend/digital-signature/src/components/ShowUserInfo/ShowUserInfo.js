@@ -1,8 +1,9 @@
 import { Box } from "@chakra-ui/react";
 import Data from "./Data";
 import Profile from "./Profile";
-
-function ShowUserInfo() {
+import { useEffect, useState } from "react";
+import UserService from "../../services/user.service";
+function ShowUserInfo({ user }) {
   return (
     <Box
       as="aside"
@@ -15,7 +16,7 @@ function ShowUserInfo() {
       borderColor="brand.light"
       style={{ transform: "translateY(-100px)" }}
     >
-      <Profile />
+      <Profile user={user} />
       <Data />
     </Box>
   );
