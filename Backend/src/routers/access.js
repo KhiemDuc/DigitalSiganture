@@ -31,6 +31,6 @@ router.post("/logout", asyncHandler(AccessController.logout));
 // router.put('/:id', asyncHandler(AccessController.))
 router.post('/change-password', asyncHandler(AccessController.changePassword))
 router.post('/avatar', upload.single('avatar'), asyncHandler(AccessController.changeAvatar))
-router.post('/background', upload.single('background'), asyncHandler(AccessController.changeAvatar))
+router.post('/background', upload.single('background'), asyncHandler(AccessController.changeBackground))
 module.exports = router
 

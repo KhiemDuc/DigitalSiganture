@@ -254,9 +254,8 @@ class AccessService {
     static async uploadBackground(user, background) {
         const fileName = background.filename
 
-        user.background = fileName
-        await user.save()
-        return fileName
+        const newInfo = await UserInfo.findByIdAndUpdate(user.userInfo, {background: fileName}, {new: true})
+        return newInfo._doc.background
     }
 
 }
