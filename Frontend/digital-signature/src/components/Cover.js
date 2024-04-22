@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState } from "react";
 import {
   Badge,
   Box,
@@ -14,29 +14,35 @@ import {
   ModalOverlay,
   Text,
   useDisclosure,
-} from '@chakra-ui/react'
+} from "@chakra-ui/react";
+import { useSelector } from "react-redux";
+import UserService from "../services/user.service";
 
 export default function Cover() {
-  const [coverImage, setCoverImage] = useState(null)
-  const inputRef = useRef(null)
-  const { isOpen, onOpen, onClose } = useDisclosure()
-
+  const [coverImage, setCoverImage] = useState(null);
+  const inputRef = useRef(null);
+  const { userInfo } = useSelector((state) => state.info);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  console.log(userInfo);
   const openChooseFile = () => {
-    inputRef.current.click()
-  }
+    inputRef.current.click();
+  };
 
-  const handleChangeCover = event => {
-    const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/jpg']
-    const selected = event.target.files[0]
+  const handleChangeCover = (event) => {
+    const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg"];
+    const selected = event.target.files[0];
 
     if (selected && ALLOWED_TYPES.includes(selected.type)) {
-      let reader = new FileReader()
-      reader.onloadend = () => setCoverImage(reader.result)
-      return reader.readAsDataURL(selected)
+      let reader = new FileReader();
+      reader.onloadend = () => setCoverImage(reader.result);
+      let formData = new FormData();
+      formData.append("background", selected);
+      UserService.uploadBackground(formData);
+      return reader.readAsDataURL(selected);
     }
 
-    onOpen()
-  }
+    onOpen();
+  };
 
   return (
     <Box h={60} overflow="hidden">
@@ -44,7 +50,13 @@ export default function Cover() {
         w="full"
         h="full"
         objectFit="cover"
-        src={coverImage ? coverImage : '/img/cover.jpg'}
+        src={
+          coverImage
+            ? coverImage
+            : userInfo?.background
+            ? process.env.REACT_APP_API_URL + "public/" + userInfo?.background
+            : "../../static/img/intro-bg.jpg"
+        }
         alt="Cover"
       />
       <Button
@@ -61,7 +73,9 @@ export default function Cover() {
             d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z"
           />
         </svg>
-        <Text ml={2} mb={0}>Change Cover</Text>
+        <Text ml={2} mb={0}>
+          Đổi ảnh bìa
+        </Text>
         <input ref={inputRef} type="file" onChange={handleChangeCover} hidden />
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -87,5 +101,5 @@ export default function Cover() {
         </ModalContent>
       </Modal>
     </Box>
-  )
+  );
 }

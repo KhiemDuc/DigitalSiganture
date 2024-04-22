@@ -19,6 +19,13 @@ import FAQ from "../../components/Home/FAQ";
 import Footer from "../../components/Home/Footer";
 import getLPTheme from "../../helpers/getLPTheme";
 import { Team } from "../../components/Home/Team";
+import { useSelector, useDispatch } from "react-redux";
+import { getUserInfo } from "../../redux/infoSlice";
+import { clearMessage } from "../../redux/message";
+import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+import { showToast, ToastType } from "../../utils/toast";
+import { useNavigate } from "react-router-dom";
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
   return (
@@ -67,14 +74,44 @@ export default function LandingPage() {
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const LPtheme = createTheme(getLPTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
+  const { user, isLoggedIn } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const toggleColorMode = () => {
     setMode((prev) => (prev === "dark" ? "light" : "dark"));
   };
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      console.log(user._id);
+      dispatch(getUserInfo(user._id))
+        .unwrap()
+        .then(() => {})
+        .catch(() => {
+          showToast(
+            "Lỗi khi lấy dữ liệu User vui lòng đăng nhập lại",
+            ToastType.ERROR
+          );
+        });
+    }
+  }, [user, dispatch]);
+
   return (
     <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
       <CssBaseline />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
       <Hero />
       <Box sx={{ bgcolor: "background.default" }}>

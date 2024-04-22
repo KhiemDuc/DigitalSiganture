@@ -15,7 +15,7 @@ function AccountSettings({ userData }) {
         <Input
           focusBorderColor="brand.blue"
           type="text"
-          placeholder={userData.firstName}
+          value={userData?.firstName}
         />
       </FormControl>
       <FormControl id="lastName">
@@ -23,12 +23,12 @@ function AccountSettings({ userData }) {
         <Input
           focusBorderColor="brand.blue"
           type="text"
-          value={userData.lastName}
+          value={userData?.lastName}
         />
       </FormControl>
       <FormControl id="gender">
         <FormLabel>Giới tính</FormLabel>
-        <Select focusBorderColor="brand.blue" value={userData.gender}>
+        <Select focusBorderColor="brand.blue" value={userData?.gender}>
           <option value="male">Nam</option>
           <option value="female">Nữ</option>
         </Select>
@@ -37,8 +37,11 @@ function AccountSettings({ userData }) {
         <FormLabel>Ngày Sinh</FormLabel>
         <Input
           focusBorderColor="brand.blue"
-          type="text"
-          value={userData.dateOfBirth}
+          type="date"
+          value={
+            userData?.dateOfBirth &&
+            new Date(userData?.dateOfBirth).toISOString().slice(0, 10)
+          }
         />
       </FormControl>
       <FormControl id="dateOfbirth">
@@ -46,7 +49,7 @@ function AccountSettings({ userData }) {
         <Input
           focusBorderColor="brand.blue"
           type="text"
-          value={userData.email}
+          value={userData?.email}
         />
       </FormControl>
       {/* Add more fields as needed */}

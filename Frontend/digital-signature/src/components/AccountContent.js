@@ -1,8 +1,10 @@
 import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import AccountSettings from "./AccountSettings";
 import ChangeCurrentPassword from "./changeCurrentPassword";
+import { useSelector } from "react-redux";
 
-const Content = ({ userData }) => {
+const Content = () => {
+  const { userInfo } = useSelector((state) => state.info);
   return (
     <Box
       as="main"
@@ -47,7 +49,7 @@ const Content = ({ userData }) => {
 
         <TabPanels px={3} mt={5}>
           <TabPanel>
-            <AccountSettings userData={userData} />
+            <AccountSettings userData={userInfo} />
           </TabPanel>
           <TabPanel>
             <ChangeCurrentPassword />

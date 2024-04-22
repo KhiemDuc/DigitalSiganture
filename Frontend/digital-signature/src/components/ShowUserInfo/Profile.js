@@ -20,7 +20,7 @@ import {
 import UserService from "../../services/user.service";
 
 function Profile({ user }) {
-  console.log(process.env.REACT_APP_API_URL + "public/" + user.avatar);
+  console.log(process.env.REACT_APP_API_URL + "public/" + user?.avatar);
   const [userProfile, setUserProfile] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const profileImage = useRef(null);
@@ -55,7 +55,9 @@ function Profile({ user }) {
         src={
           userProfile
             ? userProfile
-            : process.env.REACT_APP_API_URL + "public/" + user.avatar
+            : user?.avatar
+            ? process.env.REACT_APP_API_URL + "public/" + user?.avatar
+            : "/static/img/bach_dev.jpg"
         }
       >
         <AvatarBadge bg="brand.blue" boxSize="1em">
@@ -98,7 +100,7 @@ function Profile({ user }) {
       </Modal>
       <VStack spacing={1}>
         <Heading as="h3" fontSize="xl" color="brand.dark">
-          {user.firstName} {user.lastName}
+          {user?.firstName} {user?.lastName}
         </Heading>
         <Text color="brand.gray" fontSize="sm">
           Founder of KnB

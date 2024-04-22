@@ -14,12 +14,25 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { logout } from "../../redux/authSlice";
 import EventBus from "../../common/EventBus";
-import instance from "../../setup/axios";
+import Badge from "@mui/material/Badge";
+import { styled } from "@mui/material/styles";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CreateIcon from "@mui/icons-material/Create";
+import FingerprintIcon from "@mui/icons-material/Fingerprint";
+
+const SmallIcon = styled(CheckCircleIcon)(({ theme }) => ({
+  width: 16,
+  height: 16,
+  color: "#0866ff",
+  // border: `0.5px solid ${theme.palette.background.paper}`,
+  borderRadius: "50%",
+}));
 
 export default function AccountMenu() {
   const navigate = useNavigate();
   const { user: currentUser } = useSelector((state) => state.auth);
-
+  const { userInfo } = useSelector((state) => state.info);
+  console.log(userInfo);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const dispatch = useDispatch();
@@ -59,9 +72,22 @@ export default function AccountMenu() {
           aria-haspopup="true"
           aria-expanded={open ? "true" : undefined}
         >
-          <Avatar sx={{ width: 32, height: 32 }}>
-            {currentUser.userName[0]}
-          </Avatar>
+          <Badge
+            overlap="circular"
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            badgeContent={
+              userInfo?.verify && (
+                <SmallIcon sx={{ backgroundColor: "white" }} />
+              )
+            }
+          >
+            <Avatar
+              sx={{ width: 32, height: 32 }}
+              src={process.env.REACT_APP_API_URL + "public/" + userInfo?.avatar}
+            >
+              {currentUser.userName[0]}
+            </Avatar>
+          </Badge>
         </IconButton>
       </Tooltip>
       <Menu
@@ -70,6 +96,7 @@ export default function AccountMenu() {
         open={open}
         onClose={handleClose}
         onClick={handleClose}
+        sx={{ borderTop: "1px solid #ccc" }}
         PaperProps={{
           elevation: 0,
           sx: {
@@ -100,15 +127,39 @@ export default function AccountMenu() {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem onClick={handleCloseProfile}>
-          <Avatar>{currentUser.userName[0]}</Avatar>
-          Profile
+          <Avatar
+            src={process.env.REACT_APP_API_URL + "public/" + userInfo?.avatar}
+          >
+            {currentUser.userName[0]}
+          </Avatar>
+          {userInfo?.firstName + " " + userInfo?.lastName}
+          {userInfo?.verify && (
+            <Tooltip
+              sx={{ marginLeft: "8px" }}
+              title="Tài Khoản đã được xác thực"
+            >
+              <SmallIcon />
+            </Tooltip>
+          )}
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
+            <CreateIcon fontSize="small" />
+          </ListItemIcon>
+          Đăng ký chứng chỉ số
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <FingerprintIcon fontSize="small" />
+          </ListItemIcon>
+          Xác thực chứng chỉ số
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
             <PersonAdd fontSize="small" />
           </ListItemIcon>
-          Add another account
+          Gói của tôi
         </MenuItem>
         <MenuItem onClick={handleClose}>
           <ListItemIcon>

@@ -20,11 +20,20 @@ const uploadAvatar = (formData) => {
   });
 };
 
+const uploadBackground = (formData) => {
+  return axios.post("access/background", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
 const UserService = {
   getUserInfo,
   searchUser,
   changeCurrentPasssword,
   uploadAvatar,
+  uploadBackground,
 };
 
 export default UserService;

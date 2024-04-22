@@ -41,7 +41,7 @@ instance.interceptors.response.use(
             "x-client-id": user._id,
           },
         });
-        // store.dispatch(refreshToken(result.data.data));
+        store.dispatch(refreshToken(result.data.data));
         originalConfig.headers["authentication"] = result.data.data.accessToken;
         originalConfig.headers["x-client-id"] = result.data.data._id;
         return instance(originalConfig);

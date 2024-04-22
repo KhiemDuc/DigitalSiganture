@@ -1,9 +1,9 @@
 import { Box } from "@chakra-ui/react";
 import Data from "./Data";
 import Profile from "./Profile";
-import { useEffect, useState } from "react";
-import UserService from "../../services/user.service";
-function ShowUserInfo({ user }) {
+import { useSelector } from "react-redux";
+function ShowUserInfo() {
+  const { userInfo } = useSelector((state) => state.info);
   return (
     <Box
       as="aside"
@@ -16,7 +16,7 @@ function ShowUserInfo({ user }) {
       borderColor="brand.light"
       style={{ transform: "translateY(-100px)" }}
     >
-      <Profile user={user} />
+      <Profile user={userInfo} />
       <Data />
     </Box>
   );

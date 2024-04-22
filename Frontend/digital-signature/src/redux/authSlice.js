@@ -5,7 +5,6 @@ import AuthService from "../services/auth.service";
 
 const user = AuthService.getCurrentUser();
 
-console.log(user);
 export const signUp = createAsyncThunk(
   "auth/signUp",
   async (
