@@ -12,7 +12,7 @@ const app = express()
 app.use(cors({
     origin: '*'
 }))
-app.use(helmet())
+// app.use(helmet())
 app.use(function (req, res, next) {
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-site')
     next()
