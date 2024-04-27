@@ -5,7 +5,7 @@ const router = express.Router()
 
 
 router.use('/access', require('./access'))
-router.use('/certificate', require('./certificate').router)
+router.use('/certificate', require('./certificate'))
 router.use('/subscription', require('./subscription'))
 router.use('/public', express.static(path.join(process.cwd() , 'upload')))
 module.exports = router

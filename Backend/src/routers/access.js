@@ -3,8 +3,27 @@ const AccessController = require("../controllers/access.controller");
 const asyncHandler = require("../utils/asyncHandler");
 const authentication = require("../middlewares/authentication");
 const refreshTokenAuth = require("../middlewares/refreshTokenAuth");
-const {upload} = require('./certificate')
 const router = express.Router();
+
+
+const multer = require('multer')
+const storage = multer.diskStorage({
+    destination: 'upload/',
+    filename: (req, file, cb) => {
+        const arr = file.originalname.split('.')
+        const suffix = '.' + arr[arr.length - 1]
+        const name = Date.now() + '-' + Math.round(Math.random() * 1E9) + suffix
+        cb(null, name)
+    }
+})
+const upload = multer({
+    storage, fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png')
+            cb(null, true)
+        else cb(new Error('Only images is allowed'), false)
+    }
+})
+
 
 //routers for sign up
 router.post("/signup", asyncHandler(AccessController.signUp));

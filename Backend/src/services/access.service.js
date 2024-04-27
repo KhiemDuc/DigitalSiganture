@@ -12,6 +12,9 @@ const Certificate = require('../models/certificate.model')
 const Subscription = require('../models/subscription.model')
 const cacheService = require('./cache.service')
 const crypto = require('crypto')
+
+
+
 class AccessService {
     static singUp = async ({ email, userName, password, firstName, lastName }) => {
 
@@ -153,9 +156,7 @@ class AccessService {
             throw new BadRequestError('Change user info failed', 'Missing information')
         } 
         const foundInfo = await UserInfo.findById(user.userInfo)
-        // check CCCD
 
-        //end check
         foundInfo.firstName = firstName
         foundInfo.lastName = lastName
         foundInfo.CCCD = CCCD
@@ -164,6 +165,7 @@ class AccessService {
         foundInfo.dateOfBirth = dateOfBirth
         foundInfo.placeOfOrigin = placeOfOrigin
         foundInfo.nationality = nationality
+        foundInfo.verified = true
         try {
             await foundInfo.save()
         } catch(err) {

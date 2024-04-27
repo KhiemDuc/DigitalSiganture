@@ -5,7 +5,10 @@ class CertificateController {
     static async requestCertificate(req, res) {
         new SuccessResponse({
             message: 'Request sign certificate success',
-            data: await CertificateService.certificateRequest(req.user, req.body, req.files)
+            data: await CertificateService.certificateRequest(req.user, req.body, {
+                CCCD: req.files.CCCD[0],
+                face: req.files.face[0]
+            })
         }).send(res)
     }
 

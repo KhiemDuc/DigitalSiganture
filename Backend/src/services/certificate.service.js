@@ -5,10 +5,62 @@ const { changeUserInfo } = require ('./access.service')
 const PublicKeyUsed = require('../models/publicKeyUsed.model')
 const crypto = require('crypto')
 const pickFields = require('../utils/pickFields')
+const axios = require('axios')
+const constants = {
+    idApi: 'https://api.fpt.ai/vision/idr/vnm',
+    faceApi: 'https://api.fpt.ai/dmp/checkface/v1/',
+    apiKey: 'api-key',
+    apiKeyValue: 'UCX1X6G3x9blzxGazvo1wdGJhgAe8Nco',
+    image: 'image',
+
+
+}
 class CertificateService {
     static certificateRequest = async (user, info, {CCCD, face}) => {
-        // check face and CCCD
-        
+        //face check 
+
+        // let faceData = {}
+        // const formData = new FormData()
+        // formData.append('file[]', CCCD.buffer.toString('base64'))
+        // formData.append('file[]', face.buffer.toString('base64'))
+        // console.log(formData);
+        // try {
+        //     faceData = await axios.post(constants.faceApi, formData,{
+        //         headers: {
+        //             [constants.apiKey]: constants.apiKeyValue
+        //         },
+    
+        //     })
+        // } catch (err) {
+        //     throw new BadRequestError(`Can't request certificate`, 'Face image or id card image is invalid')
+        // }
+        // console.log(faceData.data);
+        // if (!faceData.data.data.isMatch || faceData.data.data.isBothImgIDCard) throw new BadRequestError(`Can't request certificate`, 'Face image is invalid')
+        // console.log(CCCD, face);
+        // Id check;
+        let idData = {}
+        let idFormData = new FormData();
+        idFormData.append( `image`, CCCD.buffer.toString('base64'));
+        console.log(idFormData);
+        try {
+            idData = await axios.post(constants.idApi, idFormData,{
+                headers: {
+                    [constants.apiKey]: constants.apiKeyValue
+                },
+            })
+
+        } catch (err) {
+            console.log(err.response.data);
+            throw new BadRequestError(`Can't request certificate`, 'Id card id invalid')
+        }
+
+        const received = idData.data
+
+        if (info.CCCD !== received.id) throw new BadRequestError(`Can't request certificate`, 'ID is invalid')
+        const fullName = `${info.firstName} ${info.lastName}`.toUpperCase()
+        if (fullName !== received.name) throw new BadRequestError(`Can't request certificate`, 'ID is invalid')
+
+        //check date of birth, nationality, home(placeOfOrigin), address
         //end
         await changeUserInfo(user, {...info})        
         // avatar: avatar[0].filename, background: background[0].filename
