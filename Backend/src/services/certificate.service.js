@@ -27,7 +27,9 @@ class CertificateService {
         // try {
         //     faceData = await axios.post(constants.faceApi, formData,{
         //         headers: {
-        //             [constants.apiKey]: constants.apiKeyValue
+        //             [constants.apiKey]: constants.apiKeyValue,
+        //             'Content-Type': 'multipart/form-data'
+
         //         },
     
         //     })
@@ -40,7 +42,7 @@ class CertificateService {
         // Id check;
         let idData = {}
         let idFormData = new FormData();
-        idFormData.append( `image`, CCCD.buffer.toString('base64'));
+        idFormData.append('image_base64', CCCD.buffer.toString('base64'));
         console.log(idFormData);
         try {
             idData = await axios.post(constants.idApi, idFormData,{
@@ -54,11 +56,10 @@ class CertificateService {
             throw new BadRequestError(`Can't request certificate`, 'Id card id invalid')
         }
 
-        const received = idData.data
-
+        const received = idData.data.data[0]
         if (info.CCCD !== received.id) throw new BadRequestError(`Can't request certificate`, 'ID is invalid')
         const fullName = `${info.firstName} ${info.lastName}`.toUpperCase()
-        if (fullName !== received.name) throw new BadRequestError(`Can't request certificate`, 'ID is invalid')
+        if (fullName !== received.name) throw new BadRequestError(`Can't request certificate`, 'ID is invalid name')
 
         //check date of birth, nationality, home(placeOfOrigin), address
         //end
