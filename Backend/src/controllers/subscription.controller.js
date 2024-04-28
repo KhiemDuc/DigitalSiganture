@@ -1,5 +1,5 @@
 const { SuccessResponse } = require('../core/success.response')
-const SubscriptionService = require('../services/subscription.service')
+const SubscriptionService = require('../services/legacy.subscription.service')
 
 class Subscription {
     static async postToken(req, res) {

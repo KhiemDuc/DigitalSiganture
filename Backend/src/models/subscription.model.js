@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const SubscriptionHistorySchema = new mongoose.Schema({
-    plan: {
+    name: {
         type: String,
         enum: ['student', 'pro', 'standard'],
         default: 'standard'
@@ -20,7 +20,11 @@ const SubscriptionHistorySchema = new mongoose.Schema({
 })
 
 const subscriptionSchema = new mongoose.Schema({
-    plan: {
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
+    },
+    currentPlan: {
         type: SubscriptionHistorySchema,
         default: () => new SubscriptionHistorySchema()
     },

@@ -1,48 +1,44 @@
-const { BadRequestError, InternalServerError } = require('../core/error.response')
-const Subscription = require('../models/subscription.model')
-const {getSubToken, putSubToken, delSubToken} = require('./cache.service')
+const { putOTP, getOTP } = require('./cache.service')
+const { sendMail } = require('./email.service')
+const { generateOTP } = require('./otp.service')
+const getRandomToken = require('../utils/getRandomToken')
+const { ForbiddenError, BadRequestError } = require('../core/error.response')
 
-const paymentAppLink = process.env.SHORT_LINK
-
-const PRICE = {
-    'pro': 150000
+const constants = {
+    student: 'student',
+    eduEmailExtension: '@thanglong.edu.vn'
 }
-
-const ROW_FIELD = {
-    description: 'Mô tả',
-    invoiceId: 'Mã giao dịch',
-    value: 'Giá trị',
-    date: 'Ngày diễn ra',
-    account: 'Số tài khoản'
-}
-
-
 class SubscriptionService {
-    static postToken(user, token, plan) {
-        if (!token) throw new BadRequestError('Post token failed', 'Token is not found')
-        putSubToken(user._id, token,  plan)
-        return 'Send token success'
+    static async studentSub({ user, studentInfo }) {   
+        // check student info 
+
+        // end check 
+
+        //send mail to student
+        const eduMail = studentInfo.studentId + constants.eduEmailExtension
+        const OTP = generateOTP()
+        sendMail({
+            to: eduMail,
+            OTP: OTP,
+            edu: true
+        })
+
+        const token = getRandomToken()
+        // store OTP to cache
+        putOTP(token, { userId: user._id, OTP: OTP }, constants.student)
+        //return 
+        return { token }
     }
 
-    static async getSubState(user) {
-        const token = getSubToken(user._id)
-        if (!token) throw new BadRequestError('Token is not valid')
-        const response = await fetch(paymentAppLink)
-        const data = (await response.json()).data
-        const result = data.find(e => e[ROW_FIELD.description] === token.token)
-        let valid = false
-        if (!result) return false
-        if (PRICE[token.plan] <= result[ROW_FIELD.value]) 
-        {
-            valid = true 
-            
-        }
-        //valid: push to db
-        
-        //return
-        return valid
-        // return (data.data.findIndex(e => e['Mô tả'] === token.token) !== -1)
+    static async studentVerify({user, OTP, token}) { 
+        const storedOTP = getOTP(token, constants.student)
+        if (!storedOTP) throw new BadRequestError('Verify student failed', 'Token is invalid')
+        if (user._id !== storedOTP.userId ) throw new ForbiddenError('Verify student failed', 'Access denied')
+        if (OTP !== storedOTP.OTP) throw new BadRequestError('Verify student failed', 'OTP is invalid')
+        return 'Verify student success'
     }
+
+    
 }
 
 

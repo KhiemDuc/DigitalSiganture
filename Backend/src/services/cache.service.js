@@ -2,6 +2,38 @@ const NodeCache = require('node-cache')
 const cache = new NodeCache();
 
 
+/* 
+cache : {
+    OTPs: {
+        type: string,
+        ...data(value)
+    },
+    tokens: {
+        token1: userId1,
+        token2: userId2,
+    },
+    subscriptions: {
+        userId1: {
+            token: string,
+            plan: string
+        },
+        userId2: {
+            token: string,
+            plan: string
+        }
+    }
+}
+*/
+
+
+/**
+ * 
+ * @param {string} token 
+ * @param {{}} value 
+ * @param {string} type 
+ * @returns {Object}
+ */
+
 const putOTP = (token, value, type) => {
     let otpCache = cache.get('OTPs');
     if (otpCache === undefined) otpCache = {}
@@ -55,24 +87,24 @@ const delToken = (token) => {
 }
 
 const getSubToken = (userId) =>  {
-    let cached = cache.get('subscription')
+    let cached = cache.get('subscriptions')
     if (cached === undefined) cached = {}
     return cached[userId]
 }
 
 const putSubToken = (userId, token, plan) => {
-    let cached = cache.get('subscription')
+    let cached = cache.get('subscriptions')
     if (cached === undefined) cached = {} 
     cached[userId] = {token, plan};
-    cache.set('subscription', {...cached})
+    cache.set('subscriptions', {...cached})
     return true
 }
 
 const delSubToken = (userId) => {
-    let cached = cache.get('subscription')
+    let cached = cache.get('subscriptions')
     if (cached === undefined) cached = {} 
     delete cached[userId]
-    cache.set('subscription', {...cached})
+    cache.set('subscriptions', {...cached})
     return true
 }
 
