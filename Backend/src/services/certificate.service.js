@@ -19,26 +19,24 @@ class CertificateService {
     static certificateRequest = async (user, info, {CCCD, face}) => {
         //face check 
 
-        // let faceData = {}
-        // const formData = new FormData()
-        // formData.append('file[]', CCCD.buffer.toString('base64'))
-        // formData.append('file[]', face.buffer.toString('base64'))
-        // console.log(formData);
-        // try {
-        //     faceData = await axios.post(constants.faceApi, formData,{
-        //         headers: {
-        //             [constants.apiKey]: constants.apiKeyValue,
-        //             'Content-Type': 'multipart/form-data'
+        let faceData = {}
+        const formData = new FormData()
+        formData.append('file[]', CCCD.buffer.toString('base64'))
+        formData.append('file[]', face.buffer.toString('base64'))
+        console.log(formData);
+        try {
+            faceData = await axios.post(constants.faceApi, formData,{
+                headers: {
+                    [constants.apiKey]: constants.apiKeyValue,
+                    'Content-Type': 'multipart/form-data'
 
-        //         },
+                },
     
-        //     })
-        // } catch (err) {
-        //     throw new BadRequestError(`Can't request certificate`, 'Face image or id card image is invalid')
-        // }
-        // console.log(faceData.data);
-        // if (!faceData.data.data.isMatch || faceData.data.data.isBothImgIDCard) throw new BadRequestError(`Can't request certificate`, 'Face image is invalid')
-        // console.log(CCCD, face);
+            })
+        } catch (err) {
+            throw new BadRequestError(`Can't request certificate`, 'Face image or id card image is invalid')
+        }
+        if (!faceData.data.data.isMatch || faceData.data.data.isBothImgIDCard) throw new BadRequestError(`Can't request certificate`, 'Face image is invalid')
         // Id check;
         let idData = {}
         let idFormData = new FormData();
@@ -52,7 +50,6 @@ class CertificateService {
             })
 
         } catch (err) {
-            console.log(err.response.data);
             throw new BadRequestError(`Can't request certificate`, 'Id card id invalid')
         }
 
