@@ -3,13 +3,17 @@ const { sendMail } = require('./email.service')
 const { generateOTP } = require('./otp.service')
 const getRandomToken = require('../utils/getRandomToken')
 const { ForbiddenError, BadRequestError } = require('../core/error.response')
-
+const Subscription = require('../models/subscription.model')
+const plansModel = require('../models/plans.model')
 const constants = {
     student: 'student',
     eduEmailExtension: '@thanglong.edu.vn'
 }
 class SubscriptionService {
     static async studentSub({ user, studentInfo }) {   
+        const studentPlan = await plansModel.findOne({name: constants.student})
+        const foundSubscription = await Subscription.findById(user.subscription)
+        if (foundSubscription.plan.toString() === studentPlan._id.toString()) throw new BadRequestError('Can not subscribe student plan', 'You are already subscribe it')
         // check student info 
 
         // end check 
@@ -25,7 +29,7 @@ class SubscriptionService {
 
         const token = getRandomToken()
         // store OTP to cache
-        putOTP(token, { userId: user._id, OTP: OTP }, constants.student)
+        putOTP(token, { userId: user._id.toString(), OTP: OTP }, constants.student)
         //return 
         return { token }
     }
@@ -33,8 +37,23 @@ class SubscriptionService {
     static async studentVerify({user, OTP, token}) { 
         const storedOTP = getOTP(token, constants.student)
         if (!storedOTP) throw new BadRequestError('Verify student failed', 'Token is invalid')
-        if (user._id !== storedOTP.userId ) throw new ForbiddenError('Verify student failed', 'Access denied')
+        if (user._id.toString() !== storedOTP.userId ) throw new ForbiddenError('Verify student failed', 'Access denied')
         if (OTP !== storedOTP.OTP) throw new BadRequestError('Verify student failed', 'OTP is invalid')
+
+        // add student subscription to db
+        const foundSubscription = await Subscription.findById(user.subscription)
+        const foundPlan = await plansModel.findOne({name: 'student'})
+        
+        const subscriptionHistory = {}
+        subscriptionHistory.plan = foundSubscription.plan
+        subscriptionHistory.start = foundSubscription.start
+        subscriptionHistory.end = foundSubscription.end
+        foundSubscription.history.push(subscriptionHistory)
+
+        foundSubscription.plan = foundPlan._id
+        foundSubscription.start = Date.now()    
+
+        await foundSubscription.save()
         return 'Verify student success'
     }
 

@@ -65,7 +65,7 @@ class AccessService {
             email, firstName, lastName, phoneNumber
         })
         const cert = await Certificate.create({userId: newUser._id})
-        const subscription = await Subscription.create()
+        const subscription = await Subscription.create({user: newUser})
         newUser.userInfo = userInfo._id
         newUser.refreshToken = tokens.refreshToken
         newUser.certificate = cert
