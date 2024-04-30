@@ -1,6 +1,3 @@
-class PaymentService {
-    
-}
+class PaymentService {}
 
-
-module.exports = PaymentService
+module.exports = PaymentService;

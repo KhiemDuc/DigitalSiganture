@@ -1,25 +1,28 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const certRequestSchema = new mongoose.Schema({
+const certRequestSchema = new mongoose.Schema(
+  {
     publicKey: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     firstName: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     lastName: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
-    }
-}, {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
+  },
+  {
     timestamps: true,
-    collection: 'CertRequests'
-})
+    collection: "CertRequests",
+  }
+);
 
-module.exports = mongoose.model('CertRequest', certRequestSchema)
+module.exports = mongoose.model("CertRequest", certRequestSchema);

@@ -1,48 +1,49 @@
-const express = require('express')
-const helmet = require('helmet')
-const morgan = require('morgan')
-const cors = require('cors')
-const swaggerDocs = require('../swagger')
-const {NotFoundError} = require('./core/error.response')
-require('./db/init.mongo')
+const express = require("express");
+const helmet = require("helmet");
+const morgan = require("morgan");
+const cors = require("cors");
+const swaggerDocs = require("../swagger");
+const { NotFoundError } = require("./core/error.response");
+require("./db/init.mongo");
 
-const app = express() 
+const app = express();
 
 //app middlewares
-app.use(cors({
-    origin: '*'
-}))
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 // app.use(helmet())
 app.use(function (req, res, next) {
-    res.setHeader('Cross-Origin-Resource-Policy', 'cross-site')
-    next()
-})
-app.use(morgan('dev'))
-app.use(express.json())
-app.use(express.urlencoded({extended:false}))
+  res.setHeader("Cross-Origin-Resource-Policy", "cross-site");
+  next();
+});
+app.use(morgan("dev"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // app routers
-app.use(require('./routers'))
+app.use(require("./routers"));
 
 // 404 error handler
 
-swaggerDocs(app)
-
+swaggerDocs(app);
 
 app.use((req, res, next) => {
-    const err = new NotFoundError('Page Not Found')
-    next(err)
-})
+  const err = new NotFoundError("Page Not Found");
+  next(err);
+});
 
 //app error handler
 app.use((err, req, res, next) => {
-    const status = err.status || 500
-    return res.status(status).json({
-        message: err.message || 'Internal server error',
-        reason: err.reason,
-        path: req.url,
-        stack: status === 500 ? err.stack : undefined
-    })
-})
+  const status = err.status || 500;
+  return res.status(status).json({
+    message: err.message || "Internal server error",
+    reason: err.reason,
+    path: req.url,
+    stack: status === 500 ? err.stack : undefined,
+  });
+});
 
-module.exports = app
+module.exports = app;

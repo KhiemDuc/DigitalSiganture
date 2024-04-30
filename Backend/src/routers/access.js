@@ -5,25 +5,24 @@ const authentication = require("../middlewares/authentication");
 const refreshTokenAuth = require("../middlewares/refreshTokenAuth");
 const router = express.Router();
 
-
-const multer = require('multer')
+const multer = require("multer");
 const storage = multer.diskStorage({
-    destination: 'upload/',
-    filename: (req, file, cb) => {
-        const arr = file.originalname.split('.')
-        const suffix = '.' + arr[arr.length - 1]
-        const name = Date.now() + '-' + Math.round(Math.random() * 1E9) + suffix
-        cb(null, name)
-    }
-})
+  destination: "upload/",
+  filename: (req, file, cb) => {
+    const arr = file.originalname.split(".");
+    const suffix = "." + arr[arr.length - 1];
+    const name = Date.now() + "-" + Math.round(Math.random() * 1e9) + suffix;
+    cb(null, name);
+  },
+});
 const upload = multer({
-    storage, fileFilter: (req, file, cb) => {
-        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png')
-            cb(null, true)
-        else cb(new Error('Only images is allowed'), false)
-    }
-})
-
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png")
+      cb(null, true);
+    else cb(new Error("Only images is allowed"), false);
+  },
+});
 
 //routers for sign up
 router.post("/signup", asyncHandler(AccessController.signUp));
@@ -48,8 +47,15 @@ router.use(authentication);
 router.get("/:id", asyncHandler(AccessController.getUserInfo));
 router.post("/logout", asyncHandler(AccessController.logout));
 // router.put('/:id', asyncHandler(AccessController.))
-router.post('/change-password', asyncHandler(AccessController.changePassword))
-router.post('/avatar', upload.single('avatar'), asyncHandler(AccessController.changeAvatar))
-router.post('/background', upload.single('background'), asyncHandler(AccessController.changeBackground))
-module.exports = router
-
+router.post("/change-password", asyncHandler(AccessController.changePassword));
+router.post(
+  "/avatar",
+  upload.single("avatar"),
+  asyncHandler(AccessController.changeAvatar)
+);
+router.post(
+  "/background",
+  upload.single("background"),
+  asyncHandler(AccessController.changeBackground)
+);
+module.exports = router;

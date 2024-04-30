@@ -1,13 +1,16 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const publicKeyUsedSchema = new mongoose.Schema({
+const publicKeyUsedSchema = new mongoose.Schema(
+  {
     publicHashed: {
-        type: String,
-        required: true
-    }
-}, {
+      type: String,
+      required: true,
+    },
+  },
+  {
     timestamps: true,
-    collection: 'PublicKeyUsed'
-})
+    collection: "PublicKeyUsed",
+  }
+);
 
-module.exports = mongoose.model('PublicKeyUsed', publicKeyUsedSchema)
+module.exports = mongoose.model("PublicKeyUsed", publicKeyUsedSchema);
