@@ -1,65 +1,64 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const UserInfoSchema = new mongoose.Schema({
+const UserInfoSchema = new mongoose.Schema(
+  {
     firstName: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     lastName: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     email: {
-        type: String,
-        match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+      type: String,
+      match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
     },
     phoneNumber: {
-        type: String,
-        match: /^0\d{9}$/
+      type: String,
+      match: /^0\d{9}$/,
     },
     address: {
-        type: String,
-        default: null
+      type: String,
+      default: null,
     },
     CCCD: {
-        type: String,
-        match: /^0\d{11}$/,
-        default: ''
+      type: String,
+      match: /^0\d{11}$/,
+      default: "",
     },
     gender: {
-        type: String,
-        enum: ['Male', 'Female'],
-        default: null
+      type: String,
+      enum: ["Male", "Female"],
+      default: null,
     },
     dateOfBirth: {
-        type: Date,
-        default: null
+      type: Date,
+      default: null,
     },
     nationality: {
-        type: String,
-        default: 'Việt Nam'
+      type: String,
+      default: "Việt Nam",
     },
     placeOfOrigin: {
-        type: String,
-        default: null
+      type: String,
+      default: null,
     },
     avatar: {
-        type: String,
+      type: String,
     },
     background: {
-        type: String,
-    }, 
-    verified : {
-        type: Boolean,
-        default: false
-    }
-}, {
+      type: String,
+    },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
     timestamps: true,
-    collection: 'UserInfo'
-})
+    collection: "UserInfo",
+  }
+);
 
-module.exports = mongoose.model('UserInfo', UserInfoSchema)
-
-
-
-
+module.exports = mongoose.model("UserInfo", UserInfoSchema);
