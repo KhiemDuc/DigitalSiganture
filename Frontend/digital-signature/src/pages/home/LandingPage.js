@@ -24,7 +24,7 @@ import { getUserInfo } from "../../redux/infoSlice";
 import { clearMessage } from "../../redux/message";
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
-import { showToast, ToastType } from "../../utils/toast";
+import { showToast, ToastType } from "../../common/toast";
 import { useNavigate } from "react-router-dom";
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {

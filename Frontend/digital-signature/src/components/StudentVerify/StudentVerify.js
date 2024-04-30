@@ -18,13 +18,19 @@ import {
 import ProvinceAPI from "../../common/Provinces.VN";
 import ReactSelect from "react-select";
 import axios from "../../setup/axios";
+import { theme } from "../../helpers/userInfoTheme";
+import { ChakraProvider } from "@chakra-ui/react";
+import BackHome from "../BackHome";
+import { Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-function RequestForm() {
+function StudentVerify() {
   const [imgCCCD, setImgCCCD] = useState(null);
   const [toggle, setToggle] = useState(true);
   const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
   const fileValidate = useDisclosure();
   const [showFormControls, setShowFormControls] = React.useState(false);
+  const navigate = useNavigate();
 
   const changeProfileImage = (event) => {
     const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg"];
@@ -86,52 +92,16 @@ function RequestForm() {
     stopCamera();
   };
 
-  const [provinces, setProvinces] = useState([]);
-  const [provinceID, setProvinceID] = useState(null);
-  const [districts, setDistricts] = useState([]);
-  const [districtID, setDistrictID] = useState(null);
-  const [wards, setWards] = useState([]);
-
-  React.useEffect(() => {
-    ProvinceAPI.getListProvinces()
-      .then((response) => {
-        setProvinces(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error!", error);
-      });
-  }, []);
-
-  const provinceSelectRef = React.useRef();
-  const wardSelectRef = React.useRef();
-
-  React.useEffect(() => {
-    if (!provinceID) return;
-    ProvinceAPI.getAllDistrictsFromProvince(provinceID)
-      .then((response) => {
-        setDistricts(response.data.districts);
-      })
-      .catch((error) => {
-        console.error("There was an error!", error);
-      });
-  }, [provinceID]);
-
-  React.useEffect(() => {
-    if (!districtID) return;
-    ProvinceAPI.getAllWardsFromDistrict(districtID)
-      .then((response) => {
-        setWards(response.data.wards);
-      })
-      .catch((error) => {
-        console.error("There was an error!", error);
-      });
-  }, [districtID]);
-
   return (
-    <>
+    <ChakraProvider theme={theme}>
+      <h4 style={{ textAlign: "left", margin: "120px 0 0 60px" }}>
+        Mở khóa ưu đãi chỉ dành cho sinh viên TLU
+      </h4>
+      <BackHome />
       <Grid
         templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(2, 1fr)" }}
         gap={4}
+        padding={"60px"}
       >
         {!showFormControls && (
           <>
@@ -171,57 +141,27 @@ function RequestForm() {
             </FormControl>
 
             <FormControl id="emailAddress">
-              <FormLabel>Email Address</FormLabel>
+              <FormLabel>Email do nhà trường cấp</FormLabel>
               <Input
                 focusBorderColor="brand.blue"
                 type="email"
-                placeholder="khimback@knb.com"
+                placeholder="khimback@thanglong.edu.vn"
               />
             </FormControl>
-
-            <FormControl id="province">
-              <FormLabel>Tỉnh, Thành Phố Trực Thuộc Trung Ương</FormLabel>
-              <ReactSelect
-                id="province"
-                options={provinces.map((province) => ({
-                  value: province.code,
-                  label: province.name,
-                }))}
-                isSearchable
-                onChange={(selectedOption) => {
-                  setProvinceID(selectedOption.value); // Log label của tùy chọn được chọn
-                  provinceSelectRef.current.focus();
-                }}
+            <FormControl id="Msv">
+              <FormLabel>Mã Sinh Viên</FormLabel>
+              <Input
+                focusBorderColor="brand.blue"
+                type="text"
+                placeholder="A40953"
               />
             </FormControl>
-
-            <FormControl id="district">
-              <FormLabel>Quận, Huyện, Thành Phố</FormLabel>
-              <ReactSelect
-                ref={provinceSelectRef}
-                id="district"
-                options={districts.map((district) => ({
-                  value: district.code,
-                  label: district.name,
-                }))}
-                isSearchable
-                onChange={(selectedOption) => {
-                  setDistrictID(selectedOption.value); // Log label của tùy chọn được chọn
-                  wardSelectRef.current.focus();
-                }}
-              />
-            </FormControl>
-
-            <FormControl id="wards">
-              <FormLabel>Phường, Xã</FormLabel>
-              <ReactSelect
-                ref={wardSelectRef}
-                id="ward"
-                options={wards.map((ward) => ({
-                  value: ward.code,
-                  label: ward.name,
-                }))}
-                isSearchable
+            <FormControl id="class">
+              <FormLabel>Lớp</FormLabel>
+              <Input
+                focusBorderColor="brand.blue"
+                type="text"
+                placeholder="TT33H7"
               />
             </FormControl>
           </>
@@ -347,41 +287,18 @@ function RequestForm() {
             </FormControl>
           </>
         )}
-        <FormControl
-          id="btn-next"
-          style={{
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "flex-end",
-          }}
-        >
-          <Button onClick={() => setShowFormControls(!showFormControls)}>
-            {showFormControls ? "Quay lại" : "Tiếp tục"}
-          </Button>
-        </FormControl>
       </Grid>
       <Box mt={5} py={5} px={8} borderTopWidth={1} borderColor="brand.light">
         <Button
           onClick={() => {
-            const formData = new FormData();
-            formData.append("cccd", imgCCCD);
-            formData.append("face", imgCCCD);
-            console.log(formData);
-            axios
-              .post("/certificate/", formData)
-              .then((response) => {
-                console.log(response);
-              })
-              .catch((error) => {
-                console.error(error);
-              });
+            navigate("/otp_student_verify");
           }}
         >
           Tiếp tục
         </Button>
       </Box>
-    </>
+    </ChakraProvider>
   );
 }
 
-export default RequestForm;
+export default StudentVerify;

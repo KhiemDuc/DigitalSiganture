@@ -11,6 +11,10 @@ import UserInfo from "../pages/user_info/UserInfo";
 import Checkout from "../pages/checkout/Checkout";
 import SearchUser from "../pages/search_user/SearchUser";
 import RequestSignature from "./../pages/request_sign/RequestSignature";
+import ViewPdf from "./../pages/view_pdf/view_pdf";
+import Test from "./../pages/test.js/test";
+import StudentVerify from "../components/StudentVerify/StudentVerify";
+import { otpHandle } from "../pages/otp_verifi/OtpVerifi";
 
 const Routes = () => {
   const { isLoggedIn } = useSelector((state) => state.auth);
@@ -33,6 +37,10 @@ const Routes = () => {
       path: "request",
       element: <RequestSignature />,
     },
+    {
+      path: "pdf",
+      element: <Test />,
+    },
   ];
 
   // Define routes accessible only to authenticated users
@@ -48,6 +56,16 @@ const Routes = () => {
         {
           path: "/user_info/:id",
           element: <UserInfo />,
+        },
+        {
+          path: "/subscription/student_verify/",
+          element: <StudentVerify />,
+        },
+        {
+          path: "/otp_student_verify",
+          element: (
+            <OTPVerifi otpHandle={otpHandle.OTP_SUBSCRIPTION_STUDNET_VERIFY} />
+          ),
         },
       ],
     },
@@ -65,7 +83,7 @@ const Routes = () => {
     },
     {
       path: "/sign_up/otp_verifi/:tokenSignUp",
-      element: <OTPVerifi otpHandle={"otp_signup"} />,
+      element: <OTPVerifi otpHandle={otpHandle.OTP_SIGNUP} />,
     },
     {
       path: "/forgot_password/search_user",
@@ -74,7 +92,7 @@ const Routes = () => {
 
     {
       path: "/forgot_password/search_user/confirm/:tokenForgot",
-      element: <OTPVerifi otpHandle={"otp_forgot_password"} />,
+      element: <OTPVerifi otpHandle={otpHandle.OTP_FORGOT_PASSWORD} />,
     },
     {
       path: "/forgot_password/new_password/:tokenNewPass",
