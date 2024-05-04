@@ -17,6 +17,10 @@ const planSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    tier: {
+      type: Number,
+      default: 1,
+    },
   },
   {
     timestamps: true,

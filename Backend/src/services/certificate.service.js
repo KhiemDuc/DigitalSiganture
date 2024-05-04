@@ -90,6 +90,7 @@ class CertificateService {
 
     return pickFields(newReq._doc, ["publicKey", "firstName", "lastName"]);
   };
+
   static getCertRequests = async () => {
     return await CertRequest.find({});
   };

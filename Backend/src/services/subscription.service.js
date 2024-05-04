@@ -5,13 +5,7 @@ const getRandomToken = require("../utils/getRandomToken");
 const { ForbiddenError, BadRequestError } = require("../core/error.response");
 const Subscription = require("../models/subscription.model");
 const plansModel = require("../models/plans.model");
-const PayOS = require("@payos/node");
-
-const payOS = new PayOS(
-  "26e4e1a6-19d9-45cf-829a-a835cfd8e129",
-  "3680cfc7-2ca6-45e7-a32f-ce91d914eb5b",
-  "371d27e82ad3a0a9b67064891973bb53ff23f67bf65cc5486f3e79d15c7bf9ca"
-);
+const { createPayment } = require("./payment.service");
 
 const constants = {
   student: "student",
@@ -76,6 +70,20 @@ class SubscriptionService {
     const foundPlan = await plansModel.findById(planId);
     if (!foundPlan)
       throw new BadRequestError("Subscribe plan failed", "Plan is invalid");
+    const userSubscription = await Subscription.findById(user.subscription);
+    if (userSubscription.plan.toString() === foundPlan._id.toString()) {
+      throw new BadRequestError(
+        "Can not subscribe plan",
+        "You are already subscribe it"
+      );
+    }
+    if (userSubscription.tier >= foundPlan.tier) {
+      throw new BadRequestError(
+        "Subscribe plan failed",
+        "You subscribed to better plan"
+      );
+    }
+    return createPayment({ user, planId });
   }
 }
 

@@ -1,5 +1,4 @@
 const { SuccessResponse } = require("../core/success.response");
-const _SubscriptionService = require("../services/legacy.subscription.service");
 const SubscriptionService = require("../services/subscription.service");
 class Subscription {
   static async postToken(req, res) {
@@ -33,6 +32,16 @@ class Subscription {
         user: req.user,
         OTP: req.body.OTP,
         token: req.headers.token,
+      }),
+    }).send(res);
+  }
+
+  static async subscribePlan(req, res) {
+    new SuccessResponse({
+      message: "Subscribe plan success",
+      data: await SubscriptionService.subscribePlan({
+        user: req.user,
+        planId: req.body.planId,
       }),
     }).send(res);
   }

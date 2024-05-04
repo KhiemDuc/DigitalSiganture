@@ -352,6 +352,16 @@ class AccessService {
     );
     return newInfo._doc.background;
   }
+
+  static async getListUser() {
+    const user = await User.find({}).populate("userInfo");
+    return user._doc;
+  }
+
+  // static async unActivateUser(id) {
+  //   const id = await User.findById(id);
+
+  // }
 }
 
 module.exports = AccessService;
