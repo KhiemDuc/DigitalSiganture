@@ -76,7 +76,7 @@ export default function AccountMenu() {
             overlap="circular"
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             badgeContent={
-              userInfo?.verify && (
+              userInfo?.verified && (
                 <SmallIcon sx={{ backgroundColor: "white" }} />
               )
             }
@@ -133,7 +133,7 @@ export default function AccountMenu() {
             {currentUser.userName[0]}
           </Avatar>
           {userInfo?.firstName + " " + userInfo?.lastName}
-          {userInfo?.verify && (
+          {userInfo?.verified && (
             <Tooltip
               sx={{ marginLeft: "8px" }}
               title="Tài Khoản đã được xác thực"

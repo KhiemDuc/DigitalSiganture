@@ -20,12 +20,13 @@ const tiers = [
     buttonText: "Đăng ký miễn phí",
     buttonVariant: "outlined",
     checkoutID: 1,
+    buttonLink: "subscription/student_verify",
   },
 
   {
     title: "Chuyên nghiệp",
     subheader: "Recommended",
-    price: "15",
+    price: "100.000",
     description: [
       "2 Chứng chỉ số",
       "Cấp lại ngay khi chứng chỉ hết hạn",
@@ -37,26 +38,21 @@ const tiers = [
     buttonText: "Bắt đầu ngay",
     buttonVariant: "contained",
     checkoutID: 2,
+    buttonLink: "subscription/student_verify",
   },
   {
     title: "Sinh Viên Thang Long University",
     price: "0",
     description: [
       "1 Chứng chỉ số",
+      "Cấp lại ngay khi chứng chỉ hết hạn",
       "Thời hạn đến khi ra trường",
       "Trung tâm hỗ trợ sinh viên",
       "Hỗ trợ qua email",
     ],
     buttonText: "Đăng ký xác nhận sinh viên",
     buttonVariant: "outlined",
-  },
-  {
-    title: "Doanh nghiệp",
-    price: "30",
-    description: ["Liên hệ với chúng tôi để nhận thông tin chi tiết"],
-    buttonText: "Liên hệ với chúng tôi",
-    buttonVariant: "outlined",
-    checkoutID: 3,
+    buttonLink: "subscription/student_verify",
   },
 ];
 
@@ -153,10 +149,10 @@ export default function Pricing() {
                   }}
                 >
                   <Typography component="h3" variant="h2">
-                    ${tier.price}
+                    {tier.price}
                   </Typography>
                   <Typography component="h3" variant="h6">
-                    &nbsp; per month
+                    &nbsp;vnd/ tháng
                   </Typography>
                 </Box>
                 <Divider
@@ -204,7 +200,7 @@ export default function Pricing() {
                 <Link
                   fullWidth
                   variant={tier.buttonVariant}
-                  to={"/checkout/" + tier.checkoutID}
+                  to={tier.buttonLink}
                   className="btn btn-primary rounded-pill"
                 >
                   {tier.buttonText}

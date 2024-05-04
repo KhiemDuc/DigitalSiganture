@@ -19,9 +19,8 @@ const items = [
     title: "Đăng ký chứng chỉ số",
     description:
       "Điền thông tin cá nhân và xác thực mặt và căn cước công dân để đăng ký chữ ký số và chứng chỉ số.",
-    imageLight:
-      'url("/static/images/templates/templates-images/dash-light.png")',
-    imageDark: 'url("/static/images/templates/templates-images/dash-dark.png")',
+    imageLight: 'url("/static/img/request_sign.png")',
+    imageDark: 'url("/static/img/request_sign.png")',
   },
   {
     icon: <FingerprintIcon />,

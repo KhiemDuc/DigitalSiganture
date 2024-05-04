@@ -1,11 +1,10 @@
+import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 
-import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
-
-import RequestForm from './RequestForm'
-import RequestTicket from './RequestTicket'
+import RequestForm from "./RequestForm";
+import RequestTicket from "./RequestTicket";
 
 const RequestNavigate = () => {
-  const tabs = ['Đăng Ký Chứng Chỉ Số', 'Xem vé yêu cầu']
+  const tabs = ["Đăng Ký Chứng Chỉ Số", "Xem vé yêu cầu"];
 
   return (
     <Box
@@ -15,17 +14,17 @@ const RequestNavigate = () => {
       alignItems="center"
       flexDir="column"
       justifyContent="center"
-    //   pt={5}
+      //   pt={5}
       bg="white"
       rounded="md"
       borderWidth={1}
       borderColor="gray.200"
-    //   style={{ transform: 'translateY(-100px)' }}
-
+      width={"1000px"}
+      //   style={{ transform: 'translateY(-100px)' }}
     >
       <Tabs>
         <TabList px={5}>
-          {tabs.map(tab => (
+          {tabs.map((tab) => (
             <Tab
               key={tab}
               mx={3}
@@ -34,8 +33,8 @@ const RequestNavigate = () => {
               fontWeight="semibold"
               color="brand.cadet"
               borderBottomWidth={1}
-              _active={{ bg: 'transparent' }}
-              _selected={{ color: 'brand.dark', borderColor: 'brand.blue' }}
+              _active={{ bg: "transparent" }}
+              _selected={{ color: "brand.dark", borderColor: "brand.blue" }}
             >
               {tab}
             </Tab>
@@ -54,7 +53,7 @@ const RequestNavigate = () => {
 
       {/* <Actions /> */}
     </Box>
-  )
-}
+  );
+};
 
-export default RequestNavigate
+export default RequestNavigate;

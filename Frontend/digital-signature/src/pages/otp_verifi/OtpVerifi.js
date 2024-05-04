@@ -22,6 +22,12 @@ import { useSelector } from "react-redux";
 
 const defaultTheme = createTheme();
 
+export const otpHandle = {
+  OTP_SIGNUP: "otp_signup",
+  OTP_FORGOT_PASSWORD: "otp_forgot_password",
+  OTP_SUBSCRIPTION_STUDNET_VERIFY: "otp_subscription_studnet_verify",
+};
+
 export default function OTPVerifi({ otpHandle }) {
   const [OTP, setOTP] = React.useState("");
   const { message } = useSelector((state) => state.message);
@@ -71,7 +77,7 @@ export default function OTPVerifi({ otpHandle }) {
     };
     console.log(verify);
     switch (otpHandle) {
-      case "otp_signup":
+      case otpHandle.OTP_SIGNUP:
         dispatch(verifyOtp(verify))
           .unwrap()
           .then((response) => {
@@ -85,7 +91,7 @@ export default function OTPVerifi({ otpHandle }) {
             setSuccessful(false);
           });
         break;
-      case "otp_forgot_password":
+      case otpHandle.OTP_FORGOT_PASSWORD:
         AuthService.confirmOtpResetPassword(verify.token, verify.otp)
           .then((response) => {
             console.log(response.data);
@@ -97,6 +103,8 @@ export default function OTPVerifi({ otpHandle }) {
             dispatch(setMessage(error.response.data.message));
             setSuccessful(false);
           });
+        break;
+      case otpHandle.OTP_SUBSCRIPTION_STUDNET_VERIFY:
         break;
       default:
     }
@@ -153,7 +161,9 @@ export default function OTPVerifi({ otpHandle }) {
             Nhập mã xác thực
           </Typography>
           <Typography component="h3" variant="body1">
-            Vui lòng kiểm tra mã trong email của bạn. Mã này gồm 6 số.
+            {otpHandle == "otp_subscription_studnet_verify"
+              ? "Vui lòng kiểm tra hòm thư trong OutLook @thanglong.edu"
+              : "Vui lòng kiểm tra mã trong email của bạn. Mã này gồm 6 số"}
           </Typography>
           <Box component="form" sx={{ mt: 3, width: "500px", padding: "20px" }}>
             <Grid container spacing={2}>

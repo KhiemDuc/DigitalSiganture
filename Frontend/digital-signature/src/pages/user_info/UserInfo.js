@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getUserInfo } from "../../redux/infoSlice";
-import { showToast, ToastType } from "../../utils/toast";
+import { showToast, ToastType } from "../../common/toast";
 import { ToastContainer } from "react-toastify";
 
 export default function Main() {
