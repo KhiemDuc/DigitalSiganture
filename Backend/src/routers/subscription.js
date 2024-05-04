@@ -6,6 +6,7 @@ const Subscription = require("../controllers/subscription.controller");
 const router = express.Router();
 
 router.use(authentication);
+router.get("/", asyncHandler(Subscription.getSubscription));
 router.post("/", asyncHandler(Subscription.subscribePlan));
 
 router.post("/student", asyncHandler(Subscription.studentSub));

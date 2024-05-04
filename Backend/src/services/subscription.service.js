@@ -6,12 +6,19 @@ const { ForbiddenError, BadRequestError } = require("../core/error.response");
 const Subscription = require("../models/subscription.model");
 const plansModel = require("../models/plans.model");
 const { createPayment } = require("./payment.service");
-
+const pickFields = require("../utils/pickFields");
 const constants = {
   student: "student",
   eduEmailExtension: "@thanglong.edu.vn",
 };
 class SubscriptionService {
+  static async getCurrentSubscription(user) {
+    const foundSubscription = await Subscription.findById(
+      user.subscription
+    ).populate("plan");
+    return { ...pickFields(foundSubscription._doc, "plan", "start", "end") };
+  }
+
   static async studentSub({ user, studentInfo }) {
     const studentPlan = await plansModel.findOne({ name: constants.student });
     const foundSubscription = await Subscription.findById(user.subscription);

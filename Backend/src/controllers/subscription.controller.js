@@ -45,6 +45,12 @@ class Subscription {
       }),
     }).send(res);
   }
+  static async getSubscription(req, res) {
+    new SuccessResponse({
+      message: "Get subscription success",
+      data: await SubscriptionService.getCurrentSubscription(req.user),
+    }).send(res);
+  }
 }
 
 module.exports = Subscription;

@@ -21,6 +21,10 @@ const planSchema = new mongoose.Schema(
       type: Number,
       default: 1,
     },
+    benefits: {
+      type: [String],
+      default: [],
+    },
   },
   {
     timestamps: true,
