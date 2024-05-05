@@ -19,7 +19,7 @@ const RequestNavigate = () => {
       rounded="md"
       borderWidth={1}
       borderColor="gray.200"
-      width={"1000px"}
+      // width={"1000px"}
       //   style={{ transform: 'translateY(-100px)' }}
     >
       <Tabs>

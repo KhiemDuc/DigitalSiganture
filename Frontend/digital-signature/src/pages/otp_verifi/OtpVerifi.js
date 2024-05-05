@@ -77,21 +77,19 @@ export default function OTPVerifi({ otpHandle }) {
     };
     console.log(verify);
     switch (otpHandle) {
-      case otpHandle.OTP_SIGNUP:
+      case "otp_signup":
         dispatch(verifyOtp(verify))
           .unwrap()
           .then((response) => {
             console.log(response.data);
 
-            navigate({
-              pathname: "/",
-            });
+            window.location.href = "/";
           })
           .catch((error) => {
             setSuccessful(false);
           });
         break;
-      case otpHandle.OTP_FORGOT_PASSWORD:
+      case "otp_forgot_password":
         AuthService.confirmOtpResetPassword(verify.token, verify.otp)
           .then((response) => {
             console.log(response.data);
@@ -104,7 +102,7 @@ export default function OTPVerifi({ otpHandle }) {
             setSuccessful(false);
           });
         break;
-      case otpHandle.OTP_SUBSCRIPTION_STUDNET_VERIFY:
+      case "otp_subscription_studnet_verify":
         break;
       default:
     }

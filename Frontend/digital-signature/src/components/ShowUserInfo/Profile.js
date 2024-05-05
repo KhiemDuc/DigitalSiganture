@@ -57,7 +57,7 @@ function Profile({ user }) {
             ? userProfile
             : user?.avatar
             ? process.env.REACT_APP_API_URL + "public/" + user?.avatar
-            : "/static/img/bach_dev.jpg"
+            : "/static/img/avatarDefault.png"
         }
       >
         <AvatarBadge bg="brand.blue" boxSize="1em">

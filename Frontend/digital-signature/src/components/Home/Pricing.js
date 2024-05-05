@@ -9,54 +9,81 @@ import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import axios from "../../setup/axios";
+import { Link, useNavigate } from "react-router-dom";
+import { usePayOS } from "payos-checkout";
+import payOSconfig from "../../setup/payOS";
+import { useSelector } from "react-redux";
+import PaymentService from "../../services/payment.service";
+import { Img } from "@chakra-ui/react";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import { Link } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { showToast, ToastType } from "../../common/toast";
 
-const tiers = [
-  {
-    title: "Miễn phí",
-    price: "0",
-    description: ["1 Chứng chỉ số", "Thời hạn 1 tháng"],
-    buttonText: "Đăng ký miễn phí",
-    buttonVariant: "outlined",
-    checkoutID: 1,
-    buttonLink: "subscription/student_verify",
-  },
-
-  {
-    title: "Chuyên nghiệp",
-    subheader: "Recommended",
-    price: "100.000",
-    description: [
-      "2 Chứng chỉ số",
-      "Cấp lại ngay khi chứng chỉ hết hạn",
-      "Hỗ trợ tận nơi",
-      "Priority email support",
-      "Dedicated team",
-      "Best deals",
-    ],
-    buttonText: "Bắt đầu ngay",
-    buttonVariant: "contained",
-    checkoutID: 2,
-    buttonLink: "subscription/student_verify",
-  },
-  {
-    title: "Sinh Viên Thang Long University",
-    price: "0",
-    description: [
-      "1 Chứng chỉ số",
-      "Cấp lại ngay khi chứng chỉ hết hạn",
-      "Thời hạn đến khi ra trường",
-      "Trung tâm hỗ trợ sinh viên",
-      "Hỗ trợ qua email",
-    ],
-    buttonText: "Đăng ký xác nhận sinh viên",
-    buttonVariant: "outlined",
-    buttonLink: "subscription/student_verify",
-  },
-];
+// const OpenPopup = ({ link, cancelUrl, returnUrl, text }) => {
+//   const { open } = usePayOS(payOSconfig(link, returnUrl));
+//   const onBuy = () => {
+//     console.log(link, cancelUrl, returnUrl);
+//     // window.location.href = link;
+//     open();
+//   };
+//   return (
+//     <button onClick={onBuy} className="btn btn-primary rounded-pill">
+//       {text}
+//     </button>
+//   );
+// };
 
 export default function Pricing() {
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const [tiers, setTier] = React.useState([]);
+  const [myPlan, setMyPlan] = React.useState({});
+  const [data, setData] = React.useState({});
+  const [loading, setLoading] = React.useState(false);
+  const { open } = usePayOS(payOSconfig(data.link, data.returnUrl));
+  const navigate = useNavigate();
+
+  const onBuy = (planId, tier) => {
+    if (myPlan?._id === planId) {
+      showToast("Bạn đã đăng ký gói này", ToastType.WARNING);
+      return;
+    }
+    if (myPlan?.tier > tier) {
+      showToast("Gói của bạn đăng ký đang là tốt nhất", ToastType.WARNING);
+      return;
+    }
+
+    axios
+      .post("subscription", {
+        planId,
+      })
+      .then((res) => {
+        console.log(res.data);
+
+        setData(res.data.data);
+        setLoading(true);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  if (loading) {
+    open();
+  }
+
+  React.useEffect(() => {
+    PaymentService.getListPlan()
+      .then((response) => {
+        setTier(response.data.data);
+      })
+      .catch((error) => console.log(error));
+    PaymentService.getMySubCriptionPlan()
+      .then((response) => {
+        setMyPlan(response.data.data.plan);
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
   return (
     <Container
       id="pricing"
@@ -70,6 +97,18 @@ export default function Pricing() {
         gap: { xs: 3, sm: 6 },
       }}
     >
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <Box
         sx={{
           width: { sm: "100%", md: "60%" },
@@ -83,13 +122,14 @@ export default function Pricing() {
           Đăng ký các gói hội viên để được hưởng các mức ưu đãi khác nhau
         </Typography>
       </Box>
+
       <Grid container spacing={2} alignItems="center" justifyContent="center">
         {tiers.map((tier) => (
           <Grid
             item
-            key={tier.title}
+            key={tier.description}
             xs={12}
-            sm={tier.title === "Enterprise" ? 12 : 6}
+            sm={tier.description === "Enterprise" ? 12 : 6}
             md={4}
           >
             <Card
@@ -99,11 +139,15 @@ export default function Pricing() {
                 flexDirection: "column",
                 gap: 2,
                 border:
-                  tier.title === "Chuyên nghiệp" ? "1px solid" : undefined,
+                  tier.description === "Gói chuyên nghiệp"
+                    ? "1px solid"
+                    : undefined,
                 borderColor:
-                  tier.title === "Chuyên nghiệp" ? "primary.main" : undefined,
+                  tier.description === "Gói chuyên nghiệp"
+                    ? "primary.main"
+                    : undefined,
                 background:
-                  tier.title === "Chuyên nghiệp"
+                  tier.description === "Gói chuyên nghiệp"
                     ? "linear-gradient(#033363, #021F3B)"
                     : undefined,
               }}
@@ -115,13 +159,27 @@ export default function Pricing() {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    color: tier.title === "Chuyên nghiệp" ? "grey.100" : "",
+                    color:
+                      tier.description === "Gói chuyên nghiệp"
+                        ? "grey.100"
+                        : "",
                   }}
                 >
-                  <Typography component="h3" variant="h6">
-                    {tier.title}
+                  <Typography
+                    component="h3"
+                    variant="h6"
+                    sx={{ textAlign: "left" }}
+                  >
+                    {tier.description}
                   </Typography>
-                  {tier.title === "Chuyên nghiệp" && (
+                  {tier.description ===
+                    "Gói dành cho sinh viên trường Đại học Thăng Long" && (
+                    <Img
+                      src="../../../static/img/tlu_name.png"
+                      sx={{ height: "32px" }}
+                    />
+                  )}
+                  {tier.description === "Gói chuyên nghiệp" && (
                     <Chip
                       icon={<AutoAwesomeIcon />}
                       label={tier.subheader}
@@ -145,7 +203,9 @@ export default function Pricing() {
                     display: "flex",
                     alignItems: "baseline",
                     color:
-                      tier.title === "Chuyên nghiệp" ? "grey.50" : undefined,
+                      tier.description === "Gói chuyên nghiệp"
+                        ? "grey.50"
+                        : undefined,
                   }}
                 >
                   <Typography component="h3" variant="h2">
@@ -162,7 +222,7 @@ export default function Pricing() {
                     borderColor: "grey.500",
                   }}
                 />
-                {tier.description.map((line) => (
+                {tier?.benefits.map((line) => (
                   <Box
                     key={line}
                     sx={{
@@ -176,17 +236,17 @@ export default function Pricing() {
                       sx={{
                         width: 20,
                         color:
-                          tier.title === "Chuyên nghiệp"
+                          tier.description === "Gói chuyên nghiệp"
                             ? "primary.light"
                             : "primary.main",
                       }}
                     />
                     <Typography
                       component="text"
-                      variant="subtitle2"
+                      variant="subdescription2"
                       sx={{
                         color:
-                          tier.title === "Chuyên nghiệp"
+                          tier.description === "Gói chuyên nghiệp"
                             ? "grey.200"
                             : undefined,
                       }}
@@ -196,16 +256,65 @@ export default function Pricing() {
                   </Box>
                 ))}
               </CardContent>
-              <CardActions>
+              {isLoggedIn ? (
+                <CardActions>
+                  {tier.description === "Gói chuyên nghiệp" ? (
+                    <button
+                      onClick={() => {
+                        onBuy(tier._id, tier.tier);
+                      }}
+                      className="btn btn-primary rounded-pill"
+                      disabled={myPlan?._id === tier._id}
+                    >
+                      {myPlan?._id === tier._id ? "Gói của bạn" : "Mua ngay"}
+                    </button>
+                  ) : tier.description === "Gói cơ bản" ? (
+                    <button
+                      type="button"
+                      class="btn btn-secondary rounded-pill"
+                      disabled={myPlan?._id === tier._id}
+                    >
+                      {myPlan?._id === tier._id ? "Gói của bạn" : "Mua ngay"}
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-primary rounded-pill"
+                      onClick={() => {
+                        if (myPlan?._id === tier._id) {
+                          showToast(
+                            "Bạn đã đăng ký gói này",
+                            ToastType.WARNING
+                          );
+                          return;
+                        }
+                        navigate("subscription/student_verify");
+                      }}
+                    >
+                      {myPlan?._id === tier._id
+                        ? "Gói của bạn"
+                        : "Xác thực ngay"}
+                    </button>
+                  )}
+                </CardActions>
+              ) : (
                 <Link
                   fullWidth
                   variant={tier.buttonVariant}
-                  to={tier.buttonLink}
+                  to="/sign_in"
                   className="btn btn-primary rounded-pill"
                 >
-                  {tier.buttonText}
+                  Bắt đầu ngay
                 </Link>
-              </CardActions>
+              )}
+
+              {/* {loading && (
+                <OpenPopup
+                  link={data.link}
+                  cancelUrl={data.cancelUrl}
+                  returnUrl={data.returnUrl}
+                  text={"Mua ngay"}
+                />
+              )} */}
             </Card>
           </Grid>
         ))}
