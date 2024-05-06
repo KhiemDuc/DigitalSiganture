@@ -45,7 +45,11 @@ class SubscriptionService {
 
     const token = getRandomToken();
     // store OTP to cache
-    putOTP(token, { userId: user._id.toString(), OTP: OTP }, constants.student);
+    putOTP(
+      token,
+      { userId: user._id.toString(), OTP: OTP, email: eduMail },
+      constants.student
+    );
     //return
     return { token };
   }
