@@ -84,14 +84,16 @@ class SubscriptionService {
     const foundPlan = await plansModel.findById(planId);
     if (!foundPlan)
       throw new BadRequestError("Subscribe plan failed", "Plan is invalid");
-    const userSubscription = await Subscription.findById(user.subscription);
+    const userSubscription = await Subscription.findById(
+      user.subscription
+    ).populate("plan");
     if (userSubscription.plan.toString() === foundPlan._id.toString()) {
       throw new BadRequestError(
         "Can not subscribe plan",
         "You are already subscribe it"
       );
     }
-    if (userSubscription.tier >= foundPlan.tier) {
+    if (userSubscription.plan.tier >= foundPlan.tier) {
       throw new BadRequestError(
         "Subscribe plan failed",
         "You subscribed to better plan"
