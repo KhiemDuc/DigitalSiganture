@@ -308,7 +308,8 @@ class AccessService {
   static resendOTP = async (token) => {
     const foundOTP =
       cacheService.getOTP(token, "verify") ||
-      cacheService.getOTP(token, "reset");
+      cacheService.getOTP(token, "reset") ||
+      cacheService.getOTP(token, "student");
     if (!foundOTP)
       throw new BadRequestError("Resend OTP failed", "OTP is not found");
     const newOTP = generateOTP();
