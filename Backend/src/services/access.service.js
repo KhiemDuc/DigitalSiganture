@@ -313,9 +313,11 @@ class AccessService {
     if (!foundOTP)
       throw new BadRequestError("Resend OTP failed", "OTP is not found");
     const newOTP = generateOTP();
-    sendMail({ to: foundOTP.email, OTP: newOTP }).catch((err) =>
-      console.log(err)
-    );
+    sendMail({
+      to: foundOTP.email,
+      OTP: newOTP,
+      edu: foundOTP.type === "student",
+    }).catch((err) => console.log(err));
     const { type, ...newOTPCache } = foundOTP;
     cacheService.putOTP(token, { ...newOTPCache, OTP: newOTP }, type);
 

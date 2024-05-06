@@ -30,7 +30,7 @@ class Subscription {
     new SuccessResponse({
       message: await SubscriptionService.studentVerify({
         user: req.user,
-        OTP: req.body.OTP,
+        OTP: req.body.otp,
         token: req.headers.token,
       }),
     }).send(res);

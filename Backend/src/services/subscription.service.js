@@ -95,6 +95,17 @@ class SubscriptionService {
     }
     return createPayment({ user, planId });
   }
+
+  static async unsubscribePlan({ user }) {
+    const foundSubscription = await Subscription.findById(
+      user.subscription
+    ).populate("plan");
+    if (foundSubscription.plan.name === "standard")
+      throw new BadRequestError(
+        "Unsubscribe plan failed",
+        "You can not unsubscribe standard plan"
+      );
+  }
 }
 
 module.exports = SubscriptionService;
