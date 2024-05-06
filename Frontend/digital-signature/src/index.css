@@ -7,5 +7,10 @@ body {
 
 code {
   font-family: "Be Vietnam Pro", sans-serif;
+}
 
+#pricing iframe {
+  top: 0;
+  left: 0;
+  position: fixed !important;
 }

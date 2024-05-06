@@ -1,7 +1,7 @@
 const payOSconfig = (url, returnUrl) => {
   return {
     RETURN_URL: returnUrl, // required
-    ELEMENT_ID: "root", // required
+    ELEMENT_ID: "pricing", // required
     CHECKOUT_URL: url, // required
     onSuccess: (event) => {
       console.log(event);

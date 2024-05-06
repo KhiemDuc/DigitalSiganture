@@ -5,16 +5,15 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { theme } from "../../helpers/userInfoTheme";
 import Cover from "../../components/Cover";
 import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { getUserInfo } from "../../redux/infoSlice";
 import { showToast, ToastType } from "../../common/toast";
 import { ToastContainer } from "react-toastify";
 
 export default function Main() {
   const { user, isLoggedIn } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
     if (isLoggedIn) {
@@ -29,7 +28,7 @@ export default function Main() {
           );
         });
     }
-  }, [user, dispatch]);
+  }, [user, dispatch, isLoggedIn]);
   return (
     <ChakraProvider theme={theme}>
       <ToastContainer

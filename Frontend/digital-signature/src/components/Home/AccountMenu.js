@@ -19,6 +19,7 @@ import { styled } from "@mui/material/styles";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CreateIcon from "@mui/icons-material/Create";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
+import { Img } from "@chakra-ui/react";
 
 const SmallIcon = styled(CheckCircleIcon)(({ theme }) => ({
   width: 16,
@@ -32,7 +33,6 @@ export default function AccountMenu() {
   const navigate = useNavigate();
   const { user: currentUser } = useSelector((state) => state.auth);
   const { userInfo } = useSelector((state) => state.info);
-  console.log(userInfo);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const dispatch = useDispatch();
@@ -126,7 +126,7 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleCloseProfile}>
+        <MenuItem>
           <Avatar
             src={process.env.REACT_APP_API_URL + "public/" + userInfo?.avatar}
           >
@@ -135,7 +135,9 @@ export default function AccountMenu() {
           {userInfo?.firstName + " " + userInfo?.lastName}
           {userInfo?.verified && (
             <Tooltip
-              sx={{ marginLeft: "8px" }}
+              sx={{
+                marginLeft: "16px",
+              }}
               title="Tài Khoản đã được xác thực"
             >
               <SmallIcon />
@@ -161,7 +163,7 @@ export default function AccountMenu() {
           </ListItemIcon>
           Gói của tôi
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleCloseProfile}>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
