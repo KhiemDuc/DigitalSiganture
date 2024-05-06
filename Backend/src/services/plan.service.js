@@ -5,7 +5,7 @@ class PlanService {
   static async getPlans() {
     const plans = await planModel.find({});
     const result = plans.map((plan) =>
-      pickFields(plan, ["_id", "name", "description", "price", "benefit"])
+      pickFields(plan, ["_id", "name", "description", "price", "benefits"])
     );
     return result;
   }

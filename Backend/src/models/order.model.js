@@ -39,6 +39,7 @@ const dataSchema = new mongoose.Schema({
   description: String,
   status: {
     type: String,
+    enum: ["PENDING", "PAID", "CANCELLED"],
   },
   reference: String,
 });
@@ -82,5 +83,3 @@ orderSchema.pre("save", async function (next) {
 });
 
 module.exports = mongoose.model("Order", orderSchema);
-
-module.exports.orderDataModel = mongoose.model("orderDataModel", dataSchema);

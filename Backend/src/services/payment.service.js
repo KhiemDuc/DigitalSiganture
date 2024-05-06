@@ -32,6 +32,23 @@ class PaymentService {
     await order.save();
     return { link: paymentResponse.checkoutUrl, returnUrl, cancelUrl };
   }
+
+  static async cancelPaymentLink(paymentLinkId) {
+    const info = await payOS.cancelPaymentLink(paymentLinkId);
+    // update database
+    const order = await orderModel.findOne({
+      "data.paymentLinkId": paymentLinkId,
+    });
+    if (!order)
+      throw new BadRequestError(
+        "Cancel payment link failed",
+        `Can not find payment`
+      );
+    order.data.status = info.status;
+    await order.save();
+    //end
+    return "Cancel payment link success";
+  }
 }
 
 module.exports = PaymentService;

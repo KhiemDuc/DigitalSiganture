@@ -20,7 +20,10 @@ class SubscriptionService {
   }
 
   static async studentSub({ user, studentInfo }) {
+    if (!studentInfo.studentId)
+      throw new BadRequestError("", "StudentId is not found");
     const studentPlan = await plansModel.findOne({ name: constants.student });
+
     const foundSubscription = await Subscription.findById(user.subscription);
     if (foundSubscription.plan.toString() === studentPlan._id.toString())
       throw new BadRequestError(
