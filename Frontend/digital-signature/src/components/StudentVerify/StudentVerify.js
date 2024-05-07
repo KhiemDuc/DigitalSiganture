@@ -15,33 +15,37 @@ import {
   Text,
   HStack,
 } from "@chakra-ui/react";
-import ProvinceAPI from "../../common/Provinces.VN";
-import ReactSelect from "react-select";
-import axios from "../../setup/axios";
 import { theme } from "../../helpers/userInfoTheme";
 import { ChakraProvider } from "@chakra-ui/react";
 import BackHome from "../BackHome";
-import { Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import PaymentService from "../../services/payment.service";
+import AppAppBar from "../Home/AppBar";
+import getLPTheme from "../../helpers/getLPTheme";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+
+const Header = () => {
+  const LPtheme = createTheme(getLPTheme("light"));
+  return (
+    <ThemeProvider theme={LPtheme}>
+      <AppAppBar hideButton="true" />
+    </ThemeProvider>
+  );
+};
 
 function StudentVerify() {
   const [imgCCCD, setImgCCCD] = useState(null);
   const [toggle, setToggle] = useState(true);
-  const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const fileValidate = useDisclosure();
   const [showFormControls, setShowFormControls] = React.useState(false);
   const navigate = useNavigate();
+  const [studentId, setStudentId] = useState(null);
 
   const changeProfileImage = (event) => {
     const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg"];
     const selected = event.target.files[0];
     setImgCCCD(selected);
-    // if (selected && ALLOWED_TYPES.includes(selected.type)) {
-    //   let reader = new FileReader();
-    //   reader.onloadend = () => setImgCCCD(reader.result);
-    //   return reader.readAsDataURL(selected);
-    // }
-
     fileValidate.onOpen();
   };
 
@@ -92,23 +96,43 @@ function StudentVerify() {
     stopCamera();
   };
 
+  const handleSubcriptionStudent = () => {
+    const studentInfo = {
+      studentId,
+    };
+    PaymentService.subscriptionStudent(studentInfo)
+      .then((res) => {
+        navigate("/otp_student_verify/" + res.data.data.token);
+      })
+      .catch((err) => {});
+  };
+
   return (
     <ChakraProvider theme={theme}>
-      <BackHome />
       <Grid templateColumns="repeat(1, 1fr)" gap={4}>
-        <h4 style={{ textAlign: "left", margin: "120px 0 0 60px" }}>
+        <BackHome />
+        <h4
+          style={{
+            textAlign: "center",
+            margin: "120px 0 0 60px",
+            fontSize: "36px",
+            fontWeight: 500,
+            lineHeight: 1.5,
+            fontFamily: "Be Vietnam Pro",
+          }}
+        >
           Mở khóa ưu đãi chỉ dành cho sinh viên TLU
         </h4>
         <Grid
           templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(2, 1fr)" }}
           gap={4}
-          padding={"60px"}
+          padding={"20px 60px 60px 60px"}
         >
           {!showFormControls && (
             <>
               <FormControl id="firstName">
                 <FormLabel>Tên</FormLabel>
-                <Input focusBorderColor="brand.blue" type="text" />
+                <Input required focusBorderColor="brand.blue" type="text" />
               </FormControl>
 
               <FormControl id="lastName">
@@ -156,9 +180,11 @@ function StudentVerify() {
               <FormControl id="Msv">
                 <FormLabel>Mã Sinh Viên</FormLabel>
                 <Input
+                  value={studentId}
                   focusBorderColor="brand.blue"
                   type="text"
                   placeholder="A40953"
+                  onChange={(e) => setStudentId(e.target.value)}
                 />
               </FormControl>
               <FormControl id="class">
@@ -297,7 +323,7 @@ function StudentVerify() {
       <Box mt={5} py={5} px={8} borderTopWidth={1} borderColor="brand.light">
         <Button
           onClick={() => {
-            navigate("/otp_student_verify");
+            handleSubcriptionStudent();
           }}
         >
           Tiếp tục

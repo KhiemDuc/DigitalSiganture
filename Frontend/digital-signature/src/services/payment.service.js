@@ -8,8 +8,28 @@ const getMySubCriptionPlan = () => {
   return axios.get("subscription");
 };
 
+const subscriptionStudent = (studentInfo) => {
+  return axios.post("subscription/student", studentInfo);
+};
+
+const verifySubscriptionStudent = (otp, token) => {
+  return axios.post(
+    "subscription/student/verify",
+    {
+      otp,
+    },
+    {
+      headers: {
+        token,
+      },
+    }
+  );
+};
+
 const PaymentService = {
   getListPlan,
   getMySubCriptionPlan,
+  subscriptionStudent,
+  verifySubscriptionStudent,
 };
 export default PaymentService;

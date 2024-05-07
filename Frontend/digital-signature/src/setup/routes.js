@@ -11,10 +11,10 @@ import UserInfo from "../pages/user_info/UserInfo";
 import Checkout from "../pages/checkout/Checkout";
 import SearchUser from "../pages/search_user/SearchUser";
 import RequestSignature from "./../pages/request_sign/RequestSignature";
-import ViewPdf from "./../pages/view_pdf/view_pdf";
-import Test from "./../pages/test.js/test";
 import StudentVerify from "../components/StudentVerify/StudentVerify";
 import { otpHandle } from "../pages/otp_verifi/OtpVerifi";
+import PricingPage from "../pages/pricing/PricingPage";
+import MyPlan from "../pages/my_plan/MyPlan";
 
 const Routes = () => {
   const { isLoggedIn } = useSelector((state) => state.auth);
@@ -38,8 +38,8 @@ const Routes = () => {
       element: <RequestSignature />,
     },
     {
-      path: "pdf",
-      element: <Test />,
+      path: "pricing",
+      element: <PricingPage />,
     },
   ];
 
@@ -62,10 +62,14 @@ const Routes = () => {
           element: <StudentVerify />,
         },
         {
-          path: "/otp_student_verify",
+          path: "/otp_student_verify/:tokenStudentVerify",
           element: (
             <OTPVerifi otpHandle={otpHandle.OTP_SUBSCRIPTION_STUDNET_VERIFY} />
           ),
+        },
+        {
+          path: "/my_plan",
+          element: <MyPlan />,
         },
       ],
     },

@@ -21,11 +21,9 @@ import getLPTheme from "../../helpers/getLPTheme";
 import { Team } from "../../components/Home/Team";
 import { useSelector, useDispatch } from "react-redux";
 import { getUserInfo } from "../../redux/infoSlice";
-import { clearMessage } from "../../redux/message";
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import { showToast, ToastType } from "../../common/toast";
-import { useNavigate } from "react-router-dom";
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
   return (
@@ -75,7 +73,6 @@ export default function LandingPage() {
   const LPtheme = createTheme(getLPTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
   const { user, isLoggedIn } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const toggleColorMode = () => {
@@ -112,9 +109,10 @@ export default function LandingPage() {
         pauseOnHover
         theme="light"
       />
-      <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
-      <Hero />
+
       <Box sx={{ bgcolor: "background.default" }}>
+        <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
+        <Hero />
         <LogoCollection />
         <Features />
         <Divider />
