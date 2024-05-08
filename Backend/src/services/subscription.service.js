@@ -111,6 +111,18 @@ class SubscriptionService {
         "Unsubscribe plan failed",
         "You can not unsubscribe standard plan"
       );
+    const defaultPlan = await plansModel.findOne({ isDefault: true });
+    const history = {
+      plan: foundSubscription.plan,
+      start: foundSubscription.start,
+      end: foundSubscription.end,
+    };
+    foundSubscription.plan = defaultPlan._id;
+    foundSubscription.start = Date.now();
+    foundSubscription.end = null;
+    foundSubscription.history.push(history);
+    await foundSubscription.save();
+    return "Unsubscribe plan success";
   }
 }
 

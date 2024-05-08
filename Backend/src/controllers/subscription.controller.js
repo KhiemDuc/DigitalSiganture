@@ -51,6 +51,15 @@ class Subscription {
       data: await SubscriptionService.getCurrentSubscription(req.user),
     }).send(res);
   }
+
+  static async unSubscribe(req, res) {
+    new SuccessResponse({
+      message: "Unsubscribe success",
+      data: await SubscriptionService.unsubscribePlan({
+        user: req.user,
+      }),
+    }).send(res);
+  }
 }
 
 module.exports = Subscription;

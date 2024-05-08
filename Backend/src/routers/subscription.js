@@ -8,6 +8,7 @@ const router = express.Router();
 router.use(authentication);
 router.get("/", asyncHandler(Subscription.getSubscription));
 router.post("/", asyncHandler(Subscription.subscribePlan));
+router.delete("/", asyncHandler(Subscription.unSubscribe));
 
 router.post("/student", asyncHandler(Subscription.studentSub));
 router.post("/student/verify", asyncHandler(Subscription.verifyStudent));
