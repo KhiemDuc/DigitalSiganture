@@ -17,6 +17,7 @@ import { clearMessage, setMessage } from "../../redux/message";
 import { verifyOtp } from "../../redux/authSlice";
 import AuthService from "../../services/auth.service";
 import { useSelector } from "react-redux";
+import PaymentService from "../../services/payment.service";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -33,7 +34,7 @@ export default function OTPVerifi({ otpHandle }) {
   const { message } = useSelector((state) => state.message);
   const [disableResend, setDisableResend] = React.useState(false);
   const [countdown, setCountdown] = React.useState(null);
-  const { tokenSignUp, tokenForgot } = useParams();
+  const { tokenSignUp, tokenForgot, tokenStudentVerify } = useParams();
   const [successful, setSuccessful] = React.useState(false);
 
   const dispatch = useDispatch();
@@ -59,7 +60,7 @@ export default function OTPVerifi({ otpHandle }) {
   const handleResendOTP = () => {
     setDisableResend(true);
     setCountdown(30);
-    AuthService.resendOtp(tokenSignUp || tokenForgot)
+    AuthService.resendOtp(tokenSignUp || tokenForgot || tokenStudentVerify)
       .then((response) => {
         setSuccessful(true);
       })
@@ -73,7 +74,7 @@ export default function OTPVerifi({ otpHandle }) {
   const handleVerify = () => {
     const verify = {
       otp: OTP,
-      token: tokenSignUp || tokenForgot,
+      token: tokenSignUp || tokenForgot || tokenStudentVerify,
     };
     console.log(verify);
     switch (otpHandle) {
@@ -103,6 +104,14 @@ export default function OTPVerifi({ otpHandle }) {
           });
         break;
       case "otp_subscription_studnet_verify":
+        PaymentService.verifySubscriptionStudent(verify.otp, verify.token)
+          .then((response) => {
+            window.location.href = "/";
+          })
+          .catch((error) => {
+            dispatch(setMessage(error.response.data.message));
+            setSuccessful(false);
+          });
         break;
       default:
     }

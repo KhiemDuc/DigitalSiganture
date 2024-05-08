@@ -19,7 +19,7 @@ import { styled } from "@mui/material/styles";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CreateIcon from "@mui/icons-material/Create";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
-import { Img } from "@chakra-ui/react";
+import PaymentService from "../../services/payment.service";
 
 const SmallIcon = styled(CheckCircleIcon)(({ theme }) => ({
   width: 16,
@@ -34,6 +34,7 @@ export default function AccountMenu() {
   const { user: currentUser } = useSelector((state) => state.auth);
   const { userInfo } = useSelector((state) => state.info);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [myPlan, setMyPlan] = React.useState(null);
   const open = Boolean(anchorEl);
   const dispatch = useDispatch();
   const handleClick = (event) => {
@@ -60,6 +61,14 @@ export default function AccountMenu() {
       EventBus.remove("logout");
     };
   }, [currentUser, logOut]);
+
+  React.useEffect(() => {
+    PaymentService.getMySubCriptionPlan()
+      .then((response) => {
+        setMyPlan(response.data.data.plan);
+      })
+      .catch((error) => console.log(error));
+  }, []);
 
   return (
     <React.Fragment>
@@ -142,6 +151,13 @@ export default function AccountMenu() {
             >
               <SmallIcon />
             </Tooltip>
+          )}
+          {myPlan?.description ===
+            "Gói dành cho sinh viên trường Đại học Thăng Long" && (
+            <img
+              src="../../../static/img/tlu_name.png"
+              style={{ marginLeft: "16px", width: "20px", height: "20px" }}
+            />
           )}
         </MenuItem>
         <Divider />

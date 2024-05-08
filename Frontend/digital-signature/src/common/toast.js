@@ -34,7 +34,17 @@ export const showToast = (message, type = ToastType.SUCCESS) => {
     });
   } else if (type === "info") {
     toast.info(message);
-  } else if (type === "warning") {
-    toast.warning(message);
+  } else if (type === ToastType.WARNING) {
+    toast.warning(message, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      // transition: Bounce,
+    });
   }
 };

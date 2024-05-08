@@ -41,16 +41,21 @@ export default function Pricing() {
   const [myPlan, setMyPlan] = React.useState({});
   const [data, setData] = React.useState({});
   const [loading, setLoading] = React.useState(false);
-  const { open } = usePayOS(payOSconfig(data.link, data.returnUrl));
+  const { open } = usePayOS(payOSconfig(data.link, data.returnUrl, showToast));
   const navigate = useNavigate();
+
+  console.log(tiers);
 
   const onBuy = (planId, tier) => {
     if (myPlan?._id === planId) {
       showToast("Bạn đã đăng ký gói này", ToastType.WARNING);
       return;
     }
-    if (myPlan?.tier > tier) {
-      showToast("Gói của bạn đăng ký đang là tốt nhất", ToastType.WARNING);
+    if (myPlan.tier > tier) {
+      showToast(
+        "Gói của bạn đăng ký đang là tốt nhất, bạn có thể huỷ gói để đăng ký gói khác",
+        ToastType.WARNING
+      );
       return;
     }
 
@@ -263,7 +268,11 @@ export default function Pricing() {
                       onClick={() => {
                         onBuy(tier._id, tier.tier);
                       }}
-                      className="btn btn-primary rounded-pill"
+                      className={
+                        myPlan?._id === tier._id
+                          ? "btn rounded-pill"
+                          : "btn rounded-pill btn-primary"
+                      }
                       disabled={myPlan?._id === tier._id}
                     >
                       {myPlan?._id === tier._id ? "Gói của bạn" : "Mua ngay"}
@@ -271,14 +280,19 @@ export default function Pricing() {
                   ) : tier.description === "Gói cơ bản" ? (
                     <button
                       type="button"
-                      class="btn btn-secondary rounded-pill"
-                      disabled={myPlan?._id === tier._id}
+                      class="btn rounded-pill "
+                      disabled={myPlan?._id === tier._id || myPlan.tier > 1}
                     >
-                      {myPlan?._id === tier._id ? "Gói của bạn" : "Mua ngay"}
+                      {myPlan?._id === tier._id ? "Gói của bạn" : "✔️"}
                     </button>
                   ) : (
                     <button
-                      className="btn btn-primary rounded-pill"
+                      className={
+                        myPlan?._id === tier._id
+                          ? "btn rounded-pill"
+                          : "btn rounded-pill btn-primary"
+                      }
+                      disabled={myPlan?._id === tier._id}
                       onClick={() => {
                         if (myPlan?._id === tier._id) {
                           showToast(
@@ -291,7 +305,7 @@ export default function Pricing() {
                       }}
                     >
                       {myPlan?._id === tier._id
-                        ? "Gói của bạn"
+                        ? "Gói của bạn ✔️"
                         : "Xác thực ngay"}
                     </button>
                   )}

@@ -39,9 +39,9 @@
     transform: rotate(360deg);
   }
 }
-#team {
+/* #team {
   width: 111%;
-}
+} */
 
 .button-hover {
   transition: opacity 0.3s ease;

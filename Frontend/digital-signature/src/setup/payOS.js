@@ -1,19 +1,17 @@
-const payOSconfig = (url, returnUrl) => {
+import { ToastType } from "../common/toast";
+const payOSconfig = (url, returnUrl, showToast) => {
   return {
     RETURN_URL: returnUrl, // required
     ELEMENT_ID: "pricing", // required
     CHECKOUT_URL: url, // required
     onSuccess: (event) => {
-      console.log(event);
-      //TODO: Hành động sau khi người dùng thanh toán đơn hàng thành công
+      showToast("Đặt hàng thành công", ToastType.SUCCESS);
     },
     onCancel: (event) => {
-      //TODO: Hành động sau khi người dùng Hủy đơn hàng
-      alert();
+      showToast("Đơn hàng đã bị huỷ", ToastType.ERROR);
     },
     onExit: (event) => {
-      console.log(event);
-      //TODO: Hành động sau khi người dùng tắt Pop up
+      showToast("Đơn hàng đã bị huỷ", ToastType.ERROR);
     },
   };
 };
