@@ -11,7 +11,7 @@ import Typography from "@mui/material/Typography";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import PaymentService from "../../services/payment.service";
-import { Img } from "@chakra-ui/react";
+import { Avatar, Img } from "@chakra-ui/react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -22,16 +22,52 @@ import AppAppBar from "../../components/Home/AppBar";
 import { useSelector, useDispatch } from "react-redux";
 import { getUserInfo } from "../../redux/infoSlice";
 import { showToast, ToastType } from "../../common/toast";
+import AddIcon from "@mui/icons-material/Add";
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import Modal from "@mui/material/Modal";
+import CircularProgress from "@mui/material/CircularProgress";
+import { delay } from "framer-motion";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function MyPlan() {
   const [tier, setTier] = React.useState({});
   const [mode, setMode] = useState("light");
+  const [open, setOpen] = React.useState(false);
   const { user, isLoggedIn } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const toggleColorMode = () => {
     setMode((prev) => (prev === "dark" ? "light" : "dark"));
   };
   const LPtheme = createTheme(getLPTheme(mode));
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDone, setIsDone] = useState(false);
+
+  const handleCancel = () => {
+    setIsLoading(true);
+    delay(3000);
+    PaymentService.cancelmySubscriptionPlan()
+      .then((response) => {
+        setIsLoading(false);
+        setIsDone(true);
+      })
+      .catch((error) => {
+        console.log(error);
+        setIsLoading(false);
+      });
+  };
+
+  // if (isDone) {
+  //   delay(15000);
+  //   handleClose();
+  //   setIsDone(false);
+  //   window.location.reload();
+  // }
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -90,31 +126,46 @@ export default function MyPlan() {
             toggleColorMode={toggleColorMode}
           />
         </Box>
-
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
         <Box
           sx={{
-            width: { sm: "100%", md: "100%" },
-            textAlign: { sm: "left", md: "left" },
+            width: "100%",
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            justifyContent: "space-evenly",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Typography component="h2" variant="h4" color="text.primary">
-            Gói của bạn
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Xem chi tiết ưu đãi và thông tin gói dịch vụ của bạn
-          </Typography>
+          <Box
+            sx={{
+              width: { sm: "100%", md: "100%" },
+              textAlign: { sm: "left", md: "left" },
+            }}
+          >
+            <Typography component="h2" variant="h4" color="text.primary">
+              Gói của bạn
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Xem chi tiết ưu đãi và thông tin gói dịch vụ của bạn
+            </Typography>
+          </Box>
+          <Box>
+            <Button
+              sx={{
+                width: "220px",
+                fontWeight: "bold",
+                backgroundColor: "white",
+                color: " rgb(102, 85, 255)",
+              }}
+              variant="outlined"
+              startIcon={<AddIcon />}
+              onClick={() => {
+                navigate("/pricing");
+              }}
+            >
+              Xem thêm gói dịch vụ
+            </Button>
+          </Box>
         </Box>
 
         <Grid sx={{ width: "100%" }}>
@@ -251,9 +302,118 @@ export default function MyPlan() {
                 ))}
               </CardContent>
               <CardActions sx={{ justifyContent: "flex-end" }}>
-                <button type="button" className="btn btn-primary">
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => {
+                    handleOpen();
+                  }}
+                >
                   Huỷ gói
                 </button>
+                <Modal
+                  open={open}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                >
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      width: 400,
+                      bgcolor: "background.paper",
+                      border: "1px solid #ccc",
+                      boxShadow: 24,
+                      p: 4,
+                      borderRadius: "15px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      flexDirection: "column",
+                    }}
+                  >
+                    {isLoading ? (
+                      <CircularProgress />
+                    ) : isDone ? (
+                      // ...
+                      <>
+                        <IconButton
+                          aria-label="close"
+                          onClick={handleClose} // Replace 'handleClose' with your function to close the modal
+                          sx={{
+                            position: "absolute", // Position the button absolutely
+                            top: 0, // Position it at the top
+                            right: 0, // Position it at the left
+                            padding: 2,
+                          }}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyItems: "space-between",
+                            alignItems: "center",
+                            gap: 2,
+                          }}
+                        >
+                          <Avatar
+                            style={{ width: "80px", height: "80px" }}
+                            src="/static/img/success.png"
+                          />
+                          <Typography fontSize={17} id="modal-modal-title">
+                            Huỷ gói thành công
+                          </Typography>
+                        </Box>
+                      </>
+                    ) : (
+                      <>
+                        <Box>
+                          <Typography
+                            id="modal-modal-title"
+                            variant="h6"
+                            component="h2"
+                          >
+                            Bạn có chắc muốn huỷ gói này không?
+                          </Typography>
+                          <Typography
+                            id="modal-modal-description"
+                            sx={{ mt: 2 }}
+                          >
+                            Nếu huỷ gọi bạn sẽ mất các ưu đãi hiện tại
+                          </Typography>
+                        </Box>
+                        <Divider />
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: 2,
+                            justifyContent: "space-between",
+                            width: "100%",
+                            marginTop: 6,
+                          }}
+                        >
+                          <Button
+                            onClick={() => {
+                              handleCancel();
+                            }}
+                          >
+                            Xác Nhận
+                          </Button>
+                          <button
+                            className="btn btn-primary"
+                            onClick={handleClose}
+                          >
+                            Đóng
+                          </button>
+                        </Box>
+                      </>
+                    )}
+                  </Box>
+                </Modal>
               </CardActions>
             </Card>
           </Grid>

@@ -19,6 +19,7 @@ const RequestNavigate = () => {
       rounded="md"
       borderWidth={1}
       borderColor="gray.200"
+      borderRadius="20px"
       // width={"1000px"}
       //   style={{ transform: 'translateY(-100px)' }}
     >

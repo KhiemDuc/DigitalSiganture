@@ -26,10 +26,15 @@ const verifySubscriptionStudent = (otp, token) => {
   );
 };
 
+const cancelmySubscriptionPlan = () => {
+  return axios.delete("subscription");
+};
+
 const PaymentService = {
   getListPlan,
   getMySubCriptionPlan,
   subscriptionStudent,
   verifySubscriptionStudent,
+  cancelmySubscriptionPlan,
 };
 export default PaymentService;

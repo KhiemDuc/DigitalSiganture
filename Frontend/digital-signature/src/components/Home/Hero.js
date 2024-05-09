@@ -133,10 +133,11 @@ export default function Hero() {
           <iframe
             width="100%"
             height="100%"
-            src="https://www.youtube.com/embed/i-rtxrEz_E8"
-            title="What is Public Key Infrastructure (PKI) by Securemetric"
+            src="https://www.youtube.com/embed/stsWa9A3sOM?si=TFVIu3cAV51BkrOp"
+            title="YouTube video player"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
             allowfullscreen
           ></iframe>
         </Box>

@@ -20,6 +20,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CreateIcon from "@mui/icons-material/Create";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import PaymentService from "../../services/payment.service";
+import PaymentIcon from "@mui/icons-material/Payment";
 
 const SmallIcon = styled(CheckCircleIcon)(({ theme }) => ({
   width: 16,
@@ -157,6 +158,7 @@ export default function AccountMenu() {
             <img
               src="../../../static/img/tlu_name.png"
               style={{ marginLeft: "16px", width: "20px", height: "20px" }}
+              alt="Thăng Long University"
             />
           )}
         </MenuItem>
@@ -173,9 +175,13 @@ export default function AccountMenu() {
           </ListItemIcon>
           Xác thực chứng chỉ số
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            navigate("/subscription/my_subscription");
+          }}
+        >
           <ListItemIcon>
-            <PersonAdd fontSize="small" />
+            <PaymentIcon fontSize="small" />
           </ListItemIcon>
           Gói của tôi
         </MenuItem>

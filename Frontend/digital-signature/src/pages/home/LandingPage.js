@@ -24,6 +24,8 @@ import { getUserInfo } from "../../redux/infoSlice";
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import { showToast, ToastType } from "../../common/toast";
+import { useSpring, animated } from "react-spring";
+import { useScroll } from "@react-spring/web";
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
   return (
@@ -68,12 +70,18 @@ ToggleCustomTheme.propTypes = {
 };
 
 export default function LandingPage() {
+  const springs = useSpring({
+    from: { opacity: 0 },
+    to: { opacity: 1 },
+  });
+  const { scrollYProgress } = useScroll();
   const [mode, setMode] = React.useState("light");
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const LPtheme = createTheme(getLPTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
   const { user, isLoggedIn } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  console.log(scrollYProgress);
 
   const toggleColorMode = () => {
     setMode((prev) => (prev === "dark" ? "light" : "dark"));
@@ -112,20 +120,38 @@ export default function LandingPage() {
 
       <Box sx={{ bgcolor: "background.default" }}>
         <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
-        <Hero />
-        <LogoCollection />
-        <Features />
+        <animated.div style={springs}>
+          <Hero />
+        </animated.div>
+        <animated.div style={springs}>
+          <LogoCollection />
+        </animated.div>
+        <animated.div style={springs}>
+          <Features />
+        </animated.div>
         <Divider />
-        <Testimonials />
+        <animated.div style={springs}>
+          <Testimonials />
+        </animated.div>
         <Divider />
-        <Highlights />
+        <animated.div style={springs}>
+          <Highlights />
+        </animated.div>
         <Divider />
-        <Pricing />
+        <animated.div style={{ springs: scrollYProgress }}>
+          <Pricing />
+        </animated.div>
         <Divider />
-        <Team />
-        <FAQ />
+        <animated.div style={springs}>
+          <Team />
+        </animated.div>
+        <animated.div style={springs}>
+          <FAQ />
+        </animated.div>
         <Divider />
-        <Footer />
+        <animated.div style={springs}>
+          <Footer />
+        </animated.div>
       </Box>
     </ThemeProvider>
   );

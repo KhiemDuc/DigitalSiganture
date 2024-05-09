@@ -301,7 +301,7 @@ export default function Pricing() {
                           );
                           return;
                         }
-                        navigate("subscription/student_verify");
+                        navigate("/subscription/student_verify");
                       }}
                     >
                       {myPlan?._id === tier._id
