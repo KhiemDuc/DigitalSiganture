@@ -27,5 +27,10 @@ class CertificateController {
       ),
     }).send(res);
   }
+  static async checkCertificate(req, res) {
+    new SuccessResponse({
+      message: "Valid certificate",
+    }).send(res);
+  }
 }
 module.exports = CertificateController;
