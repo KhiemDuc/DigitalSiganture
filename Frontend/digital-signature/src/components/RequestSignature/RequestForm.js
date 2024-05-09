@@ -22,7 +22,7 @@ import axios from "../../setup/axios";
 function RequestForm() {
   const [imgCCCD, setImgCCCD] = useState(null);
   const [toggle, setToggle] = useState(true);
-  const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const fileValidate = useDisclosure();
   const [showFormControls, setShowFormControls] = React.useState(false);
 
@@ -137,17 +137,26 @@ function RequestForm() {
           <>
             <FormControl id="firstName">
               <FormLabel>Tên</FormLabel>
-              <Input focusBorderColor="brand.blue" type="text" />
+              <Input
+                borderRadius={"15px"}
+                focusBorderColor="brand.blue"
+                type="text"
+              />
             </FormControl>
 
             <FormControl id="lastName">
               <FormLabel>Họ</FormLabel>
-              <Input focusBorderColor="brand.blue" type="text" />
+              <Input
+                borderRadius={"15px"}
+                focusBorderColor="brand.blue"
+                type="text"
+              />
             </FormControl>
 
             <FormControl id="gender">
               <FormLabel>Giới tính</FormLabel>
               <Select
+                borderRadius={"15px"}
                 focusBorderColor="brand.blue"
                 placeholder="Chọn giới tính"
               >
@@ -158,12 +167,18 @@ function RequestForm() {
 
             <FormControl id="dateOfbirth">
               <FormLabel>Ngày Sinh</FormLabel>
-              <Input focusBorderColor="brand.blue" type="date" placeholder="" />
+              <Input
+                borderRadius={"15px"}
+                focusBorderColor="brand.blue"
+                type="date"
+                placeholder=""
+              />
             </FormControl>
 
             <FormControl id="phoneNumber">
               <FormLabel>Số Điện Thoại</FormLabel>
               <Input
+                borderRadius={"15px"}
                 focusBorderColor="brand.blue"
                 type="tel"
                 placeholder="(408) 996–1010"
@@ -173,6 +188,7 @@ function RequestForm() {
             <FormControl id="emailAddress">
               <FormLabel>Email Address</FormLabel>
               <Input
+                borderRadius={"15px"}
                 focusBorderColor="brand.blue"
                 type="email"
                 placeholder="khimback@knb.com"
@@ -182,7 +198,11 @@ function RequestForm() {
             <FormControl id="province">
               <FormLabel>Tỉnh, Thành Phố Trực Thuộc Trung Ương</FormLabel>
               <ReactSelect
+                theme={{
+                  borderRadius: "15px",
+                }}
                 id="province"
+                placeholder="Chọn tỉnh"
                 options={provinces.map((province) => ({
                   value: province.code,
                   label: province.name,
@@ -198,8 +218,12 @@ function RequestForm() {
             <FormControl id="district">
               <FormLabel>Quận, Huyện, Thành Phố</FormLabel>
               <ReactSelect
+                theme={{
+                  borderRadius: "15px",
+                }}
                 ref={provinceSelectRef}
                 id="district"
+                placeholder="Chọn quận, huyện "
                 options={districts.map((district) => ({
                   value: district.code,
                   label: district.name,
@@ -215,6 +239,10 @@ function RequestForm() {
             <FormControl id="wards">
               <FormLabel>Phường, Xã</FormLabel>
               <ReactSelect
+                theme={{
+                  borderRadius: "15px",
+                }}
+                placeholder="Chọn phường, xã"
                 ref={wardSelectRef}
                 id="ward"
                 options={wards.map((ward) => ({

@@ -13,7 +13,7 @@ import Drawer from "@mui/material/Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
 import ToggleColorMode from "../ToggleColorMode";
 import { Link, useNavigate } from "react-router-dom";
-import { Avatar } from "@mui/material";
+// import { Avatar } from "@mui/material";
 import AccountMenu from "./AccountMenu";
 import { useSelector } from "react-redux";
 
@@ -230,27 +230,26 @@ function AppAppBar({ mode, toggleColorMode, hideButton }) {
                     FAQ
                   </MenuItem>
                   <Divider />
-                  <MenuItem>
-                    {currentUser ? (
-                      <AccountMenu />
-                    ) : (
-                      <>
-                        <Link
-                          to="/sign_in"
-                          style={{ textDecoration: "none", color: "primary" }}
-                        >
-                          Đăng Nhập
-                        </Link>
-                        <Link
-                          to="/sign_up"
-                          className="btn btn-primary"
-                          style={{ textDecoration: "none", marginLeft: "8px" }}
-                        >
-                          Đăng Ký
-                        </Link>
-                      </>
-                    )}
-                  </MenuItem>
+
+                  {currentUser ? (
+                    <AccountMenu />
+                  ) : (
+                    <>
+                      <Link
+                        to="/sign_in"
+                        style={{ textDecoration: "none", color: "primary" }}
+                      >
+                        Đăng Nhập
+                      </Link>
+                      <Link
+                        to="/sign_up"
+                        className="btn btn-primary"
+                        style={{ textDecoration: "none", marginLeft: "8px" }}
+                      >
+                        Đăng Ký
+                      </Link>
+                    </>
+                  )}
                 </Box>
               </Drawer>
             </Box>

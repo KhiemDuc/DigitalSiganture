@@ -15,6 +15,8 @@ import StudentVerify from "../components/StudentVerify/StudentVerify";
 import { otpHandle } from "../pages/otp_verifi/OtpVerifi";
 import PricingPage from "../pages/pricing/PricingPage";
 import MyPlan from "../pages/my_plan/MyPlan";
+import CheckCertificate from "../components/CheckCertificate/CheckCertificate";
+import CheckCertificatePage from "../pages/check_certificate/CheckCertificatePage";
 
 const Routes = () => {
   const { isLoggedIn } = useSelector((state) => state.auth);
@@ -41,6 +43,10 @@ const Routes = () => {
       path: "pricing",
       element: <PricingPage />,
     },
+    {
+      path: "certificate/check",
+      element: <CheckCertificatePage />,
+    },
   ];
 
   // Define routes accessible only to authenticated users
@@ -49,6 +55,10 @@ const Routes = () => {
       path: "/",
       element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
       children: [
+        {
+          path: "/home",
+          element: <LandingPage />,
+        },
         {
           path: "/checkout/:id",
           element: <Checkout />,
@@ -60,6 +70,10 @@ const Routes = () => {
         {
           path: "/subscription/student_verify/",
           element: <StudentVerify />,
+        },
+        {
+          path: "/subscription/my_subscription/",
+          element: <MyPlan />,
         },
         {
           path: "/otp_student_verify/:tokenStudentVerify",

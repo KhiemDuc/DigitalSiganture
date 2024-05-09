@@ -18,6 +18,8 @@ import { verifyOtp } from "../../redux/authSlice";
 import AuthService from "../../services/auth.service";
 import { useSelector } from "react-redux";
 import PaymentService from "../../services/payment.service";
+import { toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -40,22 +42,22 @@ export default function OTPVerifi({ otpHandle }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleUnload = (event) => {
-    event.preventDefault();
-    // Chrome requires returnValue to be set.const handleUnload = (event) => {
-  };
+  // const handleUnload = (event) => {
+  //   event.preventDefault();
+  //   // Chrome requires returnValue to be set.const handleUnload = (event) => {
+  // };
 
   React.useEffect(() => {
     dispatch(clearMessage());
   }, [dispatch]);
 
-  React.useEffect(() => {
-    window.addEventListener("beforeunload", handleUnload);
+  // React.useEffect(() => {
+  //   window.addEventListener("beforeunload", handleUnload);
 
-    return () => {
-      window.removeEventListener("beforeunload", handleUnload);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("beforeunload", handleUnload);
+  //   };
+  // }, []);
 
   const handleResendOTP = () => {
     setDisableResend(true);
@@ -82,9 +84,16 @@ export default function OTPVerifi({ otpHandle }) {
         dispatch(verifyOtp(verify))
           .unwrap()
           .then((response) => {
-            console.log(response.data);
-
-            window.location.href = "/";
+            toast.success("Đăng Ký Tài Khoản Thành Công", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              onClose: () => window.location.href("/"), // Navigate to home page after toast closes
+            });
           })
           .catch((error) => {
             setSuccessful(false);
@@ -106,7 +115,16 @@ export default function OTPVerifi({ otpHandle }) {
       case "otp_subscription_studnet_verify":
         PaymentService.verifySubscriptionStudent(verify.otp, verify.token)
           .then((response) => {
-            window.location.href = "/";
+            toast.success("Đăng Ký Gói Thành Công", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              onClose: () => window.location.href("/"), // Navigate to home page after toast closes
+            });
           })
           .catch((error) => {
             dispatch(setMessage(error.response.data.message));
@@ -142,6 +160,18 @@ export default function OTPVerifi({ otpHandle }) {
           display: "flex",
         }}
       >
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
         <CssBaseline />
         <BackHome />
         <Box
