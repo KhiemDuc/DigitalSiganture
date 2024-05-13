@@ -13,6 +13,7 @@ import { getUserInfo } from "../../redux/infoSlice";
 import { showToast, ToastType } from "../../common/toast";
 import CheckCertificate from "../../components/CheckCertificate/CheckCertificate";
 import { Typography } from "@mui/material";
+import CertificateModal from "../../components/Certificate/Certificate";
 
 export default function CheckCertificatePage() {
   const [mode, setMode] = useState("light");
@@ -36,7 +37,7 @@ export default function CheckCertificatePage() {
           );
         });
     }
-  }, [user, dispatch]);
+  }, [user, dispatch, isLoggedIn]);
 
   return (
     <Container
@@ -78,7 +79,6 @@ export default function CheckCertificatePage() {
             flexDirection: { xs: "column", sm: "row" },
             justifyContent: "space-evenly",
             alignItems: "center",
-            justifyContent: "center",
           }}
         >
           <Box
@@ -91,7 +91,8 @@ export default function CheckCertificatePage() {
               Kiểm tra chứng chỉ số
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Kiểm tra chứng chỉ có hợp lệ hay còn hạn hay không
+              Kiểm tra chứng chỉ được cấp bởi chứng tôi có hợp lệ hay còn hạn sử
+              dụng hay không
             </Typography>
           </Box>
         </Box>

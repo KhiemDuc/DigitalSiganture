@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from "react";
 import forge from "node-forge";
 import iconv from "iconv-lite";
-import Data from "./../ShowUserInfo/Data";
-import { red } from "@mui/material/colors";
+import CertificateModal from "../Certificate/Certificate";
+import { Box } from "@mui/system";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import { Modal } from "@mui/material";
 
 function CheckCertificate() {
+  const [open, setOpen] = useState(false);
   const [certData, setCertData] = useState(null);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleFileChange = (event) => {
     if (!event.target.files.length) {
@@ -68,28 +76,75 @@ function CheckCertificate() {
   };
 
   return (
-    <form>
-      <div
-        class="form-group"
-        style={{
-          padding: "10px",
-        }}
-      >
-        <label for="exampleInputPassword1">
-          Nhập file chứng chỉ số định dạng *cer, *crt
-        </label>
-        <input
-          class="form-control"
-          id="exampleInputPassword1"
-          type="file"
-          accept=".cer, .crt"
-          onChange={handleFileChange}
-        />
-      </div>
-      <button type="submit" class="btn btn-primary">
-        Kiểm tra
-      </button>
-    </form>
+    <>
+      <Box>
+        <div
+          class="form-group"
+          style={{
+            padding: "10px",
+          }}
+        >
+          <label htmlFor="exampleInputPassword1">
+            Nhập file chứng chỉ số định dạng *cer, *crt
+          </label>
+          <input
+            className="form-control"
+            id="exampleInputPassword1"
+            type="file"
+            accept=".cer, .crt"
+            onChange={handleFileChange}
+          />
+        </div>
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
+          Kiểm tra
+        </button>
+        {certData != null && (
+          <Modal
+            open={open}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: 900,
+                bgcolor: "white",
+                border: "1px solid #ccc",
+                boxShadow: 24,
+                p: 4,
+                borderRadius: "15px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
+            >
+              <CertificateModal pemData={certData} />
+              <IconButton
+                aria-label="close"
+                onClick={handleClose} // Replace 'handleClose' with your function to close the modal
+                sx={{
+                  position: "absolute", // Position the button absolutely
+                  top: 0, // Position it at the top
+                  right: 0, // Position it at the left
+                  padding: 2,
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </Box>
+          </Modal>
+        )}
+      </Box>
+    </>
   );
 }
 
