@@ -14,9 +14,52 @@ const certRequestSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    address: {
+      type: String,
+      required: true,
+    },
+    gender: {
+      type: String,
+      enum: ["Male", "Female"],
+      required: true,
+    },
+    dateOfBirth: {
+      type: Date,
+      required: true,
+    },
+    nationality: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+      required: true,
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
+    },
+    face: {
+      type: String,
+      required: true,
+    },
+    CCCD: {
+      type: String,
+      required: true,
+    },
+    CCCDBack: {
+      type: String,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["PENDING", "APPROVED", "REJECTED"],
+      default: "PENDING",
     },
   },
   {

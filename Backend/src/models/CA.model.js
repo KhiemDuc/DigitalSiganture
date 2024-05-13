@@ -19,6 +19,7 @@ const CASchema = new mongoose.Schema(
   {
     timestamps: false,
     versionKey: false,
+    collection: "CA",
   }
 );
 
