@@ -29,7 +29,7 @@ import { showToast, ToastType } from "../../common/toast";
 //     open();
 //   };
 //   return (
-//     <button onClick={onBuy} className="btn btn-primary rounded-pill">
+//     <button onClick={onBuy} className="btn-primary btn-outline">
 //       {text}
 //     </button>
 //   );
@@ -154,6 +154,9 @@ export default function Pricing() {
                 background:
                   tier.description === "Gói chuyên nghiệp"
                     ? "linear-gradient(#033363, #021F3B)"
+                    : tier.description ===
+                      "Gói dành cho sinh viên trường Đại học Thăng Long"
+                    ? "#020066"
                     : undefined,
               }}
             >
@@ -164,10 +167,7 @@ export default function Pricing() {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    color:
-                      tier.description === "Gói chuyên nghiệp"
-                        ? "grey.100"
-                        : "",
+                    color: tier.description !== "Gói cơ bản" ? "grey.100" : "",
                   }}
                 >
                   <Typography
@@ -180,7 +180,7 @@ export default function Pricing() {
                   {tier.description ===
                     "Gói dành cho sinh viên trường Đại học Thăng Long" && (
                     <Img
-                      src="../../../static/img/tlu_name.png"
+                      src="../../../static/img/tlu_white.png"
                       sx={{ height: "32px" }}
                     />
                   )}
@@ -208,9 +208,7 @@ export default function Pricing() {
                     display: "flex",
                     alignItems: "baseline",
                     color:
-                      tier.description === "Gói chuyên nghiệp"
-                        ? "grey.50"
-                        : undefined,
+                      tier.description !== "Gói cơ bản" ? "grey.50" : undefined,
                   }}
                 >
                   <Typography component="h3" variant="h2">
@@ -241,7 +239,7 @@ export default function Pricing() {
                       sx={{
                         width: 20,
                         color:
-                          tier.description === "Gói chuyên nghiệp"
+                          tier.description !== "Gói cơ bản"
                             ? "primary.light"
                             : "primary.main",
                       }}
@@ -251,7 +249,7 @@ export default function Pricing() {
                       variant="subdescription2"
                       sx={{
                         color:
-                          tier.description === "Gói chuyên nghiệp"
+                          tier.description !== "Gói cơ bản"
                             ? "grey.200"
                             : undefined,
                       }}
@@ -270,8 +268,8 @@ export default function Pricing() {
                       }}
                       className={
                         myPlan?._id === tier._id
-                          ? "btn rounded-pill"
-                          : "btn rounded-pill btn-primary"
+                          ? "btn btn-outline"
+                          : "btn btn-outline-light"
                       }
                       disabled={myPlan?._id === tier._id}
                     >
@@ -280,7 +278,7 @@ export default function Pricing() {
                   ) : tier.description === "Gói cơ bản" ? (
                     <button
                       type="button"
-                      class="btn rounded-pill "
+                      class="btn btn-outline "
                       disabled={myPlan?._id === tier._id || myPlan.tier > 1}
                     >
                       {myPlan?._id === tier._id ? "Gói của bạn" : "✔️"}
@@ -289,8 +287,8 @@ export default function Pricing() {
                     <button
                       className={
                         myPlan?._id === tier._id
-                          ? "btn rounded-pill"
-                          : "btn rounded-pill btn-primary"
+                          ? "btn btn-outline"
+                          : "btn btn-outline-light"
                       }
                       disabled={myPlan?._id === tier._id}
                       onClick={() => {
@@ -315,7 +313,11 @@ export default function Pricing() {
                   fullWidth
                   variant={tier.buttonVariant}
                   to="/sign_in"
-                  className="btn btn-primary rounded-pill"
+                  className={
+                    tier.description === "Gói cơ bản"
+                      ? "btn btn-outline-primary"
+                      : "btn btn-outline-light"
+                  }
                 >
                   Bắt đầu ngay
                 </Link>

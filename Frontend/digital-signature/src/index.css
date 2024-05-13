@@ -14,3 +14,9 @@ code {
   left: 0;
   position: fixed !important;
 }
+.btn-outline-primary {
+  border-radius: 15px;
+}
+.btn-outline-light {
+  border-radius: 15px;
+}
