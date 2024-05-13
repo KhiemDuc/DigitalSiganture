@@ -1,20 +1,10 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import {
-  Card,
-  Checkbox,
-  Grid,
-  TextField,
-  Box,
-  styled,
-  useTheme,
-  Typography,
-} from "@mui/material";
+import { Card, Grid, TextField, Box } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Formik } from "formik";
 import * as Yup from "yup";
-
-// import { Paragraph } from "app/components/Typography";
+import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 
 // STYLED COMPONENTS
 const FlexBox = styled(Box)(() => ({
@@ -41,6 +31,7 @@ const StyledRoot = styled("div")(() => ({
     display: "flex",
     borderRadius: 12,
     alignItems: "center",
+    justifyContent: "center",
   },
 
   ".img-wrapper": {
@@ -71,9 +62,15 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function Login() {
-  const theme = useTheme();
+  const defaultTheme = createTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+
+  const [selectedValue, setSelectedValue] = useState("");
+
+  const handleSelectChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
 
   const handleFormSubmit = async (values) => {
     setLoading(true);
@@ -86,115 +83,132 @@ export default function Login() {
   };
 
   return (
-    <StyledRoot>
-      <Card className="card">
-        <Grid container>
-          <Grid item sm={6} xs={12}>
-            <div className="img-wrapper">
-              <img
-                src="../src/assets/images/posting_photo.svg"
-                width="100%"
-                alt=""
-              />
-            </div>
-          </Grid>
+    <ThemeProvider theme={defaultTheme}>
+      {/* <StyledRoot> */}
+      <StyledRoot>
+        <Card className="card">
+          <Grid container>
+            <Grid item sm={6} xs={12}>
+              <div className="img-wrapper">
+                <img
+                  src="../src/assets/images/posting_photo.svg"
+                  width="100%"
+                  alt=""
+                />
+              </div>
+            </Grid>
 
-          <Grid item sm={6} xs={12}>
-            <ContentBox>
-              <Formik
-                onSubmit={handleFormSubmit}
-                initialValues={initialValues}
-                validationSchema={validationSchema}
-              >
-                {({
-                  values,
-                  errors,
-                  touched,
-                  handleChange,
-                  handleBlur,
-                  handleSubmit,
-                }) => (
-                  <form onSubmit={handleSubmit}>
-                    <TextField
-                      fullWidth
-                      size="small"
-                      type="email"
-                      name="email"
-                      label="Email"
-                      variant="outlined"
-                      onBlur={handleBlur}
-                      value={values.email}
-                      onChange={handleChange}
-                      helperText={touched.email && errors.email}
-                      error={Boolean(errors.email && touched.email)}
-                      sx={{ mb: 3 }}
-                    />
+            <Grid item sm={6} xs={12}>
+              <ContentBox>
+                <Formik
+                  onSubmit={handleFormSubmit}
+                  initialValues={initialValues}
+                  validationSchema={validationSchema}
+                >
+                  {({
+                    values,
+                    errors,
+                    touched,
+                    handleChange,
+                    handleBlur,
+                    handleSubmit,
+                  }) => (
+                    <form onSubmit={handleSubmit}>
+                      <div class="form-group">
+                        <label htmlFor="form-select">Chọn định dạng</label>
+                        <select
+                          class="form-select"
+                          aria-label="Default select example"
+                          value={selectedValue}
+                          onChange={handleSelectChange}
+                        >
+                          <option selected>
+                            Chọn định dạng bạn muốn đăng nhập
+                          </option>
+                          <option value="1">PEM</option>
+                          <option value="2">PKCS12</option>
+                        </select>
+                      </div>
 
-                    <TextField
-                      fullWidth
-                      size="small"
-                      name="password"
-                      type="password"
-                      label="Password"
-                      variant="outlined"
-                      onBlur={handleBlur}
-                      value={values.password}
-                      onChange={handleChange}
-                      helperText={touched.password && errors.password}
-                      error={Boolean(errors.password && touched.password)}
-                      sx={{ mb: 1.5 }}
-                    />
+                      {selectedValue === "2" && (
+                        <>
+                          <div class="form-group">
+                            <label htmlFor="exampleInputPassword1">
+                              Nhập định dạng file .p12, .pfx
+                            </label>
+                            <input
+                              className="form-control"
+                              id="exampleInputPassword1"
+                              type="file"
+                              accept=".cer, .crt"
+                            />
+                          </div>
 
-                    <FlexBox justifyContent="space-between">
-                      <FlexBox gap={1}>
-                        <Checkbox
-                          size="small"
-                          name="remember"
-                          onChange={handleChange}
-                          checked={values.remember}
-                          sx={{ padding: 0 }}
-                        />
+                          <TextField
+                            fullWidth
+                            size="small"
+                            name="password"
+                            type="password"
+                            label="Mật khẩu"
+                            variant="outlined"
+                            onBlur={handleBlur}
+                            value={values.password}
+                            onChange={handleChange}
+                            helperText={touched.password && errors.password}
+                            error={Boolean(errors.password && touched.password)}
+                            sx={{ mt: 1.5 }}
+                          />
+                        </>
+                      )}
 
-                        <Typography>Remember Me</Typography>
-                      </FlexBox>
+                      {selectedValue === "1" && (
+                        <>
+                          <div class="form-group">
+                            <label htmlFor="exampleInputPassword1">
+                              Nhập định dạng file .pem
+                            </label>
+                            <input
+                              className="form-control"
+                              id="exampleInputPassword1"
+                              type="file"
+                              accept=".cer, .crt"
+                            />
+                          </div>
 
-                      <NavLink
-                        to="/session/forgot-password"
-                        style={{ color: theme.palette.primary.main }}
-                      >
-                        Forgot password?
-                      </NavLink>
-                    </FlexBox>
+                          <div class="form-group">
+                            <label htmlFor="exampleInputPassword1">
+                              Nhập định dạng file .cer hoặc .crt
+                            </label>
+                            <input
+                              className="form-control"
+                              id="exampleInputPassword1"
+                              type="file"
+                              accept=".cer, .crt"
+                            />
+                          </div>
+                        </>
+                      )}
 
-                    <LoadingButton
-                      type="submit"
-                      color="primary"
-                      loading={loading}
-                      variant="contained"
-                      sx={{ my: 2 }}
-                    >
-                      Login
-                    </LoadingButton>
-
-                    <Typography>
-                      Don't have an account?
-                      <NavLink
-                        to="/session/signup"
-                        style={{
-                          color: theme.palette.primary.main,
-                          marginLeft: 5,
+                      <LoadingButton
+                        type="submit"
+                        loading={loading}
+                        variant="contained"
+                        sx={{
+                          my: 2,
+                          backgroundColor: "#6c63ff",
+                          borderRadius: 3,
                         }}
                       >
-                        Register
-                      </NavLink>
-                    </Typography>
-                  </form>
-                )}
-              </Formik>
-            </ContentBox>
+                        Đăng Nhập
+                      </LoadingButton>
+                    </form>
+                  )}
+                </Formik>
+              </ContentBox>
+            </Grid>
           </Grid>
-        </Grid>
-      </Card>
-    </StyledRoot>
+        </Card>
+      </StyledRoot>
+    </ThemeProvider>
   );
 }
