@@ -62,13 +62,6 @@ export default function MyPlan() {
       });
   };
 
-  // if (isDone) {
-  //   delay(15000);
-  //   handleClose();
-  //   setIsDone(false);
-  //   window.location.reload();
-  // }
-
   useEffect(() => {
     if (isLoggedIn) {
       console.log(user._id);

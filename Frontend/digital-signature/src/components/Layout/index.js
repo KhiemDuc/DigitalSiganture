@@ -7,14 +7,13 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import getLPTheme from "../../helpers/getLPTheme";
 import { useState, useEffect } from "react";
-import AppAppBar from "../../components/Home/AppBar";
+import AppAppBar from "../Home/AppBar";
 import { useSelector, useDispatch } from "react-redux";
 import { getUserInfo } from "../../redux/infoSlice";
 import { showToast, ToastType } from "../../common/toast";
-import CheckCertificate from "../../components/CheckCertificate/CheckCertificate";
 import { Typography } from "@mui/material";
 
-export default function CheckCertificatePage() {
+export default function Layout({ children, heading, subheading }) {
   const [mode, setMode] = useState("light");
   const { user, isLoggedIn } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -87,17 +86,16 @@ export default function CheckCertificatePage() {
             }}
           >
             <Typography component="h2" variant="h4" color="text.primary">
-              Kiểm tra chứng chỉ số
+              {heading}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Kiểm tra chứng chỉ được cấp bởi chứng tôi có hợp lệ hay còn hạn sử
-              dụng hay không
+              {subheading}
             </Typography>
           </Box>
         </Box>
       </ThemeProvider>
 
-      <CheckCertificate />
+      {children}
     </Container>
   );
 }

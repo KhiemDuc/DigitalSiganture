@@ -57,7 +57,7 @@ export default function SignInSide() {
     dispatch(login(user))
       .unwrap()
       .then(() => {
-        navigate("/");
+        navigate("/home");
         window.location.reload();
       })
       .catch(() => {

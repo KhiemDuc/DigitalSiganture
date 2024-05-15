@@ -17,6 +17,7 @@ import PricingPage from "../pages/pricing/PricingPage";
 import MyPlan from "../pages/my_plan/MyPlan";
 import CheckCertificate from "../components/CheckCertificate/CheckCertificate";
 import CheckCertificatePage from "../pages/check_certificate/CheckCertificatePage";
+import CreateKey from "../pages/create_key/CreateKey";
 
 const Routes = () => {
   const { isLoggedIn } = useSelector((state) => state.auth);
@@ -36,7 +37,7 @@ const Routes = () => {
       element: <PageNotFound />,
     },
     {
-      path: "request",
+      path: "/certificate/request",
       element: <RequestSignature />,
     },
     {
@@ -46,6 +47,10 @@ const Routes = () => {
     {
       path: "certificate/check",
       element: <CheckCertificatePage />,
+    },
+    {
+      path: "/certificate/create_key",
+      element: <CreateKey />,
     },
   ];
 

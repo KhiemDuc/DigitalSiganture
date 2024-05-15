@@ -14,16 +14,20 @@ import {
   Badge,
   Text,
   HStack,
+  IconButton,
+  Avatar,
 } from "@chakra-ui/react";
 import ProvinceAPI from "../../common/Provinces.VN";
 import ReactSelect from "react-select";
 import axios from "../../setup/axios";
+import { CloseButton } from "@chakra-ui/react";
 
-function RequestForm() {
+function RequestForm({ changeStep }) {
   const [imgCCCD, setImgCCCD] = useState(null);
   const [toggle, setToggle] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const fileValidate = useDisclosure();
+  const [isSuccess, setIsSuccess] = useState(false);
   const [showFormControls, setShowFormControls] = React.useState(false);
 
   const changeProfileImage = (event) => {
@@ -260,6 +264,7 @@ function RequestForm() {
             <FormControl id="cccd_img_front">
               <FormLabel>Ảnh CCCD Mặt Trước</FormLabel>
               <Input
+                className="form-control"
                 focusBorderColor="brand.blue"
                 type="file"
                 // value={imgCCCD}
@@ -297,6 +302,7 @@ function RequestForm() {
             <FormControl id="cccd_img_back">
               <FormLabel>Ảnh CCCD Mặt Sau</FormLabel>
               <Input
+                className="form-control"
                 focusBorderColor="brand.blue"
                 type="file"
                 // value={imgCCCD}
@@ -341,9 +347,9 @@ function RequestForm() {
                   justifyContent: "space-between",
                 }}
               >
-                <Button onClick={openModal}>
+                <button className="btn btn-outline-success" onClick={openModal}>
                   {image ? "Chụp/Xem lại ảnh" : "Mở Camera"}
-                </Button>
+                </button>
                 <p className="m-0">
                   {image ? "Ảnh đã được chụp" : "Chưa có ảnh nào được chụp"}
                 </p>
@@ -359,14 +365,29 @@ function RequestForm() {
                     {image && <img src={image} alt="Captured" />}
 
                     <ModalFooter>
-                      <Button mr={3} onClick={captureImage}>
+                      <Button
+                        variant="outline"
+                        color={"brand.blue"}
+                        mr={3}
+                        onClick={captureImage}
+                      >
                         Chụp ảnh
                       </Button>
-                      <Button mr={3} onClick={startCamera}>
+                      <Button
+                        variant="outline"
+                        color={"brand.blue"}
+                        mr={3}
+                        onClick={startCamera}
+                      >
                         Mở Camera
                       </Button>
-                      <Button colorScheme="blue" mr={3} onClick={closeModal}>
-                        Close
+                      <Button
+                        variant="outline"
+                        color={"brand.blue"}
+                        mr={3}
+                        onClick={closeModal}
+                      >
+                        Đóng
                       </Button>
                     </ModalFooter>
                   </ModalContent>
@@ -383,30 +404,85 @@ function RequestForm() {
             justifyContent: "flex-end",
           }}
         >
-          <Button onClick={() => setShowFormControls(!showFormControls)}>
-            {showFormControls ? "Quay lại" : "Tiếp tục"}
+          <Button
+            variant="outlined"
+            color={"brand.blue"}
+            onClick={() => setShowFormControls(!showFormControls)}
+            borderBottom={"1px solid #4164e3"}
+          >
+            {showFormControls ? "<< Quay lại" : "Tiếp tục >>"}
           </Button>
         </FormControl>
       </Grid>
       <Box mt={5} py={5} px={8} borderTopWidth={1} borderColor="brand.light">
         <Button
           onClick={() => {
-            const formData = new FormData();
-            formData.append("cccd", imgCCCD);
-            formData.append("face", imgCCCD);
-            console.log(formData);
-            axios
-              .post("/certificate/", formData)
-              .then((response) => {
-                console.log(response);
-              })
-              .catch((error) => {
-                console.error(error);
-              });
+            // if (showFormControls) {
+            //   const formData = new FormData();
+            //   formData.append("cccd", imgCCCD);
+            //   formData.append("face", imgCCCD);
+            //   console.log(formData);
+            //   axios
+            //     .post("/certificate/", formData)
+            //     .then((response) => {
+            //       console.log(response);
+            //     })
+            //     .catch((error) => {
+            //       console.error(error);
+            //     });
+            // } else {
+            //   setShowFormControls(!showFormControls);
+            // }
+            changeStep(3);
           }}
         >
-          Tiếp tục
+          {!showFormControls ? "Tiếp tục" : "Đăng ký"}
         </Button>
+        <Modal
+          blockScrollOnMount={false}
+          isOpen={!isSuccess}
+          onClose={() => setIsSuccess(false)}
+          isCentered
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader></ModalHeader>
+            <ModalBody>
+              <IconButton
+                aria-label="close"
+                // onClick={handleClose} // Replace 'handleClose' with your function to close the modal
+                sx={{
+                  position: "absolute", // Position the button absolutely
+                  top: 0, // Position it at the top
+                  right: 0, // Position it at the left
+                  padding: 2,
+                }}
+                variant={"text"}
+                onClick={() => setIsSuccess(!isSuccess)}
+              >
+                <CloseButton />
+              </IconButton>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyItems: "space-between",
+                  alignItems: "center",
+                  gap: 2,
+                }}
+              >
+                <Avatar
+                  style={{ width: "80px", height: "80px" }}
+                  src="/static/img/success.png"
+                />
+                <Text fontSize={17} id="modal-modal-title">
+                  Gửi yêu cầu thành công
+                </Text>
+              </Box>
+            </ModalBody>
+            <ModalFooter></ModalFooter>
+          </ModalContent>
+        </Modal>
       </Box>
     </>
   );

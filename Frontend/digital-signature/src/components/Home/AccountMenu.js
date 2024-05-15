@@ -169,7 +169,11 @@ export default function AccountMenu() {
           </ListItemIcon>
           Đăng ký chứng chỉ số
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            navigate("/certificate/check");
+          }}
+        >
           <ListItemIcon>
             <FingerprintIcon fontSize="small" />
           </ListItemIcon>
