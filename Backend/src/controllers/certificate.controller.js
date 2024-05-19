@@ -3,7 +3,6 @@ const { SuccessResponse } = require("../core/success.response");
 
 class CertificateController {
   static async requestCertificate(req, res) {
-    console.log(req.files);
     new SuccessResponse({
       message: "Request sign certificate success",
       data: await CertificateService.certificateRequest(req.user, req.body, {
@@ -37,7 +36,18 @@ class CertificateController {
   }
   static async checkCertificate(req, res) {
     new SuccessResponse({
-      message: await CertificateService.checkCertificate(req.body.certPem),
+      message: await CertificateService.checkCertificate(
+        req.body.certificatePem
+      ),
+    }).send(res);
+  }
+
+  static async getCertificate(req, res) {
+    new SuccessResponse({
+      message: "Get certificate requests success",
+      data: await CertificateService.getMyCertificate(
+        req.headers["x-client-id"]
+      ),
     }).send(res);
   }
 }

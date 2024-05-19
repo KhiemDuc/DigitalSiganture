@@ -17,7 +17,11 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
-    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png")
+    if (
+      file.mimetype === "image/jpeg" ||
+      file.mimetype === "image/png" ||
+      file.mimetype === "image/jpg"
+    )
       cb(null, true);
     else cb(new Error("Only images is allowed"), false);
   },
@@ -26,6 +30,7 @@ const upload = multer({
 router.post("/check", asyncHandler(CertificateController.checkCertificate));
 
 router.use("/", authentication);
+router.get("/", asyncHandler(CertificateController.getCertificate));
 router.post(
   "/",
   upload.fields([

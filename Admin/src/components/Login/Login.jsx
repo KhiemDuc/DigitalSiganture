@@ -45,11 +45,7 @@ const StyledRoot = styled("div")(() => ({
 }));
 
 // initial login credentials
-const initialValues = {
-  email: "jason@ui-lib.com",
-  password: "dummyPass",
-  remember: true,
-};
+const initialValues = {};
 
 // form field validation schema
 const validationSchema = Yup.object().shape({
@@ -75,8 +71,9 @@ export default function Login() {
   const handleFormSubmit = async (values) => {
     setLoading(true);
     try {
+      console.log(values);
       //   await login(values.email, values.password);
-      navigate("/");
+      // navigate("/");
     } catch (e) {
       setLoading(false);
     }
@@ -137,10 +134,11 @@ export default function Login() {
                               Nhập định dạng file .p12, .pfx
                             </label>
                             <input
+                              name="pfx"
                               className="form-control"
                               id="exampleInputPassword1"
                               type="file"
-                              accept=".cer, .crt"
+                              accept=".p12, .pfx"
                             />
                           </div>
 
