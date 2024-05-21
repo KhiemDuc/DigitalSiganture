@@ -6,10 +6,14 @@ import { Box } from "@mui/system";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Modal } from "@mui/material";
+import CertificateService from "../../services/certificate.service";
+import { Card } from "@mui/material/Card";
 
 function CheckCertificate() {
   const [open, setOpen] = useState(false);
   const [certData, setCertData] = useState(null);
+  const [status, setStatus] = useState(null);
+  const [message, setMessage] = useState(null);
 
   const handleClose = () => {
     setOpen(false);
@@ -98,6 +102,15 @@ function CheckCertificate() {
         <button
           className="btn btn-primary"
           onClick={() => {
+            CertificateService.checkCertificate(certData)
+              .then((res) => {
+                setStatus("Chứng chỉ hợp lệ");
+              })
+              .catch((err) => {
+                setStatus(
+                  "Chứng chỉ không được cấp bởi CA này hoặc đã hết hạn"
+                );
+              });
             setOpen(true);
           }}
         >
@@ -123,11 +136,15 @@ function CheckCertificate() {
                 borderRadius: "15px",
                 display: "flex",
                 justifyContent: "space-between",
-                alignItems: "center",
+                alignItems: "flex-start",
                 flexDirection: "column",
               }}
             >
-              <CertificateModal pemData={certData} />
+              <CertificateModal
+                pemData={certData}
+                status={status}
+                reason={message}
+              />
               <IconButton
                 aria-label="close"
                 onClick={handleClose} // Replace 'handleClose' with your function to close the modal

@@ -93,9 +93,8 @@ export default function Layout({ children, heading, subheading }) {
             </Typography>
           </Box>
         </Box>
+        {children}
       </ThemeProvider>
-
-      {children}
     </Container>
   );
 }

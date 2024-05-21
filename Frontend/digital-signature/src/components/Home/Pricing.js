@@ -268,7 +268,7 @@ export default function Pricing() {
                       }}
                       className={
                         myPlan?._id === tier._id
-                          ? "btn btn-outline"
+                          ? "btn btn-outline-light"
                           : "btn btn-outline-light"
                       }
                       disabled={myPlan?._id === tier._id}
@@ -281,7 +281,7 @@ export default function Pricing() {
                       class="btn btn-outline "
                       disabled={myPlan?._id === tier._id || myPlan.tier > 1}
                     >
-                      {myPlan?._id === tier._id ? "Gói của bạn" : "✔️"}
+                      {myPlan?._id === tier._id ? "Gói của bạn" : " ✔️"}
                     </button>
                   ) : (
                     <button

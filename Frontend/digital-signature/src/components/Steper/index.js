@@ -25,7 +25,7 @@ const steps = [
   },
   {
     title: "Bước 2",
-    description: "Điền thông tin cấp chứng chỉ",
+    description: "Điền thông tin",
     navigate: "/certificate/request",
   },
   {
@@ -35,7 +35,7 @@ const steps = [
   },
 ];
 
-const StepperCustom = ({ step }) => {
+const StepperCustom = ({ step, sx }) => {
   const navigate = useNavigate();
   const { activeStep, setActiveStep } = useSteps({
     index: step,
@@ -48,7 +48,13 @@ const StepperCustom = ({ step }) => {
 
   return (
     <ChakraProvider theme={theme}>
-      <Stepper index={activeStep}>
+      <Stepper
+        overflow={"auto"}
+        sx={sx}
+        index={activeStep}
+        gap={20}
+        justifyContent={"space-between"}
+      >
         {steps.map((step, index) => (
           <Step
             key={index}

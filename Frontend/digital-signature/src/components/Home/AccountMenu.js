@@ -21,6 +21,7 @@ import CreateIcon from "@mui/icons-material/Create";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import PaymentService from "../../services/payment.service";
 import PaymentIcon from "@mui/icons-material/Payment";
+import ScheduleSendIcon from "@mui/icons-material/ScheduleSend";
 
 const SmallIcon = styled(CheckCircleIcon)(({ theme }) => ({
   width: 16,
@@ -93,7 +94,10 @@ export default function AccountMenu() {
           >
             <Avatar
               sx={{ width: 32, height: 32 }}
-              src={process.env.REACT_APP_API_URL + "public/" + userInfo?.avatar}
+              src={
+                userInfo?.avatar &&
+                process.env.REACT_APP_API_URL + "public/" + userInfo?.avatar
+              }
             >
               {currentUser.userName[0]}
             </Avatar>
@@ -138,7 +142,10 @@ export default function AccountMenu() {
       >
         <MenuItem>
           <Avatar
-            src={process.env.REACT_APP_API_URL + "public/" + userInfo?.avatar}
+            src={
+              userInfo?.avatar &&
+              process.env.REACT_APP_API_URL + "public/" + userInfo?.avatar
+            }
           >
             {currentUser.userName[0]}
           </Avatar>
@@ -163,11 +170,25 @@ export default function AccountMenu() {
           )}
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            navigate("/certificate/create_key");
+          }}
+        >
           <ListItemIcon>
             <CreateIcon fontSize="small" />
           </ListItemIcon>
           Đăng ký chứng chỉ số
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            navigate("/certificate/my_request");
+          }}
+        >
+          <ListItemIcon>
+            <ScheduleSendIcon fontSize="small" />
+          </ListItemIcon>
+          Xem danh sách yêu cầu
         </MenuItem>
         <MenuItem
           onClick={() => {

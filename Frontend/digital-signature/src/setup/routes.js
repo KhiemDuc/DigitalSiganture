@@ -15,9 +15,9 @@ import StudentVerify from "../components/StudentVerify/StudentVerify";
 import { otpHandle } from "../pages/otp_verifi/OtpVerifi";
 import PricingPage from "../pages/pricing/PricingPage";
 import MyPlan from "../pages/my_plan/MyPlan";
-import CheckCertificate from "../components/CheckCertificate/CheckCertificate";
 import CheckCertificatePage from "../pages/check_certificate/CheckCertificatePage";
 import CreateKey from "../pages/create_key/CreateKey";
+import MyRequest from "./../pages/my_request/index";
 
 const Routes = () => {
   const { isLoggedIn } = useSelector((state) => state.auth);
@@ -51,6 +51,10 @@ const Routes = () => {
     {
       path: "/certificate/create_key",
       element: <CreateKey />,
+    },
+    {
+      path: "/certificate/my_request",
+      element: <MyRequest />,
     },
   ];
 

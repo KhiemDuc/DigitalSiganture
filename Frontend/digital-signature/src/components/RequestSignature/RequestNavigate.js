@@ -14,7 +14,7 @@ import RequestTicket from "./RequestTicket";
 import Stepper from "../Steper";
 
 const RequestNavigate = () => {
-  const tabs = ["Đăng Ký Chứng Chỉ Số ✍️", "Xem vé yêu cầu"];
+  const tabs = ["Đăng Ký Chứng Chỉ Số ✍️"];
   const [stepParent, setParentState] = useState(2);
 
   const changeParentState = (newState) => {
@@ -60,12 +60,11 @@ const RequestNavigate = () => {
             <TabPanel>
               <RequestForm changeStep={changeParentState} />
             </TabPanel>
-            <TabPanel>
+            {/* <TabPanel>
               <RequestTicket />
-            </TabPanel>
+            </TabPanel> */}
           </TabPanels>
         </Tabs>
-
         {/* <Actions /> */}
       </Box>
     </div>
