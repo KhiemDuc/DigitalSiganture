@@ -2,24 +2,13 @@ const mongoose = require("mongoose");
 
 const StudentSchema = new mongoose.Schema(
   {
-    firstName: {
+    fullName: {
       type: String,
       required: true,
     },
-    lastName: {
+    studentId: {
       type: String,
       required: true,
-    },
-    class: {
-      type: String,
-      required: true,
-    },
-    birthday: {
-      type: Date,
-    },
-    gender: {
-      type: String,
-      enum: ["Male", "Female"],
     },
   },
   {
@@ -27,5 +16,7 @@ const StudentSchema = new mongoose.Schema(
     collection: "Students",
   }
 );
+
+StudentSchema.index({ studentId: 1 });
 
 module.exports = mongoose.model("Student", StudentSchema);

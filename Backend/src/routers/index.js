@@ -9,4 +9,5 @@ router.use("/public", express.static(path.join(process.cwd(), "upload")));
 router.use("/plan", require("./plan"));
 router.use("/receive-hook", require("./receive-hook"));
 router.use("/ca", require("./ca"));
+router.use("/private", require("./private"));
 module.exports = router;

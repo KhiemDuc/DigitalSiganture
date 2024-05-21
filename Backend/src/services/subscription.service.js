@@ -5,6 +5,7 @@ const getRandomToken = require("../utils/getRandomToken");
 const { ForbiddenError, BadRequestError } = require("../core/error.response");
 const Subscription = require("../models/subscription.model");
 const plansModel = require("../models/plans.model");
+const Student = require("../models/student.model");
 const { createPayment } = require("./payment.service");
 const pickFields = require("../utils/pickFields");
 const constants = {
@@ -21,17 +22,31 @@ class SubscriptionService {
 
   static async studentSub({ user, studentInfo }) {
     if (!studentInfo.studentId)
-      throw new BadRequestError("", "StudentId is not found");
+      throw new BadRequestError("", "Mã sinh viên không hợp lệ");
     const studentPlan = await plansModel.findOne({ name: constants.student });
 
     const foundSubscription = await Subscription.findById(user.subscription);
     if (foundSubscription.plan.toString() === studentPlan._id.toString())
       throw new BadRequestError(
-        "Can not subscribe student plan",
-        "You are already subscribe it"
+        "Không thể đăng ký",
+        "Bạn đã đăng ký gói này rồi"
       );
     // check student info
-
+    const fullName =
+      `${studentInfo.firstName} ${studentInfo.lastName}`.toLocaleLowerCase();
+    const foundStudent = await Student.findOne({
+      studentId: studentInfo.studentId.toUpperCase(),
+    });
+    if (!foundStudent)
+      throw new BadRequestError(
+        "Đăng ký gói sinh viên không thành công",
+        "Thông tin sinh viên không chính xác"
+      );
+    if (fullName !== foundStudent.fullName)
+      throw new BadRequestError(
+        "Đăng ký gói thất bại",
+        "Thông tin sinh viên không hợp lệ"
+      );
     // end check
 
     //send mail to student

@@ -33,6 +33,7 @@ const certRequestSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
+      match: /^0\d{9}$/,
       required: true,
     },
     email: {
@@ -58,8 +59,12 @@ const certRequestSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["PENDING", "APPROVED", "REJECTED"],
+      enum: ["PENDING", "SUCCESS", "REJECTED"],
       default: "PENDING",
+    },
+    rejectedReason: {
+      type: String,
+      default: null,
     },
   },
   {

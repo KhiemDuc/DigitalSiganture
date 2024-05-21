@@ -4,7 +4,6 @@ const {
 } = require("../core/error.response");
 const Certificate = require("../models/certificate.model");
 const CertRequest = require("../models/certRequest.model");
-const { changeUserInfo } = require("./access.service");
 const PublicKeyUsed = require("../models/publicKeyUsed.model");
 const crypto = require("crypto");
 const pickFields = require("../utils/pickFields");
@@ -12,6 +11,7 @@ const axios = require("axios");
 const fs = require("fs");
 const CAModel = require("../models/CA.model");
 const forge = require("node-forge");
+const omitFields = require("../utils/omitFields");
 const constants = {
   idApi: "https://api.fpt.ai/vision/idr/vnm",
   faceApi: "https://api.fpt.ai/dmp/checkface/v1/",
@@ -21,6 +21,31 @@ const constants = {
 };
 class CertificateService {
   static certificateRequest = async (user, info, { CCCD, face, CCCDBack }) => {
+    const foundRequest = await CertRequest.findOne({
+      userId: user._id,
+      status: "PENDING",
+    });
+    if (foundRequest)
+      throw new BadRequestError(
+        "Request sign certificate failed",
+        "Bạn đã yêu cầu 1 chứng chỉ từ trước đó rồi"
+      );
+
+    const foundCert = await Certificate.findOne({ userId: user._id });
+    if (foundCert.certPem !== null)
+      throw new BadRequestError(
+        "Request sign certificate failed",
+        "Bạn đã có chứng chỉ rồi, vui lòng hủy chứng chỉ cũ trước khi yêu cầu 1 chứng chỉ mới"
+      );
+    const hash = crypto.createHash("sha256");
+    hash.update(info.publicKey);
+    const result = hash.digest("hex");
+    const keyUsed = await PublicKeyUsed.findOne({ publicHashed: result });
+    if (keyUsed)
+      throw new BadRequestError(
+        "Request certificate failed",
+        "Some thing wrong, please try again"
+      );
     //face check
     const CCCD64 = fs.readFileSync(CCCD.path, "base64");
     const face64 = fs.readFileSync(face.path, "base64");
@@ -75,15 +100,6 @@ class CertificateService {
     //check date of birth, nationality, home(placeOfOrigin), address
     //end
     // await changeUserInfo(user, { ...info });
-    const hash = crypto.createHash("sha256");
-    hash.update(info.publicKey);
-    const result = hash.digest("hex");
-    const keyUsed = await PublicKeyUsed.findOne({ publicHashed: result });
-    if (keyUsed)
-      throw new BadRequestError(
-        "Request certificate failed",
-        "Some thing wrong, please try again"
-      );
 
     const newReq = await CertRequest.create({
       publicKey: info.publicKey,
@@ -106,7 +122,7 @@ class CertificateService {
   };
 
   static getCertRequests = async () => {
-    return await CertRequest.find({});
+    return await CertRequest.find({ status: "PENDING" });
   };
 
   static signCertificate = async (userId, certPem) => {
@@ -117,9 +133,17 @@ class CertificateService {
   };
 
   static getMyCertRequest = async (user) => {
-    const foundCertRequest = await CertRequest.findOne({
+    const foundCertRequest = await CertRequest.find({
       userId: user._id,
-    }).populate({ path: "userId", populate: { path: "userInfo" } });
+    });
+    if (!foundCertRequest)
+      throw new BadRequestError(
+        "Get certificate request failed",
+        "Bạn không có yêu cầu chứng chỉ nào"
+      );
+
+    // const result = omitFields(foundCertRequest._doc, ["__v", "updatedAt"]);
+
     return foundCertRequest;
   };
 
@@ -142,6 +166,21 @@ class CertificateService {
     }
 
     return "Chứng chỉ hợp lệ";
+  };
+
+  static getMyCertificate = async (userId) => {
+    const foundCert = await Certificate.findOne({ userId });
+    if (!foundCert)
+      throw new InternalServerError(
+        "Get certificate failed",
+        "Lỗi không xác định"
+      );
+    if (!foundCert.certPem)
+      throw new BadRequestError(
+        "Get certificate failed",
+        "Bạn chưa có chứng chỉ nào"
+      );
+    return foundCert.certPem;
   };
 }
 
