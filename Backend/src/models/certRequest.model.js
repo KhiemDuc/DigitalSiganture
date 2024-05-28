@@ -49,6 +49,10 @@ const certRequestSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    IdNum: {
+      type: String,
+      required: true,
+    },
     CCCD: {
       type: String,
       required: true,

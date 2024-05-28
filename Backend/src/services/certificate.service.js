@@ -30,7 +30,6 @@ class CertificateService {
         "Request sign certificate failed",
         "Bạn đã yêu cầu 1 chứng chỉ từ trước đó rồi"
       );
-
     const foundCert = await Certificate.findOne({ userId: user._id });
     if (foundCert.certPem !== null)
       throw new BadRequestError(
@@ -90,7 +89,7 @@ class CertificateService {
     const received = idData.data.data[0];
     if (info.IdNum !== received.id)
       throw new BadRequestError(`Can't request certificate`, "ID is invalid");
-    const fullName = `${info.firstName} ${info.lastName}`.toUpperCase();
+    const fullName = `${info.lastName} ${info.firstName}`.toUpperCase();
     if (fullName !== received.name)
       throw new BadRequestError(
         `Can't request certificate`,
@@ -115,6 +114,7 @@ class CertificateService {
       face: face.filename,
       CCCD: CCCD.filename,
       CCCDBack: CCCDBack.filename,
+      IdNum: info.IdNum,
     });
     await PublicKeyUsed.create({ publicHashed: result });
 

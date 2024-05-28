@@ -170,7 +170,6 @@ const notifications = [
 ];
 
 export default function Sidebar({ children, appBarText }) {
-  console.log(appBarText);
   const [panelOpen, setPanelOpen] = useState(false);
   const [open, setOpen] = React.useState(true);
   const navigate = useNavigate();
@@ -178,7 +177,6 @@ export default function Sidebar({ children, appBarText }) {
     setOpen(!open);
   };
   const handleDrawerToggle = () => {
-    console.log("handleDrawerToggle");
     setPanelOpen(!panelOpen);
   };
 
@@ -279,7 +277,7 @@ export default function Sidebar({ children, appBarText }) {
             </ListItemButton>
             <ListItemButton
               onClick={() => {
-                navigate("/admin/dashboard");
+                navigate("/admin/orders");
               }}
             >
               <ListItemIcon>

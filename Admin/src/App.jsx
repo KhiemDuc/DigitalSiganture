@@ -1,35 +1,20 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import { publicRoutes } from "./setup/routes";
-import Sidebar from "./components/SideBar/SideBar";
-import { Fragment } from "react";
-
+import Layout from "./components/Layout/Layout";
+import NotFound from "./components/404NotFound/NotFound";
 function App() {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          {publicRoutes.map((route, index) => {
-            const Page = route.component;
-            let isSizeBar = route.sidebar;
-            return (
-              <Route
-                key={index}
-                path={route.path}
-                element={
-                  isSizeBar ? (
-                    <Sidebar appBarText={route.text}>
-                      <Page />
-                    </Sidebar>
-                  ) : (
-                    <Fragment>
-                      <Page />
-                    </Fragment>
-                  )
-                }
-              />
-            );
-          })}
+          <Route element={<Layout />} path="/">
+            {publicRoutes.map((route, index) => {
+              const Page = route.component;
+              return <Route key={index} path={route.path} element={<Page />} />;
+            })}
+          </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </>

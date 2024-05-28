@@ -1,93 +1,71 @@
 import * as React from "react";
-import Link from "@mui/material/Link";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Title from "./../Title/Title";
-
-// Generate Order Data
-function createData(id, date, name, shipTo, paymentMethod, amount) {
-  return { id, date, name, shipTo, paymentMethod, amount };
-}
-
-const rows = [
-  createData(
-    0,
-    "16 Mar, 2019",
-    "Elvis Presley",
-    "Tupelo, MS",
-    "VISA ⠀•••• 3719",
-    312.44
-  ),
-  createData(
-    1,
-    "16 Mar, 2019",
-    "Paul McCartney",
-    "London, UK",
-    "VISA ⠀•••• 2574",
-    866.99
-  ),
-  createData(
-    2,
-    "16 Mar, 2019",
-    "Tom Scholz",
-    "Boston, MA",
-    "MC ⠀•••• 1253",
-    100.81
-  ),
-  createData(
-    3,
-    "16 Mar, 2019",
-    "Michael Jackson",
-    "Gary, IN",
-    "AMEX ⠀•••• 2000",
-    654.39
-  ),
-  createData(
-    4,
-    "15 Mar, 2019",
-    "Bruce Springsteen",
-    "Long Branch, NJ",
-    "VISA ⠀•••• 5919",
-    212.79
-  ),
-];
-
-function preventDefault(event) {
-  event.preventDefault();
-}
-
+import { getListRequests } from "../../service/certificate";
+import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
+const StyledTableRow = styled(TableRow)(() => ({
+  "&:hover": {
+    backgroundColor: "#ccc",
+  },
+  userSelect: "none",
+}));
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 export default function Orders() {
+  const [requests, setReuests] = React.useState([]);
+  const navigate = useNavigate();
+  React.useEffect(() => {
+    getListRequests().then((response) => {
+      console.log(response);
+      setReuests(response.data.data);
+    });
+  }, []);
+  const hanldeOpenModal = (request) => {
+    navigate(`/admin/orders/${request._id}`, { state: request });
+  };
   return (
     <React.Fragment>
       <Title>Recent Orders</Title>
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Ship To</TableCell>
-            <TableCell>Payment Method</TableCell>
-            <TableCell align="right">Sale Amount</TableCell>
+            <TableCell>Họ Tên</TableCell>
+            <TableCell>Địa chỉ</TableCell>
+            <TableCell>CCCD</TableCell>
+            <TableCell>Giới tính</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
-              <TableCell>{row.paymentMethod}</TableCell>
-              <TableCell align="right">{`$${row.amount}`}</TableCell>
-            </TableRow>
+          {requests.map((row) => (
+            <StyledTableRow key={row._id} onClick={() => hanldeOpenModal(row)}>
+              <TableCell>{row.firstName + " " + row.lastName}</TableCell>
+              <TableCell>{row.address}</TableCell>
+              <TableCell>{row.IdNum}</TableCell>
+              <TableCell>
+                {row.gender === "Male"
+                  ? "Nam"
+                  : gender === "Female"
+                  ? "Nữ"
+                  : "N/A"}
+              </TableCell>
+            </StyledTableRow>
           ))}
         </TableBody>
       </Table>
-      <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
-        See more orders
-      </Link>
     </React.Fragment>
   );
 }

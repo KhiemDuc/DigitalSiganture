@@ -1,15 +1,10 @@
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { Card, Grid, TextField, Box } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
-import { Formik } from "formik";
-import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
+import { Card, Grid, TextField, Box, Button } from "@mui/material";
+import { useFormik } from "formik";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-
-// STYLED COMPONENTS
-const FlexBox = styled(Box)(() => ({
-  display: "flex",
-}));
+import forge from "node-forge";
+import { setState } from "../../setup/redux/signatureSlice";
 
 const ContentBox = styled("div")(() => ({
   height: "100%",
@@ -43,40 +38,91 @@ const StyledRoot = styled("div")(() => ({
     justifyContent: "center",
   },
 }));
-
-// initial login credentials
-const initialValues = {};
-
-// form field validation schema
-const validationSchema = Yup.object().shape({
-  password: Yup.string()
-    .min(6, "Password must be 6 character length")
-    .required("Password is required!"),
-  email: Yup.string()
-    .email("Invalid Email address")
-    .required("Email is required!"),
-});
+const readFile = (file, format) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    if (format == "text") reader.readAsText(file);
+    else reader.readAsArrayBuffer(file);
+    reader.onload = (e) => {
+      resolve(e.target.result);
+    };
+  });
+};
 
 export default function Login() {
   const defaultTheme = createTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [selectedValue, setSelectedValue] = useState("0");
 
-  const [selectedValue, setSelectedValue] = useState("");
+  // const arrayBufferToBinaryString = (buffer) => {
+  //   var binary = "";
+  //   var bytes = new Uint8Array(buffer);
+  //   var len = bytes.byteLength;
+  //   for (var i = 0; i < len; i++) {
+  //     binary += String.fromCharCode(bytes[i]);
+  //   }
+  //   return binary;
+  // };
 
-  const handleSelectChange = (event) => {
-    setSelectedValue(event.target.value);
+  const readPemFormat = (pemFile, crtFile) => {
+    console.log(pemFile, crtFile);
   };
 
-  const handleFormSubmit = async (values) => {
-    setLoading(true);
+  const readPfxFormat = async (pfxFile, password) => {
+    var p12Asn1;
+    var p12;
+
     try {
-      console.log(values);
-      //   await login(values.email, values.password);
-      // navigate("/");
-    } catch (e) {
-      setLoading(false);
+      const fileContent = await readFile(pfxFile, "text");
+      const der = forge.util.decode64(fileContent);
+      p12Asn1 = forge.asn1.fromDer(der);
+    } catch (err) {
+      const fileContent = await readFile(pfxFile, "binary");
+      const uint8Array = new Uint8Array(fileContent);
+      const forgeBuffer = forge.util.createBuffer(uint8Array);
+      p12Asn1 = forge.asn1.fromDer(forgeBuffer.getBytes());
     }
+    try {
+      p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, password || null);
+      var bags = p12.getBags({ bagType: forge.pki.oids.pkcs8ShroudedKeyBag });
+      var keyBag =
+        bags[forge.pki.oids.pkcs8ShroudedKeyBag][0] ??
+        p12.getBags({ bagType: forge.pki.oids.keyBag })[
+          forge.pki.oids.keyBag
+        ][0];
+      var certBag = p12.getBags({ bagType: forge.pki.oids.certBag })[
+        forge.pki.oids.certBag
+      ][0];
+      // var key = bag.key;
+      setState({ cert: certBag.cert, key: keyBag.key });
+      navigate("/admin/dashboard");
+      // console.log(bags, keyBag, certBag);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const formik = useFormik({
+    initialValues: {},
+    onSubmit: (values) => {
+      if (selectedValue === "2") {
+        if (values.pfx) {
+          readPfxFormat(values.pfx, values.password);
+        }
+      } else if (selectedValue === "1") {
+        if (values.pem && values.crt) readPemFormat(values.pem, values.crt);
+      } else return;
+    },
+  });
+  const handleSelectChange = (event) => {
+    setSelectedValue(event.target.value);
+    formik.resetForm();
+  };
+
+  const handleChangePfx = (event) => {
+    const file = event.target?.files[0];
+    formik.setFieldValue("pfx", file);
   };
 
   return (
@@ -97,111 +143,105 @@ export default function Login() {
 
             <Grid item sm={6} xs={12}>
               <ContentBox>
-                <Formik
-                  onSubmit={handleFormSubmit}
-                  initialValues={initialValues}
-                  validationSchema={validationSchema}
-                >
-                  {({
-                    values,
-                    errors,
-                    touched,
-                    handleChange,
-                    handleBlur,
-                    handleSubmit,
-                  }) => (
-                    <form onSubmit={handleSubmit}>
-                      <div class="form-group">
-                        <label htmlFor="form-select">Chọn định dạng</label>
-                        <select
-                          class="form-select"
-                          aria-label="Default select example"
-                          value={selectedValue}
-                          onChange={handleSelectChange}
-                        >
-                          <option selected>
-                            Chọn định dạng bạn muốn đăng nhập
-                          </option>
-                          <option value="1">PEM</option>
-                          <option value="2">PKCS12</option>
-                        </select>
-                      </div>
-
-                      {selectedValue === "2" && (
-                        <>
-                          <div class="form-group">
-                            <label htmlFor="exampleInputPassword1">
-                              Nhập định dạng file .p12, .pfx
-                            </label>
-                            <input
-                              name="pfx"
-                              className="form-control"
-                              id="exampleInputPassword1"
-                              type="file"
-                              accept=".p12, .pfx"
-                            />
-                          </div>
-
-                          <TextField
-                            fullWidth
-                            size="small"
-                            name="password"
-                            type="password"
-                            label="Mật khẩu"
-                            variant="outlined"
-                            onBlur={handleBlur}
-                            value={values.password}
-                            onChange={handleChange}
-                            helperText={touched.password && errors.password}
-                            error={Boolean(errors.password && touched.password)}
-                            sx={{ mt: 1.5 }}
+                <form onSubmit={formik.handleSubmit}>
+                  <div className="form-group">
+                    <label htmlFor="form-select">Chọn định dạng</label>
+                    <select
+                      name="select"
+                      className="form-select"
+                      aria-label="Default select example"
+                      value={selectedValue}
+                      onChange={handleSelectChange}
+                    >
+                      <option value={"0"}>
+                        Chọn định dạng bạn muốn đăng nhập
+                      </option>
+                      <option value="1">PEM</option>
+                      <option value="2">PKCS12</option>
+                    </select>
+                    {selectedValue === "2" && (
+                      <>
+                        <div className="form-group">
+                          <label htmlFor="exampleInputPassword1">
+                            Nhập định dạng file .p12, .pfx
+                          </label>
+                          <input
+                            key={"pfx"}
+                            name="pfx"
+                            // value={formik.pfx?.name}
+                            className="form-control"
+                            id="exampleInputPassword1"
+                            type="file"
+                            accept=".p12, .pfx"
+                            onChange={handleChangePfx}
                           />
-                        </>
-                      )}
+                        </div>
 
-                      {selectedValue === "1" && (
-                        <>
-                          <div class="form-group">
-                            <label htmlFor="exampleInputPassword1">
-                              Nhập định dạng file .pem
-                            </label>
-                            <input
-                              className="form-control"
-                              id="exampleInputPassword1"
-                              type="file"
-                              accept=".cer, .crt"
-                            />
-                          </div>
+                        <TextField
+                          onChange={formik.handleChange}
+                          fullWidth
+                          autoComplete=""
+                          size="small"
+                          name="password"
+                          type="password"
+                          label="Mật khẩu"
+                          variant="outlined"
+                          sx={{ mt: 1.5 }}
+                        />
+                      </>
+                    )}
 
-                          <div class="form-group">
-                            <label htmlFor="exampleInputPassword1">
-                              Nhập định dạng file .cer hoặc .crt
-                            </label>
-                            <input
-                              className="form-control"
-                              id="exampleInputPassword1"
-                              type="file"
-                              accept=".cer, .crt"
-                            />
-                          </div>
-                        </>
-                      )}
+                    {selectedValue === "1" && (
+                      <>
+                        <div className="form-group">
+                          <label htmlFor="exampleInputPassword1">
+                            Nhập định dạng file .pem
+                          </label>
+                          <input
+                            key={"pem"}
+                            onChange={(e) =>
+                              formik.setFieldValue("pem", e.target.files[0])
+                            }
+                            name="pem"
+                            className="form-control"
+                            id="exampleInputPassword1"
+                            type="file"
+                            accept=".pem, .key"
+                          />
+                        </div>
 
-                      <LoadingButton
-                        type="submit"
-                        loading={loading}
-                        variant="contained"
-                        sx={{
-                          my: 2,
-                          backgroundColor: "#6c63ff",
-                          borderRadius: 3,
-                        }}
-                      >
-                        Đăng Nhập
-                      </LoadingButton>
-                    </form>
-                  )}
-                </Formik>
+                        <div className="form-group">
+                          <label htmlFor="exampleInputPassword1">
+                            Nhập định dạng file .cer hoặc .crt
+                          </label>
+                          <input
+                            key={"crt"}
+                            onChange={(e) =>
+                              formik.setFieldValue("crt", e.target.files[0])
+                            }
+                            name="crt"
+                            className="form-control"
+                            id="exampleInputPassword1"
+                            type="file"
+                            accept=".cer, .crt"
+                          />
+                        </div>
+                      </>
+                    )}
+                    <Button
+                      type="submit"
+                      loading={loading.toString()}
+                      variant="contained"
+                      sx={{
+                        my: 2,
+                        backgroundColor: "#6c63ff",
+                        borderRadius: 3,
+                      }}
+                    >
+                      Đăng Nhập
+                    </Button>
+                  </div>
+                </form>
               </ContentBox>
             </Grid>
           </Grid>

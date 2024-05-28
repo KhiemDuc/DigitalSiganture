@@ -1,3 +1,4 @@
+const { BadRequestError } = require("../core/error.response");
 const CAModel = require("../models/CA.model");
 const asyncHandler = require("../utils/asyncHandler");
 const crypto = require("crypto");
@@ -7,10 +8,11 @@ const HEADERS = {
 };
 
 const verifySignature = (data, signature, publicKey) => {
+  const buffer = Buffer.from(signature, "base64");
   const verify = crypto.createVerify("RSA-SHA256");
-  verify.update(JSON.stringify(data));
+  verify.update(data);
   verify.end();
-  const result = verify.verify(publicKey, signature, "hex");
+  const result = verify.verify(publicKey, buffer);
   return result;
 };
 
@@ -21,7 +23,11 @@ module.exports = asyncHandler(async (req, res, next) => {
   const signature = req.headers[HEADERS.SIGNATURE];
   if (!signature)
     throw new BadRequest("Request failed", "Could not find signature");
-  const result = verifySignature(req.body, signature, foundCA.publicKey);
+  const result = verifySignature(
+    req.method != "GET" ? req.body : foundCA.certificate,
+    signature,
+    foundCA.publicKey
+  );
   if (!result) throw new BadRequestError("Request failed", "Invalid signature");
   next();
 });
