@@ -47,6 +47,22 @@
   transition: opacity 0.3s ease;
 }
 
-.button-hover:hover {
-  opacity: 0.8;
+.card-show {
+  cursor: pointer;
+}
+.card-show--action {
+  display: none !important;
+  transition: all 0.6s ease;
+}
+.card-show--action button {
+  transition-duration: all 0.2s ease-in-out;
+}
+.card-show:hover > .card-show--action {
+  display: flex !important;
+}
+.als-left {
+  align-self: flex-start;
+}
+.pl-5 {
+  padding-left: 2rem;
 }

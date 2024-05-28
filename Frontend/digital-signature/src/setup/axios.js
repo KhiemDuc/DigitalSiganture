@@ -8,13 +8,11 @@ const instance = axios.create({
 });
 
 // const navigate = useNavigate();
-console.log(process.env.REACT_APP_API_URL);
 
 instance.interceptors.request.use(
   (config) => {
     // const user = JSON.parse(localStorage.getItem("user"));
     const { user } = store.getState().auth;
-    console.log(user);
     if (user) {
       config.headers["authentication"] = user.accessToken;
       config.headers["x-client-id"] = user._id;

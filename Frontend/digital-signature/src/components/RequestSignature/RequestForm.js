@@ -21,31 +21,61 @@ import ProvinceAPI from "../../common/Provinces.VN";
 import ReactSelect from "react-select";
 import axios from "../../setup/axios";
 import { CloseButton } from "@chakra-ui/react";
+import { screen } from "@testing-library/react";
 
 function RequestForm({ changeStep }) {
   const [imgCCCD, setImgCCCD] = useState(null);
+  const [imgCccdDBack, setImgCccdBack] = useState(null);
   const [toggle, setToggle] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const fileValidate = useDisclosure();
   const [isSuccess, setIsSuccess] = useState(false);
   const [showFormControls, setShowFormControls] = React.useState(false);
+  const [image, setImage] = useState(null);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [formData, setFormData] = useState(() => new FormData());
+
+  function DataURIToBlob(dataURI) {
+    const splitDataURI = dataURI.split(",");
+    const byteString =
+      splitDataURI[0].indexOf("base64") >= 0
+        ? atob(splitDataURI[1])
+        : decodeURI(splitDataURI[1]);
+    const mimeString = splitDataURI[0].split(":")[1].split(";")[0];
+
+    const ia = new Uint8Array(byteString.length);
+    for (let i = 0; i < byteString.length; i++)
+      ia[i] = byteString.charCodeAt(i);
+
+    return new Blob([ia], { type: mimeString });
+  }
 
   const changeProfileImage = (event) => {
     const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg"];
     const selected = event.target.files[0];
-    setImgCCCD(selected);
+    formData.append("CCCD", selected);
     // if (selected && ALLOWED_TYPES.includes(selected.type)) {
     //   let reader = new FileReader();
     //   reader.onloadend = () => setImgCCCD(reader.result);
     //   return reader.readAsDataURL(selected);
     // }
 
-    fileValidate.onOpen();
+    // fileValidate.onOpen();
   };
 
-  const [image, setImage] = useState(null);
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
+  const changeCCCDBackImage = (event) => {
+    // const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg"];
+    const selected = event.target.files[0];
+    // if (selected && ALLOWED_TYPES.includes(selected.type)) {
+    //   let reader = new FileReader();
+    //   reader.onloadend = () => setImgCccdBack(reader.result);
+    //   return reader.readAsDataURL(selected);
+    // }
+
+    // fileValidate.onOpen();
+    formData.append("CCCDBack", selected);
+  };
 
   const stopCamera = () => {
     if (!toggle) return;
@@ -74,6 +104,10 @@ function RequestForm({ changeStep }) {
       0,
       videoRef.current.videoWidth,
       videoRef.current.videoHeight
+    );
+    formData.append(
+      "face",
+      DataURIToBlob(canvasRef.current.toDataURL("image/png"))
     );
     setImage(canvasRef.current.toDataURL("image/png"));
     stopCamera();
@@ -306,7 +340,7 @@ function RequestForm({ changeStep }) {
                 focusBorderColor="brand.blue"
                 type="file"
                 // value={imgCCCD}
-                onChange={changeProfileImage}
+                onChange={changeCCCDBackImage}
                 accept="image/png, image/jpeg"
                 style={{ padding: "5px" }}
               ></Input>
@@ -417,22 +451,40 @@ function RequestForm({ changeStep }) {
       <Box mt={5} py={5} px={8} borderTopWidth={1} borderColor="brand.light">
         <Button
           onClick={() => {
-            // if (showFormControls) {
-            //   const formData = new FormData();
-            //   formData.append("cccd", imgCCCD);
-            //   formData.append("face", imgCCCD);
-            //   console.log(formData);
-            //   axios
-            //     .post("/certificate/", formData)
-            //     .then((response) => {
-            //       console.log(response);
-            //     })
-            //     .catch((error) => {
-            //       console.error(error);
-            //     });
-            // } else {
-            //   setShowFormControls(!showFormControls);
-            // }
+            const body = {
+              firstName: "Khiem",
+              lastName: "Nguyen",
+              publicKey:
+                "-----BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiOq6GkOOcdLafJNIHoTTIL2I3OpruPnqsJuqEXZXUdwrflh5/cHFawfsW3dyWorg6u9e5KvHu2iL6WqEr+/yp5bFRLLqW40zacT5odIrErWqxDLnY5MNGsXGzC1YAB3WZXgVonTIG6NKmqPdat3KsoqK2NI64pJoOWt5aBwxggQWEFAdqowswJQdNCh4v0jMOZqGcN/HNVG8bUh4Wr4B1KmCvaN8Phz0oRxMjzKYwOiRyI4TLtnQGiAoCE8450FoJmA/7vOqpvtPsa8uLcn2IyUKYh6M1zmnGK4bx69i76raGDyYjNBfRir61LoyQBPXzerf7BNguQSbdZEFW/Kr2QIDAQAB-----END PUBLIC KEY-----",
+              address: "Hà Nội",
+              phone: "0123456789",
+              gender: "Male",
+              dateOfBirth: "2023-09-01",
+              nationaltiy: "Vietnam",
+              email: "123@gmail.com",
+              idNum: "030202010287",
+            };
+
+            if (showFormControls) {
+              for (const key in body) {
+                formData.append(key, body[key]);
+              }
+              console.log(formData);
+              axios
+                .post("/certificate/", formData, {
+                  headers: {
+                    "Content-Type": "multipart/form-data",
+                  },
+                })
+                .then((response) => {
+                  console.log(response);
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+            } else {
+              setShowFormControls(!showFormControls);
+            }
             changeStep(3);
           }}
         >
@@ -440,7 +492,7 @@ function RequestForm({ changeStep }) {
         </Button>
         <Modal
           blockScrollOnMount={false}
-          isOpen={!isSuccess}
+          isOpen={isSuccess}
           onClose={() => setIsSuccess(false)}
           isCentered
         >

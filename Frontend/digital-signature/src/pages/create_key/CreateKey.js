@@ -1,14 +1,13 @@
-import Layout from "../../components/Layout";
-import { TextField, TextareaAutosize, Typography } from "@mui/material";
-import FormControl from "@mui/material/FormControl";
+import forge from "node-forge";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { useNavigate } from "react-router-dom";
+import StepperCustom from "../../components/Steper";
+import BackHome from "./../../components/BackHome";
 
 const CreateKey = () => {
   const [showPassword, setShowPassword] = React.useState(true);
@@ -17,13 +16,22 @@ const CreateKey = () => {
   const navigate = useNavigate();
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
+  const generateKeyPair = () => {
+    const { publicKey, privateKey } = forge.pki.rsa.generateKeyPair({
+      bits: 2048,
+      e: 0x10001,
+    });
+
+    // Convert keys to PEM format
+    const publicKeyPem = forge.pki.publicKeyToPem(publicKey);
+    const privateKeyPem = forge.pki.privateKeyToPem(privateKey);
+
+    setPrivateKey(privateKeyPem);
+    setPublicKey(publicKeyPem);
+  };
+
   return (
-    <Layout
-      heading={"Tạo cặp khoá"}
-      subheading={
-        "Gồm khoá công khai và bảo mật, khoá bảo mật chính là chữ ký số của bạn, hay bảo quản cẩn thận"
-      }
-    >
+    <>
       <div
         className="container"
         style={{
@@ -32,15 +40,34 @@ const CreateKey = () => {
           alignItems: "center",
           flexDirection: "column",
           gap: "20px",
+          width: "100%",
+          marginTop: "40px",
         }}
       >
-        <button className="btn btn-primary">Tạo cặp khoá</button>
+        <BackHome />
+        <StepperCustom
+          step={1}
+          sx={{
+            width: "65%",
+          }}
+        />
+        <button
+          className="btn btn-outline-dark"
+          style={{
+            boxShadow: "5px 5px 5px #d1c1f1",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+          }}
+          onClick={() => generateKeyPair()}
+        >
+          Tạo cặp khoá 🔐
+        </button>
         <div
           style={{
             display: "flex",
             justifyItems: "center",
             alignItems: "center",
-            width: "50%",
+            width: "65%",
             flexDirection: "column",
           }}
         >
@@ -57,7 +84,8 @@ const CreateKey = () => {
               height: "130px",
               border: "1px solid #ccc",
               borderRadius: "5px",
-              boxShadow: "5px 5px 5px #d1c1f1",
+              boxShadow:
+                "rgba(49, 130, 206, 0.3) 5px 5px, rgba(49, 130, 206, 0.2) 10px 10px, rgba(49, 130, 206, 0.2) 15px 15px",
               padding: "5px",
               outline: "none",
               resize: "none",
@@ -65,10 +93,9 @@ const CreateKey = () => {
             }}
           >
             <textarea
+              className="w-100 px-4 h-100"
               readOnly={true}
               style={{
-                width: "100%",
-                height: "100%",
                 border: "1px solid #ccc",
                 borderRadius: "5px",
                 padding: "10px",
@@ -89,7 +116,7 @@ const CreateKey = () => {
                 sx={{
                   position: "absolute",
                   alignSelf: "flex-end",
-                  right: 0,
+                  right: 20,
                 }}
                 onClick={() => {
                   navigator.clipboard.writeText(publicKey);
@@ -102,7 +129,7 @@ const CreateKey = () => {
         </div>
         <div
           style={{
-            width: "50%",
+            width: "65%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -110,22 +137,26 @@ const CreateKey = () => {
           }}
         >
           <div
+            className="w-100 mt-2"
             style={{
               display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              flexDirection: "row",
-              width: "100%",
+              justifyContent: "center",
+              alignItems: "baseline",
+              flexDirection: "column",
             }}
           >
-            <h5>Khoá bí mật</h5>
+            <h5 class="text-center">Khoá bí mật 🔏</h5>
+            <h6 class="text-center">
+              (Đây là chữ ký số của bạn, hãy lưu trữ một cách cẩn thận)
+            </h6>
           </div>
           <div
             style={{
               width: "100%",
-              height: "200px",
+              height: "230px",
               position: "relative",
-              boxShadow: "5px 5px 5px #d1c1f1",
+              boxShadow:
+                "rgba(49, 130, 206, 0.3) 5px 5px, rgba(49, 130, 206, 0.2) 10px 10px, rgba(49, 130, 206, 0.2) 15px 15px",
               border: "1px solid #ccc",
               borderRadius: "5px",
               padding: "5px",
@@ -146,9 +177,8 @@ const CreateKey = () => {
             />
             <textarea
               readOnly={true}
+              className="w-100 px-4 h-100"
               style={{
-                width: "100%",
-                height: "100%",
                 outline: "none",
                 border: "1px solid #ccc",
                 borderRadius: "5px",
@@ -162,7 +192,7 @@ const CreateKey = () => {
               sx={{
                 marginLeft: "16px",
               }}
-              title="Sao chép!"
+              title="Sao chép và cất giữ khoá bí mật một cách cẩn thận"
             >
               <IconButton
                 aria-label="delete"
@@ -170,7 +200,7 @@ const CreateKey = () => {
                 sx={{
                   position: "absolute",
                   alignSelf: "flex-end",
-                  right: 0,
+                  right: 20,
                 }}
                 onClick={() => {
                   navigator.clipboard.writeText(privateKey);
@@ -189,11 +219,15 @@ const CreateKey = () => {
                 sx={{
                   position: "absolute",
                   bottom: 0,
-                  right: 0,
+                  right: 20,
                 }}
                 onClick={handleClickShowPassword}
               >
-                <Visibility fontSize="small" />
+                {showPassword ? (
+                  <Visibility fontSize="small" />
+                ) : (
+                  <VisibilityOff fontSize="small" />
+                )}
               </IconButton>
             </Tooltip>
           </div>
@@ -213,7 +247,7 @@ const CreateKey = () => {
           </button>
         </Tooltip>
       </div>
-    </Layout>
+    </>
   );
 };
 

@@ -27,10 +27,8 @@ const items = [
     title: "Xác Thực Thông Tin Chứng Chỉ",
     description:
       "Gửi chứng chỉ lên hệ thống để xem chứng chỉ có hợp lệ hay không.",
-    imageLight:
-      'url("/static/images/templates/templates-images/mobile-light.png")',
-    imageDark:
-      'url("/static/images/templates/templates-images/mobile-dark.png")',
+    imageLight: 'url("/static/img/certificate_check.png")',
+    imageDark: 'url("/static/img/certificate_check.png")',
   },
   {
     icon: <KeyOffIcon />,

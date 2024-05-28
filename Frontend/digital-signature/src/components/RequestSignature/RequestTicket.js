@@ -1,13 +1,9 @@
-import {
-  SimpleGrid,
-  CardHeader,
-  Card,
-  CardBody,
-  CardFooter,
-  Heading,
-  Text,
-  Button,
-} from "@chakra-ui/react";
+import { Typography, Box } from "@mui/material";
+import Grid from "@mui/material/Unstable_Grid2";
+import CardCustom from "../../components/CardCustom";
+import { useEffect } from "react";
+import CertificateService from "../../services/certificate.service";
+import { useState } from "react";
 
 const data = [
   {
@@ -28,53 +24,112 @@ const data = [
     status: "Từ chối",
     date: "2023-09-01",
   },
+  {
+    id: 4,
+    name: "Chữ ký số",
+    status: "Từ chối",
+    date: "2023-09-01",
+  },
+  {
+    id: 5,
+    name: "Chữ ký số",
+    status: "Từ chối",
+    date: "2023-09-01",
+  },
 ];
 
+const rejectColorRed =
+  "rgba(255, 0, 0, 0.3) 5px 5px, rgba(255, 0, 0, 0.2) 10px 10px";
+const pendingColor =
+  "rgba(255, 165, 0, 0.3) 5px 5px, rgba(255, 140, 0, 0.2) 10px 10px";
+const doneColor =
+  "rgba(0, 128, 0, 0.3) 5px 5px, rgba(0, 128, 0, 0.2) 10px 10px";
+
 function RequestTicket() {
+  const [requests, setRequests] = useState([]);
+
+  useEffect(() => {
+    CertificateService.myRequest()
+      .then((response) => {
+        console.log(response.data);
+        setRequests(response.data.data);
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
+  const rejectItems = data.filter((item) => item.status === "REJECTED");
+  const pendingItems = data.filter((item) => item.status === "PENDING");
+  const doneItems = requests.filter((item) => item.status === "SUCCESS");
+
   return (
-    <SimpleGrid
-      spacing={3}
-      templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
-    >
-      {data.map((item) => (
-        <Card
-          key={item.id}
-          sx={{
-            width: "100%",
-            borderRadius: "15px",
-            border: "1px solid #ccc",
-          }}
-          // variant={"filled"}
+    <Box sx={{ flexGrow: 1, width: "100%" }}>
+      <Grid container spacing={1} minHeight={160}>
+        <Grid
+          xs
+          display="flex"
+          justifyContent="flex-start"
+          alignItems="start"
+          flexDirection={"column"}
+          gap={4}
         >
-          <CardHeader>
-            <Heading size="lg">{item.name}</Heading>
-          </CardHeader>
-          <CardBody>
-            <Text>
-              View a summary of all your customers over the last month.
-            </Text>
-            <Text>Ngày yêu cầu {item.date}</Text>
-            <Text>Trạng thái {item.status}</Text>
-          </CardBody>
-          <CardFooter
-            sx={{
-              justifyContent: "center",
-            }}
-          >
-            <Button
-              // isLoading
-              loadingText="Submitting"
-              border={"1px solid #7843e6"}
-              variant="outline"
-              color={"#7843e6"}
-              borderRadius={"15px"}
-            >
-              Xem chi tiết đơn yêu cầu
-            </Button>
-          </CardFooter>
-        </Card>
-      ))}
-    </SimpleGrid>
+          <Typography variant="h6" fontSize={"16px"} fontWeight={"600"}>
+            Đang yêu cầu
+          </Typography>
+          {pendingItems.map((item) => {
+            return (
+              <CardCustom
+                date={item.date}
+                status={item.status}
+                boxShadow={pendingColor}
+              ></CardCustom>
+            );
+          })}
+        </Grid>
+        <Grid
+          xs
+          display="flex"
+          justifyContent="flex-start"
+          alignItems="start"
+          flexDirection={"column"}
+          gap={4}
+        >
+          <Typography variant="h6" fontSize={"16px"} fontWeight={"600"}>
+            Thành công
+          </Typography>
+          {doneItems.map((item) => {
+            return (
+              <CardCustom
+                date={item.date}
+                status={item.status}
+                boxShadow={doneColor}
+              ></CardCustom>
+            );
+          })}
+        </Grid>
+        <Grid
+          xs
+          display="flex"
+          justifyContent="flex-start"
+          alignItems="start"
+          flexDirection={"column"}
+          gap={4}
+        >
+          <Typography variant="h6" fontSize={"16px"} fontWeight={"600"}>
+            Từ chối
+          </Typography>
+          {rejectItems.map((item) => {
+            return (
+              <CardCustom
+                key={item.id}
+                date={item.date}
+                status={item.status}
+                boxShadow={rejectColorRed}
+              ></CardCustom>
+            );
+          })}
+        </Grid>
+      </Grid>
+    </Box>
   );
 }
 
