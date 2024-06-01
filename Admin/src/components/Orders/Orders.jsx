@@ -14,17 +14,7 @@ const StyledTableRow = styled(TableRow)(() => ({
   },
   userSelect: "none",
 }));
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+
 export default function Orders() {
   const [requests, setReuests] = React.useState([]);
   const navigate = useNavigate();
@@ -52,13 +42,13 @@ export default function Orders() {
         <TableBody>
           {requests.map((row) => (
             <StyledTableRow key={row._id} onClick={() => hanldeOpenModal(row)}>
-              <TableCell>{row.firstName + " " + row.lastName}</TableCell>
+              <TableCell>{row.lastName + " " + row.firstName}</TableCell>
               <TableCell>{row.address}</TableCell>
               <TableCell>{row.IdNum}</TableCell>
               <TableCell>
-                {row.gender === "Male"
+                {row?.gender === "Male"
                   ? "Nam"
-                  : gender === "Female"
+                  : row?.gender === "Female"
                   ? "Nữ"
                   : "N/A"}
               </TableCell>

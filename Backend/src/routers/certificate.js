@@ -42,5 +42,5 @@ router.post(
 );
 
 router.get("/request", asyncHandler(CertificateController.getMyRequest));
-
+router.post("/extend", asyncHandler(CertificateController.extendCert));
 module.exports = router;

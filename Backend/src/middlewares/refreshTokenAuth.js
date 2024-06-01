@@ -26,16 +26,16 @@ module.exports = asyncHandler(async (req, res, next) => {
 
     decoded = verifyToken(refreshToken, secret);
   } catch (err) {
-    if (foundUser.refreshTokenUsed.some((item) => item === refreshToken)) {
-      foundUser.secretKey = null;
-      foundUser.refreshToken = null;
-      foundUser.refreshTokenUsed = [];
-      await foundUser.save();
-      throw new ForbiddenError(
-        "Request failed",
-        "Some thing wrong, please login again"
-      );
-    }
+    // if (foundUser.refreshTokenUsed.some((item) => item === refreshToken)) {
+    //   foundUser.secretKey = null;
+    //   foundUser.refreshToken = null;
+    //   foundUser.refreshTokenUsed = [];
+    //   await foundUser.save();
+    //   throw new ForbiddenError(
+    //     "Request failed",
+    //     "Some thing wrong, please login again"
+    //   );
+    // }
     throw new ForbiddenError("Request failed", "Access denied");
   }
   if (decoded._id !== foundUser._id.toString())

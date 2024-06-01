@@ -102,6 +102,12 @@ class AccessController {
       data: await accessService.uploadBackground(req.user, req.file),
     }).send(res);
   }
+
+  static async getListUser(req, res) {
+    new SuccessResponse({
+      data: await accessService.getListUser(),
+    }).send(res);
+  }
 }
 
 module.exports = AccessController;
