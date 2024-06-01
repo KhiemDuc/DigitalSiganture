@@ -129,7 +129,6 @@ export default function SignInSide() {
                 setTimeout(async () => {
                   setSubmitting(false);
                   handleLogin(values);
-                  console.log(values);
                 }, 400);
               }}
             >

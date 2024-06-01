@@ -1,3 +1,4 @@
+import Layout from "../../components/Layout";
 import forge from "node-forge";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -5,14 +6,14 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { useNavigate } from "react-router-dom";
-import StepperCustom from "../../components/Steper";
-import BackHome from "./../../components/BackHome";
+import CertificateService from "../../services/certificate.service";
 import { useEffect } from "react";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { saveAs } from "file-saver";
+import { showToast, ToastType } from "../../common/toast";
+import { ToastContainer } from "react-toastify";
 
-const CreateKey = () => {
+export default function ExtendCertificate() {
   useEffect(() => {
     document.title = "Tạo cặp khoá - Hệ thống chữ ký số";
     let element = document.querySelector(".fda3723591e0b38e7e52");
@@ -24,7 +25,6 @@ const CreateKey = () => {
   const [showPassword, setShowPassword] = React.useState(true);
   const [privateKey, setPrivateKey] = React.useState("");
   const [publicKey, setPublicKey] = React.useState("");
-  const navigate = useNavigate();
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const generateKeyPair = () => {
@@ -41,8 +41,41 @@ const CreateKey = () => {
     setPublicKey(publicKeyPem);
   };
 
+  const handleClick = () => {
+    if (publicKey === "") {
+      showToast("Vui lòng tạo cặp khoá trước khi gửi yêu cầu", ToastType.ERROR);
+      return;
+    }
+    CertificateService.extendCertificate(publicKey)
+      .then((response) => {
+        console.log(response);
+        showToast("Yêu cầu gia hạn chứng chỉ thành công", ToastType.SUCCESS);
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast(error.response.data.reason, ToastType.ERROR);
+      });
+  };
+
   return (
-    <>
+    <Layout
+      heading={"Gia hạn chứng chỉ số"}
+      subheading={
+        "Gửi yêu cầu gia hạn lại hoặc cấp lại chứng chỉ số của bạn khi đã hết hạn"
+      }
+    >
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <div
         className="container"
         style={{
@@ -50,29 +83,49 @@ const CreateKey = () => {
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
-          gap: "20px",
+          gap: "15px",
           width: "100%",
-          marginTop: "20px",
         }}
       >
-        <BackHome />
-        <StepperCustom
-          step={1}
-          sx={{
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
             width: "65%",
           }}
-        />
-        <button
-          className="btn btn-outline-dark"
-          style={{
-            boxShadow: "5px 5px 5px #d1c1f1",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
-          }}
-          onClick={() => generateKeyPair()}
         >
-          Tạo cặp khoá 🔐
-        </button>
+          <button
+            className="btn btn-outline-dark"
+            style={{
+              boxShadow: "5px 5px 5px #d1c1f1",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+            }}
+            onClick={() => generateKeyPair()}
+          >
+            Tạo cặp khoá 🔐
+          </button>
+          <Tooltip
+            followCursor
+            title="Bạn vui lòng lưu trũ và cất giữ khoá bí mật một cách cẩn thận trước khi gửi yêu cầu"
+          >
+            <button
+              className="btn btn-outline-dark"
+              style={{
+                boxShadow: "5px 5px 5px #d1c1f1",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
+              onClick={() => {
+                handleClick();
+              }}
+            >
+              Gia hạn chứng chỉ {"->"}
+            </button>
+          </Tooltip>
+        </div>
+
         <div
           style={{
             display: "flex",
@@ -248,23 +301,7 @@ const CreateKey = () => {
             </Tooltip>
           </div>
         </div>
-        <Tooltip
-          followCursor
-          title="Bạn vui lòng sao chép mã khoá công khai trước khi tiếp tục!"
-        >
-          <button
-            style={{ alignSelf: "end" }}
-            className="btn btn-outline-primary"
-            onClick={() => {
-              navigate("/certificate/request");
-            }}
-          >
-            Tiếp tục
-          </button>
-        </Tooltip>
       </div>
-    </>
+    </Layout>
   );
-};
-
-export default CreateKey;
+}

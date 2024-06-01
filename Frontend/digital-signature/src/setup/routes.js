@@ -18,6 +18,8 @@ import MyPlan from "../pages/my_plan/MyPlan";
 import CheckCertificatePage from "../pages/check_certificate/CheckCertificatePage";
 import CreateKey from "../pages/create_key/CreateKey";
 import MyRequest from "./../pages/my_request/index";
+import CreataDigitalSignature from "../pages/create_digital_signature/CreateDigitalSignature";
+import ExtendCertificate from "../pages/extend_certificate/ExtendCertificate";
 
 const Routes = () => {
   const { isLoggedIn } = useSelector((state) => state.auth);
@@ -36,10 +38,7 @@ const Routes = () => {
       path: "*",
       element: <PageNotFound />,
     },
-    {
-      path: "/certificate/request",
-      element: <RequestSignature />,
-    },
+
     {
       path: "pricing",
       element: <PricingPage />,
@@ -53,8 +52,8 @@ const Routes = () => {
       element: <CreateKey />,
     },
     {
-      path: "/certificate/my_request",
-      element: <MyRequest />,
+      path: "/certificate/create_digital_signature",
+      element: <CreataDigitalSignature />,
     },
   ];
 
@@ -93,6 +92,18 @@ const Routes = () => {
         {
           path: "/my_plan",
           element: <MyPlan />,
+        },
+        {
+          path: "/certificate/my_request",
+          element: <MyRequest />,
+        },
+        {
+          path: "/certificate/request",
+          element: <RequestSignature />,
+        },
+        {
+          path: "/certificate/extend",
+          element: <ExtendCertificate />,
         },
       ],
     },

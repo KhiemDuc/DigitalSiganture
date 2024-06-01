@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import forge from "node-forge";
-import iconv from "iconv-lite";
 import CertificateModal from "../Certificate/Certificate";
 import { Box } from "@mui/system";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Modal } from "@mui/material";
 import CertificateService from "../../services/certificate.service";
-import { Card } from "@mui/material/Card";
 
 function CheckCertificate() {
   const [open, setOpen] = useState(false);
@@ -32,44 +30,17 @@ function CheckCertificate() {
     reader.onload = (e) => {
       try {
         const buffer = forge.util.createBuffer(e.target.result);
-        // const certPem = `-----BEGIN CERTIFICATE-----\n${e.target.result}\n-----END CERTIFICATE-----`;
-        // const der = forge.util.decode64(e.target.result);
-        // console.log(der);
         const asn1 = forge.asn1.fromDer(buffer);
         const cert = forge.pki.certificateFromAsn1(asn1);
         const pem = forge.pki.certificateToPem(cert);
-        console.log(pem);
-        const cert1 = forge.pki.certificateFromPem(pem);
-        const value = cert1.subject.attributes[2].value;
-        const utf8String = iconv.decode(value, "utf-8");
         setCertData(pem);
-        console.log(utf8String);
-        console.log("Issuer:", cert1.issuer.attributes);
-        console.log("Serial Number:", cert1.serialNumber);
-        const fingerprint = forge.pki.getPublicKeyFingerprint(cert1.publicKey, {
-          md: forge.md.sha256.create(),
-          encoding: "hex",
-        });
-        console.log("Public Key Fingerprint:", fingerprint);
-        console.log(cert1);
       } catch (e) {
         isFalse = true;
       }
     };
     readerText.onload = (e) => {
       try {
-        const cert1 = forge.pki.certificateFromPem(e.target.result);
-        const value = cert1.subject.attributes[2].value;
-        const utf8String = iconv.decode(value, "utf-8");
-        console.log(utf8String);
-        console.log("Issuer:", cert1.issuer.attributes);
-        console.log("Serial Number:", cert1.serialNumber);
-        const fingerprint = forge.pki.getPublicKeyFingerprint(cert1.publicKey, {
-          md: forge.md.sha256.create(),
-          encoding: "hex",
-        });
         setCertData(e.target.result);
-        console.log(e.target.result);
       } catch (error) {
         console.log(error);
       }
@@ -104,11 +75,11 @@ function CheckCertificate() {
           onClick={() => {
             CertificateService.checkCertificate(certData)
               .then((res) => {
-                setStatus("Chứng chỉ hợp lệ");
+                setStatus("Chứng chỉ hợp lệ ✅");
               })
               .catch((err) => {
                 setStatus(
-                  "Chứng chỉ không được cấp bởi CA này hoặc đã hết hạn"
+                  "Chứng chỉ không được cấp bởi chúng tôi hoặc đã hết hạn ❌"
                 );
               });
             setOpen(true);
@@ -128,16 +99,18 @@ function CheckCertificate() {
                 top: "50%",
                 left: "50%",
                 transform: "translate(-50%, -50%)",
-                width: 900,
+                width: "80%",
+                maxWidth: 900,
                 bgcolor: "white",
-                border: "1px solid #ccc",
+                border: "2px solid #ccc",
                 boxShadow: 24,
                 p: 4,
-                borderRadius: "15px",
+                // borderRadius: "15px",
                 display: "flex",
                 justifyContent: "space-between",
-                alignItems: "flex-start",
                 flexDirection: "column",
+                maxHeight: "92vh",
+                overflow: "auto",
               }}
             >
               <CertificateModal

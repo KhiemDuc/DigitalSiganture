@@ -1,12 +1,13 @@
 import React from "react";
-import BackHome from "../../components/BackHome";
+import Layout from "../../components/Layout";
 
 const PageNotFound = () => {
   return (
-    <div className="container">
-      <BackHome />
-      <img alt="404" src="../../../static/img/illustatus.svg" />
-    </div>
+    <Layout>
+      <div className="container">
+        <img alt="404" src="../../../static/img/illustatus.svg" />
+      </div>
+    </Layout>
   );
 };
 

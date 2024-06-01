@@ -16,20 +16,21 @@ import {
   HStack,
   IconButton,
   Avatar,
+  Tooltip,
 } from "@chakra-ui/react";
 import ProvinceAPI from "../../common/Provinces.VN";
 import ReactSelect from "react-select";
 import axios from "../../setup/axios";
 import { CloseButton } from "@chakra-ui/react";
-import { screen } from "@testing-library/react";
+import { InfoOutlineIcon } from "@chakra-ui/icons";
 
 function RequestForm({ changeStep }) {
-  const [imgCCCD, setImgCCCD] = useState(null);
-  const [imgCccdDBack, setImgCccdBack] = useState(null);
   const [toggle, setToggle] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const fileValidate = useDisclosure();
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isFail, setIsFail] = useState(false);
+  const [message, setMessage] = useState("");
   const [showFormControls, setShowFormControls] = React.useState(false);
   const [image, setImage] = useState(null);
   const videoRef = useRef(null);
@@ -54,44 +55,51 @@ function RequestForm({ changeStep }) {
   const changeProfileImage = (event) => {
     const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg"];
     const selected = event.target.files[0];
-    formData.append("CCCD", selected);
-    // if (selected && ALLOWED_TYPES.includes(selected.type)) {
-    //   let reader = new FileReader();
-    //   reader.onloadend = () => setImgCCCD(reader.result);
-    //   return reader.readAsDataURL(selected);
-    // }
 
-    // fileValidate.onOpen();
+    if (selected && ALLOWED_TYPES.includes(selected.type)) {
+      let reader = new FileReader();
+      // setImgCCCDFont(selected);
+      formData.delete("CCCD");
+      formData.append("CCCD", selected);
+      return reader.readAsDataURL(selected);
+    }
+
+    fileValidate.onOpen();
   };
 
   const changeCCCDBackImage = (event) => {
-    // const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg"];
+    const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg"];
     const selected = event.target.files[0];
-    // if (selected && ALLOWED_TYPES.includes(selected.type)) {
-    //   let reader = new FileReader();
-    //   reader.onloadend = () => setImgCccdBack(reader.result);
-    //   return reader.readAsDataURL(selected);
-    // }
+    if (selected && ALLOWED_TYPES.includes(selected.type)) {
+      let reader = new FileReader();
+      // reader.onloadend = () => setImgCCCDBack(selected);
+      formData.delete("CCCDBack");
+      formData.append("CCCDBack", selected);
+      return reader.readAsDataURL(selected);
+    }
 
-    // fileValidate.onOpen();
-    formData.append("CCCDBack", selected);
+    fileValidate.onOpen();
   };
 
   const stopCamera = () => {
     if (!toggle) return;
-    const stream = videoRef.current.srcObject;
-    const tracks = stream.getTracks();
-    tracks.forEach((track) => track.stop());
-    videoRef.current.srcObject = null;
-    setToggle(false);
+    try {
+      const stream = videoRef.current.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach((track) => track.stop());
+      videoRef.current.srcObject = null;
+      setToggle(false);
+    } catch (err) {}
   };
 
   const startCamera = async () => {
-    setToggle(true);
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    videoRef.current.srcObject = stream;
-    videoRef.current.play();
-    setImage(null);
+    try {
+      setToggle(true);
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoRef.current.srcObject = stream;
+      videoRef.current.play();
+      setImage(null);
+    } catch (err) {}
   };
 
   const captureImage = () => {
@@ -107,7 +115,8 @@ function RequestForm({ changeStep }) {
     );
     formData.append(
       "face",
-      DataURIToBlob(canvasRef.current.toDataURL("image/png"))
+      DataURIToBlob(canvasRef.current.toDataURL("image/png")),
+      "face.jpg"
     );
     setImage(canvasRef.current.toDataURL("image/png"));
     stopCamera();
@@ -124,11 +133,70 @@ function RequestForm({ changeStep }) {
     stopCamera();
   };
 
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [publicKey, setPublicKey] = useState("");
+  const [phone, setPhone] = useState("");
+  const [gender, setGender] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [nationaltiy, setNationaltiy] = useState("Việt Nam");
+  const [email, setEmail] = useState("");
+  const [idNum, setIdNum] = useState("");
+
   const [provinces, setProvinces] = useState([]);
+  const [provinceName, setProvinceName] = useState("");
   const [provinceID, setProvinceID] = useState(null);
   const [districts, setDistricts] = useState([]);
+  const [districtName, setDistrictName] = useState(null);
   const [districtID, setDistrictID] = useState(null);
   const [wards, setWards] = useState([]);
+  const [selectedWard, setSelectedWard] = useState(null);
+  const [wardName, setWardName] = useState(null);
+  const [selectedProvince, setSelectedProvince] = useState(null);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+
+  const handleRegisterSignature = (event) => {
+    event.preventDefault();
+    const body = {
+      firstName: firstName,
+      lastName: lastName,
+      publicKey: publicKey,
+      address: wardName + ", " + districtName + ", " + provinceName,
+      phone: phone,
+      gender: gender,
+      dateOfBirth: dateOfBirth,
+      nationality: nationaltiy,
+      email: email,
+      IdNum: idNum,
+    };
+
+    if (showFormControls) {
+      for (const key in body) {
+        formData.delete(key);
+      }
+      for (const key in body) {
+        formData.append(key, body[key]);
+      }
+      axios
+        .post("/certificate/", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          setIsSuccess(true);
+          setMessage("Gửi yêu cầu thành công");
+        })
+        .catch((error) => {
+          setIsSuccess(true);
+          setIsFail(true);
+          setMessage(error.response.data.message || "Gửi yêu cầu thất bại");
+        });
+    } else {
+      setShowFormControls(!showFormControls);
+    }
+    changeStep(3);
+  };
 
   React.useEffect(() => {
     ProvinceAPI.getListProvinces()
@@ -166,7 +234,7 @@ function RequestForm({ changeStep }) {
   }, [districtID]);
 
   return (
-    <>
+    <form onSubmit={handleRegisterSignature}>
       <Grid
         templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(2, 1fr)" }}
         gap={4}
@@ -179,6 +247,9 @@ function RequestForm({ changeStep }) {
                 borderRadius={"15px"}
                 focusBorderColor="brand.blue"
                 type="text"
+                value={firstName}
+                required
+                onInput={(e) => setFirstName(e.target.value)}
               />
             </FormControl>
 
@@ -188,48 +259,65 @@ function RequestForm({ changeStep }) {
                 borderRadius={"15px"}
                 focusBorderColor="brand.blue"
                 type="text"
+                required
+                value={lastName}
+                onInput={(e) => setLastName(e.target.value)}
               />
             </FormControl>
 
             <FormControl id="gender">
               <FormLabel>Giới tính</FormLabel>
               <Select
+                value={gender}
                 borderRadius={"15px"}
                 focusBorderColor="brand.blue"
                 placeholder="Chọn giới tính"
+                onChange={(e) => {
+                  setGender(e.target.value);
+                  console.log(e.target.value);
+                }}
               >
-                <option value="male">Nam</option>
-                <option value="female">Nữ</option>
+                <option value="Male">Nam</option>
+                <option value="Female">Nữ</option>
               </Select>
             </FormControl>
 
             <FormControl id="dateOfbirth">
               <FormLabel>Ngày Sinh</FormLabel>
               <Input
+                onInput={(e) => setDateOfBirth(e.target.value)}
                 borderRadius={"15px"}
                 focusBorderColor="brand.blue"
                 type="date"
                 placeholder=""
+                isRequired
+                value={dateOfBirth}
               />
             </FormControl>
 
             <FormControl id="phoneNumber">
               <FormLabel>Số Điện Thoại</FormLabel>
               <Input
+                onInput={(e) => setPhone(e.target.value)}
                 borderRadius={"15px"}
                 focusBorderColor="brand.blue"
                 type="tel"
                 placeholder="(408) 996–1010"
+                isRequired
+                value={phone}
               />
             </FormControl>
 
             <FormControl id="emailAddress">
               <FormLabel>Email Address</FormLabel>
               <Input
+                onInput={(e) => setEmail(e.target.value)}
                 borderRadius={"15px"}
                 focusBorderColor="brand.blue"
                 type="email"
                 placeholder="khimback@knb.com"
+                isRequired
+                value={email}
               />
             </FormControl>
 
@@ -239,6 +327,7 @@ function RequestForm({ changeStep }) {
                 theme={{
                   borderRadius: "15px",
                 }}
+                value={selectedProvince}
                 id="province"
                 placeholder="Chọn tỉnh"
                 options={provinces.map((province) => ({
@@ -248,6 +337,8 @@ function RequestForm({ changeStep }) {
                 isSearchable
                 onChange={(selectedOption) => {
                   setProvinceID(selectedOption.value); // Log label của tùy chọn được chọn
+                  setProvinceName(selectedOption.label);
+                  setSelectedProvince(selectedOption);
                   provinceSelectRef.current.focus();
                 }}
               />
@@ -266,9 +357,12 @@ function RequestForm({ changeStep }) {
                   value: district.code,
                   label: district.name,
                 }))}
+                value={selectedDistrict}
                 isSearchable
                 onChange={(selectedOption) => {
                   setDistrictID(selectedOption.value); // Log label của tùy chọn được chọn
+                  setDistrictName(selectedOption.label);
+                  setSelectedDistrict(selectedOption);
                   wardSelectRef.current.focus();
                 }}
               />
@@ -280,6 +374,7 @@ function RequestForm({ changeStep }) {
                 theme={{
                   borderRadius: "15px",
                 }}
+                // value={wardID}
                 placeholder="Chọn phường, xã"
                 ref={wardSelectRef}
                 id="ward"
@@ -287,7 +382,14 @@ function RequestForm({ changeStep }) {
                   value: ward.code,
                   label: ward.name,
                 }))}
+                value={selectedWard}
+                required
+                isLoading={wards.length === 0}
                 isSearchable
+                onChange={(selectedOption) => {
+                  setWardName(selectedOption.label);
+                  setSelectedWard(selectedOption);
+                }}
               />
             </FormControl>
           </>
@@ -295,16 +397,43 @@ function RequestForm({ changeStep }) {
 
         {showFormControls && (
           <>
+            <FormControl id="idNum">
+              <FormLabel>Số CCCD</FormLabel>
+              <Input
+                onInput={(e) => setIdNum(e.target.value)}
+                borderRadius={"15px"}
+                focusBorderColor="brand.blue"
+                type="text"
+                isRequired
+                value={idNum}
+              />
+            </FormControl>
+            <FormControl id="idNum">
+              <FormLabel>
+                Mã khoá công khai{" "}
+                <Tooltip label="Mã khoá công khai được tạo ở bước 1">
+                  <InfoOutlineIcon />
+                </Tooltip>
+              </FormLabel>
+              <Input
+                onInput={(e) => setPublicKey(e.target.value)}
+                borderRadius={"15px"}
+                focusBorderColor="brand.blue"
+                type="text"
+                isRequired
+                value={publicKey}
+              />
+            </FormControl>
             <FormControl id="cccd_img_front">
               <FormLabel>Ảnh CCCD Mặt Trước</FormLabel>
               <Input
                 className="form-control"
                 focusBorderColor="brand.blue"
                 type="file"
-                // value={imgCCCD}
                 onChange={changeProfileImage}
                 accept="image/png, image/jpeg"
                 style={{ padding: "5px" }}
+                isRequired
               ></Input>
               <Modal
                 isOpen={fileValidate.isOpen}
@@ -336,10 +465,11 @@ function RequestForm({ changeStep }) {
             <FormControl id="cccd_img_back">
               <FormLabel>Ảnh CCCD Mặt Sau</FormLabel>
               <Input
+                isRequired
                 className="form-control"
                 focusBorderColor="brand.blue"
                 type="file"
-                // value={imgCCCD}
+                // value={imgCCCDBack}
                 onChange={changeCCCDBackImage}
                 accept="image/png, image/jpeg"
                 style={{ padding: "5px" }}
@@ -381,7 +511,11 @@ function RequestForm({ changeStep }) {
                   justifyContent: "space-between",
                 }}
               >
-                <button className="btn btn-outline-success" onClick={openModal}>
+                <button
+                  type="button"
+                  className="btn btn-outline-success"
+                  onClick={openModal}
+                >
                   {image ? "Chụp/Xem lại ảnh" : "Mở Camera"}
                 </button>
                 <p className="m-0">
@@ -448,48 +582,10 @@ function RequestForm({ changeStep }) {
           </Button>
         </FormControl>
       </Grid>
-      <Box mt={5} py={5} px={8} borderTopWidth={1} borderColor="brand.light">
-        <Button
-          onClick={() => {
-            const body = {
-              firstName: "Khiem",
-              lastName: "Nguyen",
-              publicKey:
-                "-----BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiOq6GkOOcdLafJNIHoTTIL2I3OpruPnqsJuqEXZXUdwrflh5/cHFawfsW3dyWorg6u9e5KvHu2iL6WqEr+/yp5bFRLLqW40zacT5odIrErWqxDLnY5MNGsXGzC1YAB3WZXgVonTIG6NKmqPdat3KsoqK2NI64pJoOWt5aBwxggQWEFAdqowswJQdNCh4v0jMOZqGcN/HNVG8bUh4Wr4B1KmCvaN8Phz0oRxMjzKYwOiRyI4TLtnQGiAoCE8450FoJmA/7vOqpvtPsa8uLcn2IyUKYh6M1zmnGK4bx69i76raGDyYjNBfRir61LoyQBPXzerf7BNguQSbdZEFW/Kr2QIDAQAB-----END PUBLIC KEY-----",
-              address: "Hà Nội",
-              phone: "0123456789",
-              gender: "Male",
-              dateOfBirth: "2023-09-01",
-              nationaltiy: "Vietnam",
-              email: "123@gmail.com",
-              idNum: "030202010287",
-            };
-
-            if (showFormControls) {
-              for (const key in body) {
-                formData.append(key, body[key]);
-              }
-              console.log(formData);
-              axios
-                .post("/certificate/", formData, {
-                  headers: {
-                    "Content-Type": "multipart/form-data",
-                  },
-                })
-                .then((response) => {
-                  console.log(response);
-                })
-                .catch((error) => {
-                  console.error(error);
-                });
-            } else {
-              setShowFormControls(!showFormControls);
-            }
-            changeStep(3);
-          }}
-        >
+      <Box mt={5} pt={5} px={8} borderTopWidth={1} borderColor="brand.light">
+        <button type="submit" className="btn btn-outline-primary">
           {!showFormControls ? "Tiếp tục" : "Đăng ký"}
-        </Button>
+        </button>
         <Modal
           blockScrollOnMount={false}
           isOpen={isSuccess}
@@ -525,10 +621,14 @@ function RequestForm({ changeStep }) {
               >
                 <Avatar
                   style={{ width: "80px", height: "80px" }}
-                  src="/static/img/success.png"
+                  src={
+                    isFail
+                      ? "/static/img/remove.png"
+                      : "/static/img/success.png"
+                  }
                 />
                 <Text fontSize={17} id="modal-modal-title">
-                  Gửi yêu cầu thành công
+                  {message}
                 </Text>
               </Box>
             </ModalBody>
@@ -536,7 +636,7 @@ function RequestForm({ changeStep }) {
           </ModalContent>
         </Modal>
       </Box>
-    </>
+    </form>
   );
 }
 

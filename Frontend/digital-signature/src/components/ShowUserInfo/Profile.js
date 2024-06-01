@@ -20,7 +20,6 @@ import {
 import UserService from "../../services/user.service";
 
 function Profile({ user }) {
-  console.log(process.env.REACT_APP_API_URL + "public/" + user?.avatar);
   const [userProfile, setUserProfile] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const profileImage = useRef(null);

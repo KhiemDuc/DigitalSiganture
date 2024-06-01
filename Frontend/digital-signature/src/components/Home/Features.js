@@ -12,6 +12,7 @@ import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import KeyOffIcon from "@mui/icons-material/KeyOff";
 import CreateIcon from "@mui/icons-material/Create";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
+import { useNavigate } from "react-router-dom";
 
 const items = [
   {
@@ -21,6 +22,8 @@ const items = [
       "Điền thông tin cá nhân và xác thực mặt và căn cước công dân để đăng ký chữ ký số và chứng chỉ số.",
     imageLight: 'url("/static/img/request_sign.png")',
     imageDark: 'url("/static/img/request_sign.png")',
+    buttonText: "Đăng ký ngay",
+    buttonLink: "/certificate/create_key",
   },
   {
     icon: <FingerprintIcon />,
@@ -29,16 +32,18 @@ const items = [
       "Gửi chứng chỉ lên hệ thống để xem chứng chỉ có hợp lệ hay không.",
     imageLight: 'url("/static/img/certificate_check.png")',
     imageDark: 'url("/static/img/certificate_check.png")',
+    buttonText: "Xác thực tại đây",
+    buttonLink: "/certificate/check",
   },
   {
     icon: <KeyOffIcon />,
     title: "Gia hạn và thu hồi chứng chỉ hết hạn",
     description:
       "Gia hạn những chứng chỉ hết hạn, thu hồi và cấp lại chứng chỉ khi người dùng cảm thấy vấn đề liên quan đến bảo mật.",
-    imageLight:
-      'url("/static/images/templates/templates-images/devices-light.png")',
-    imageDark:
-      'url("/static/images/templates/templates-images/devices-dark.png")',
+    imageLight: 'url("/static/img/hehe.jpg")',
+    imageDark: 'url("/static/img/hehe.jpg")',
+    buttonText: "Gia hạn tại đây",
+    buttonLink: "/certificate/extend",
   },
 ];
 
@@ -50,6 +55,7 @@ export default function Features() {
   };
 
   const selectedFeature = items[selectedItemIndex];
+  const navigate = useNavigate();
 
   return (
     <Container id="features" sx={{ py: { xs: 8, sm: 16 } }}>
@@ -113,8 +119,8 @@ export default function Features() {
                     ? items[selectedItemIndex].imageLight
                     : items[selectedItemIndex].imageDark,
                 backgroundSize: "cover",
-                backgroundPosition: "center",
-                minHeight: 280,
+                backgroundRepeat: "no-repeat",
+                minHeight: 380,
               }}
             />
             <Box sx={{ px: 2, pb: 2 }}>
@@ -143,7 +149,7 @@ export default function Features() {
                   "&:hover > svg": { transform: "translateX(2px)" },
                 }}
               >
-                <span>Learn more</span>
+                <span>{selectedFeature.buttonText}</span>
                 <ChevronRightRoundedIcon
                   fontSize="small"
                   sx={{ mt: "1px", ml: "2px" }}
@@ -159,96 +165,102 @@ export default function Features() {
             useFlexGap
             sx={{ width: "100%", display: { xs: "none", sm: "flex" } }}
           >
-            {items.map(({ icon, title, description }, index) => (
-              <Card
-                key={index}
-                variant="outlined"
-                component={Button}
-                onClick={() => handleItemClick(index)}
-                sx={{
-                  p: 3,
-                  height: "fit-content",
-                  width: "100%",
-                  background: "none",
-                  backgroundColor:
-                    selectedItemIndex === index ? "action.selected" : undefined,
-                  borderColor: (theme) => {
-                    if (theme.palette.mode === "light") {
-                      return selectedItemIndex === index
-                        ? "primary.light"
-                        : "grey.200";
-                    }
-                    return selectedItemIndex === index
-                      ? "primary.dark"
-                      : "grey.800";
-                  },
-                }}
-              >
-                <Box
+            {items.map(
+              ({ icon, title, description, buttonText, buttonLink }, index) => (
+                <Card
+                  key={index}
+                  variant="outlined"
+                  component={Button}
+                  onClick={() => handleItemClick(index)}
                   sx={{
+                    p: 3,
+                    height: "fit-content",
                     width: "100%",
-                    display: "flex",
-                    textAlign: "left",
-                    flexDirection: { xs: "column", md: "row" },
-                    alignItems: { md: "center" },
-                    gap: 2.5,
+                    background: "none",
+                    backgroundColor:
+                      selectedItemIndex === index
+                        ? "action.selected"
+                        : undefined,
+                    borderColor: (theme) => {
+                      if (theme.palette.mode === "light") {
+                        return selectedItemIndex === index
+                          ? "primary.light"
+                          : "grey.200";
+                      }
+                      return selectedItemIndex === index
+                        ? "primary.dark"
+                        : "grey.800";
+                    },
                   }}
                 >
                   <Box
                     sx={{
-                      color: (theme) => {
-                        if (theme.palette.mode === "light") {
-                          return selectedItemIndex === index
-                            ? "primary.main"
-                            : "grey.300";
-                        }
-                        return selectedItemIndex === index
-                          ? "primary.main"
-                          : "grey.700";
-                      },
+                      width: "100%",
+                      display: "flex",
+                      textAlign: "left",
+                      flexDirection: { xs: "column", md: "row" },
+                      alignItems: { md: "center" },
+                      gap: 2.5,
                     }}
                   >
-                    {icon}
-                  </Box>
-                  <Box sx={{ textTransform: "none" }}>
-                    <Typography
-                      color="text.primary"
-                      variant="body2"
-                      fontWeight="bold"
-                    >
-                      {title}
-                    </Typography>
-                    <Typography
-                      color="text.secondary"
-                      variant="body2"
-                      sx={{ my: 0.5 }}
-                    >
-                      {description}
-                    </Typography>
-                    <Link
-                      color="primary"
-                      variant="body2"
-                      fontWeight="bold"
+                    <Box
                       sx={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        "& > svg": { transition: "0.2s" },
-                        "&:hover > svg": { transform: "translateX(2px)" },
-                      }}
-                      onClick={(event) => {
-                        event.stopPropagation();
+                        color: (theme) => {
+                          if (theme.palette.mode === "light") {
+                            return selectedItemIndex === index
+                              ? "primary.main"
+                              : "grey.300";
+                          }
+                          return selectedItemIndex === index
+                            ? "primary.main"
+                            : "grey.700";
+                        },
                       }}
                     >
-                      <span>Learn more</span>
-                      <ChevronRightRoundedIcon
-                        fontSize="small"
-                        sx={{ mt: "1px", ml: "2px" }}
-                      />
-                    </Link>
+                      {icon}
+                    </Box>
+                    <Box sx={{ textTransform: "none" }}>
+                      <Typography
+                        color="text.primary"
+                        variant="body2"
+                        fontWeight="bold"
+                      >
+                        {title}
+                      </Typography>
+                      <Typography
+                        color="text.secondary"
+                        variant="body2"
+                        sx={{ my: 0.5 }}
+                      >
+                        {description}
+                      </Typography>
+                      <Link
+                        color="primary"
+                        variant="body2"
+                        fontWeight="bold"
+                        sx={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          "& > svg": { transition: "0.2s" },
+                          "&:hover > svg": { transform: "translateX(2px)" },
+                        }}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          navigate(buttonLink);
+                        }}
+                      >
+                        <span>{buttonText}</span>
+                        <ChevronRightRoundedIcon
+                          fontSize="small"
+                          sx={{ mt: "1px", ml: "2px" }}
+                        />
+                      </Link>
+                    </Box>
                   </Box>
-                </Box>
-              </Card>
-            ))}
+                </Card>
+              )
+            )}
           </Stack>
         </Grid>
         <Grid
@@ -268,10 +280,11 @@ export default function Features() {
           >
             <Box
               sx={{
-                m: "auto",
-                width: 420,
-                height: 500,
-                backgroundSize: "contain",
+                marginTop: 10,
+                width: "100%",
+                height: 380,
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
                 backgroundImage: (theme) =>
                   theme.palette.mode === "light"
                     ? items[selectedItemIndex].imageLight

@@ -6,7 +6,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import PersonAdd from "@mui/icons-material/PersonAdd";
+import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +22,7 @@ import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import PaymentService from "../../services/payment.service";
 import PaymentIcon from "@mui/icons-material/Payment";
 import ScheduleSendIcon from "@mui/icons-material/ScheduleSend";
+import HourglassFullIcon from "@mui/icons-material/HourglassFull";
 
 const SmallIcon = styled(CheckCircleIcon)(({ theme }) => ({
   width: 16,
@@ -52,6 +53,7 @@ export default function AccountMenu() {
 
   const logOut = React.useCallback(() => {
     dispatch(logout());
+    navigate("/");
     window.location.reload();
   }, [dispatch]);
 
@@ -176,7 +178,7 @@ export default function AccountMenu() {
           }}
         >
           <ListItemIcon>
-            <CreateIcon fontSize="small" />
+            <AppRegistrationIcon fontSize="small" />
           </ListItemIcon>
           Đăng ký chứng chỉ số
         </MenuItem>
@@ -199,6 +201,26 @@ export default function AccountMenu() {
             <FingerprintIcon fontSize="small" />
           </ListItemIcon>
           Xác thực chứng chỉ số
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            navigate("/certificate/extend");
+          }}
+        >
+          <ListItemIcon>
+            <HourglassFullIcon fontSize="small" />
+          </ListItemIcon>
+          Gia hạn chứng chỉ số
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            navigate("/certificate/create_digital_signature");
+          }}
+        >
+          <ListItemIcon>
+            <CreateIcon fontSize="small" />
+          </ListItemIcon>
+          Tạo chữ ký số
         </MenuItem>
         <MenuItem
           onClick={() => {

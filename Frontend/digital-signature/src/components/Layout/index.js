@@ -47,6 +47,7 @@ export default function Layout({ children, heading, subheading }) {
         flexDirection: "column",
         alignItems: "center",
         gap: { xs: 3, sm: 4 },
+        paddingBottom: "0 !important",
       }}
     >
       <ThemeProvider theme={LPtheme}>

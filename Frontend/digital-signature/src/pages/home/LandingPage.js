@@ -26,6 +26,8 @@ import { ToastContainer } from "react-toastify";
 import { showToast, ToastType } from "../../common/toast";
 import { useSpring, animated } from "react-spring";
 import { useScroll } from "@react-spring/web";
+import { useLocation } from "react-router-dom";
+import "https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/0.1.0-beta.2/libs/oversea/index.js";
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
   return (
@@ -74,6 +76,7 @@ export default function LandingPage() {
     from: { opacity: 0 },
     to: { opacity: 1 },
   });
+  const location = useLocation();
   const { scrollYProgress } = useScroll();
   const [mode, setMode] = React.useState("light");
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
@@ -86,6 +89,36 @@ export default function LandingPage() {
   const toggleColorMode = () => {
     setMode((prev) => (prev === "dark" ? "light" : "dark"));
   };
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src =
+      "https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/0.1.0-beta.2/libs/oversea/index.js";
+    script.onload = () => {
+      if (location.pathname === "/" || location.pathname === "/home") {
+        new window.CozeWebSDK.WebChatClient({
+          config: {
+            bot_id: "7371504896325074951",
+          },
+          componentProps: {
+            title: "Hướng dẫn sử dụng với KnB PKI với AI",
+            subtitle: "Hãy nhập câu hỏi của bạn vào đây",
+            placeholder: "Nhập câu hỏi của bạn vào đây",
+          },
+        });
+        // Hành động A
+      }
+    };
+    document.body.appendChild(script);
+    return () => {
+      let element = document.querySelector(".fda3723591e0b38e7e52");
+
+      if (element) {
+        element.remove();
+      }
+      document.body.removeChild(script);
+    };
+  }, []);
 
   useEffect(() => {
     if (isLoggedIn) {

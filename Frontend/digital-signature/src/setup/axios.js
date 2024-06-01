@@ -11,8 +11,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    // const user = JSON.parse(localStorage.getItem("user"));
-    const { user } = store.getState().auth;
+    const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
       config.headers["authentication"] = user.accessToken;
       config.headers["x-client-id"] = user._id;
@@ -32,20 +31,23 @@ instance.interceptors.response.use(
     const originalConfig = error.config;
     if (error.response.data.reason === "Token expired") {
       try {
-        const { user } = store.getState().auth;
+        const user = JSON.parse(localStorage.getItem("user"));
         const result = await instance.get("/access/refresh-token", {
           headers: {
             "refresh-token": user.refreshToken,
             "x-client-id": user._id,
           },
         });
-        store.dispatch(refreshToken(result.data.data));
+        console.log(result.data.data);
+        localStorage.setItem("user", JSON.stringify(result.data.data));
         originalConfig.headers["authentication"] = result.data.data.accessToken;
         originalConfig.headers["x-client-id"] = result.data.data._id;
+        store.dispatch(refreshToken(result.data.data));
         return instance(originalConfig);
       } catch (err) {
         console.log(err.response);
         if (err.response) {
+          console.log(err.response.data);
           localStorage.removeItem("user");
           window.location.href = "/";
         }

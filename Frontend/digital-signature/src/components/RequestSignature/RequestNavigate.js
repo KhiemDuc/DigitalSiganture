@@ -1,16 +1,7 @@
-import {
-  Box,
-  Container,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-} from "@chakra-ui/react";
+import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import { useState } from "react";
 
 import RequestForm from "./RequestForm";
-import RequestTicket from "./RequestTicket";
 import Stepper from "../Steper";
 
 const RequestNavigate = () => {
@@ -60,12 +51,8 @@ const RequestNavigate = () => {
             <TabPanel>
               <RequestForm changeStep={changeParentState} />
             </TabPanel>
-            {/* <TabPanel>
-              <RequestTicket />
-            </TabPanel> */}
           </TabPanels>
         </Tabs>
-        {/* <Actions /> */}
       </Box>
     </div>
   );

@@ -51,14 +51,15 @@ function RequestTicket() {
   useEffect(() => {
     CertificateService.myRequest()
       .then((response) => {
-        console.log(response.data);
+        console.log(response.data.data);
         setRequests(response.data.data);
       })
       .catch((error) => console.log(error));
   }, []);
 
-  const rejectItems = data.filter((item) => item.status === "REJECTED");
-  const pendingItems = data.filter((item) => item.status === "PENDING");
+  const rejectItems = requests.filter((item) => item.status === "REJECTED");
+  const pendingItems = requests.filter((item) => item.status === "PENDING");
+  console.log(pendingItems);
   const doneItems = requests.filter((item) => item.status === "SUCCESS");
 
   return (
