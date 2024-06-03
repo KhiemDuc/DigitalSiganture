@@ -28,7 +28,7 @@ export default function Orders() {
   };
   return (
     <React.Fragment>
-      <Title>Recent Orders</Title>
+      <Title>Danh sách yêu cầu</Title>
       <Table size="small">
         <TableHead>
           <TableRow>

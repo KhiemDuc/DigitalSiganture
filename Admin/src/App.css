@@ -4,6 +4,9 @@
   margin: 0 auto;
   font-family: "Public Sans", sans-serif;
 }
+p {
+  margin: 0;
+}
 /* 
 
 .logo {

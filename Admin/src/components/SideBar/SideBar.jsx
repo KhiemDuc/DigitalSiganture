@@ -27,6 +27,7 @@ import logo from "../../assets/images/Knb.svg";
 import { Clear } from "@mui/icons-material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import MoveToInboxIcon from "@mui/icons-material/MoveToInbox";
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -281,15 +282,15 @@ export default function Sidebar({ children, appBarText }) {
               }}
             >
               <ListItemIcon>
-                <ShoppingCartIcon />
+                <MoveToInboxIcon />
               </ListItemIcon>
-              <ListItemText primary="Orders" />
+              <ListItemText primary="Danh sách yêu cầu" />
             </ListItemButton>
             <ListItemButton onClick={() => navigate("/admin/user")}>
               <ListItemIcon>
                 <PeopleIcon />
               </ListItemIcon>
-              <ListItemText primary="User" />
+              <ListItemText primary="Quản lý người dùng" />
             </ListItemButton>
             <ListItemButton>
               <ListItemIcon>
