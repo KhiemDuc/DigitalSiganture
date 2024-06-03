@@ -64,10 +64,6 @@ const Routes = () => {
       element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
       children: [
         {
-          path: "/home",
-          element: <LandingPage />,
-        },
-        {
           path: "/checkout/:id",
           element: <Checkout />,
         },
@@ -111,6 +107,14 @@ const Routes = () => {
 
   // Define routes accessible only to non-authenticated users
   const routesForNotAuthenticatedOnly = [
+    {
+      path: "/home",
+      element: <LandingPage />,
+    },
+    {
+      path: "/",
+      element: <LandingPage />,
+    },
     {
       path: "/sign_in",
       element: <SignIn />,

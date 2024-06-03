@@ -7,6 +7,7 @@ import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { NavLink, Navigate } from "react-router-dom";
 
 export default function Hero() {
   return (
@@ -83,7 +84,13 @@ export default function Hero() {
                 ariaLabel: "Nhập địa chỉ email của bạn",
               }}
             />
-            <Button variant="contained" color="primary">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                window.location.href = "/sign_up";
+              }}
+            >
               Bắt đầu nào
             </Button>
           </Stack>

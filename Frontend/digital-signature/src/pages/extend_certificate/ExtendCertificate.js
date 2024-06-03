@@ -15,7 +15,7 @@ import { ToastContainer } from "react-toastify";
 
 export default function ExtendCertificate() {
   useEffect(() => {
-    document.title = "Tạo cặp khoá - Hệ thống chữ ký số";
+    document.title = "Gia hạn chứng chỉ số";
     let element = document.querySelector(".fda3723591e0b38e7e52");
 
     if (element) {

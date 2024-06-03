@@ -126,7 +126,8 @@ export default function LandingPage() {
       dispatch(getUserInfo(user._id))
         .unwrap()
         .then(() => {})
-        .catch(() => {
+        .catch((err) => {
+          if (err.response.data.reason === "Token expired") return;
           showToast(
             "Lỗi khi lấy dữ liệu User vui lòng đăng nhập lại",
             ToastType.ERROR

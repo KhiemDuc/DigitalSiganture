@@ -10,7 +10,6 @@ import { showToast, ToastType } from "../../common/toast";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { TextField } from "@mui/material";
-import { Grid } from "@mui/material";
 import { InputAdornment } from "@mui/material";
 import { IconButton } from "@mui/material";
 import { Visibility } from "@mui/icons-material";
@@ -48,23 +47,74 @@ const CreataDigitalSignature = () => {
       return;
     }
     reader.onload = (e) => {
+      console.log(e.target.result);
       setPemData(e.target.result);
     };
-    reader.readAsArrayBuffer(file);
+    reader.readAsText(file);
+  };
+
+  const signString = (privateKey, message) => {
+    const md = forge.md.sha256.create();
+    md.update(message, "utf8");
+    const privKey = forge.pki.privateKeyFromPem(privateKey);
+    const signature = privKey.sign(md);
+    return forge.util.encode64(signature);
+  };
+
+  const verifySignature = (publicKey, message, signature) => {
+    const md = forge.md.sha256.create();
+    md.update(message, "utf8");
+    const decodedSignature = forge.util.decode64(signature);
+    return publicKey.verify(md.digest().bytes(), decodedSignature);
+  };
+
+  const getPublicKeyFromCertificate = (certificatePem) => {
+    const certificate = forge.pki.certificateFromPem(certificatePem);
+    console.log(certificate.publicKey);
+    return certificate.publicKey;
   };
 
   const handleClick = (values) => {
-    console.log(pemData);
+    if (values.password === "") {
+      showToast("Vui lòng nhập mật khẩu", ToastType.ERROR);
+      return;
+    }
     if (pemData == "") {
       showToast("Vui lòng chọn file private key", ToastType.ERROR);
       return;
     }
     CertificateService.getCertificate()
       .then((response) => {
-        genPfx(pemData, response.data.data, values.password);
+        const message = "Hello, World!";
+        const publicKey = getPublicKeyFromCertificate(response.data.data);
+        const privateKey = forge.pki.privateKeyFromPem(pemData);
+        const md = forge.md.sha256.create();
+        md.update(message, "utf8");
+        const md2 = forge.md.sha256.create();
+        md2.update(message, "utf8");
+        const signature = privateKey.sign(md);
+        try {
+          const verified = publicKey.verify(md.digest().bytes(), signature);
+          if (verified) {
+            genPfx(pemData, response.data.data, values.password);
+          } else {
+            showToast(
+              "Khoá bí mật và chứng chỉ không trùng khớp",
+              ToastType.ERROR
+            );
+          }
+        } catch (e) {
+          showToast(
+            "Khoá bí mật và chứng chỉ không trùng khớp",
+            ToastType.ERROR
+          );
+        }
+
+        // const verified = verifySignature(publicKey, message, signature);
       })
       .catch((error) => {
-        showToast(error.response.data.reason, ToastType.ERROR);
+        console.log(error);
+        showToast("Có lỗi gì đó", ToastType.ERROR);
       });
   };
 
@@ -77,7 +127,7 @@ const CreataDigitalSignature = () => {
     const der = forge.asn1.toDer(p12Asn1).getBytes();
     var p12b64 = forge.util.encode64(der);
     const blob = new Blob([p12b64], { type: "application/x-pkcs12" });
-    saveAs(blob, "out.pfx");
+    saveAs(blob, "digitalSignature.pfx");
   };
 
   return (
@@ -85,8 +135,7 @@ const CreataDigitalSignature = () => {
       heading={"Tạo chữ ký số"}
       subheading={
         <>
-          `Hãy nhập file chứng chỉ (.cer hoặc .crt), khoá bí và mật khẩu để tạo
-          chữ ký số của bạn.
+          `Hãy nhập file chứa khoá bí và mật khẩu để tạo chữ ký số của bạn.
           <br />
           *Lưu ý: Bạn phải chọn khoá bí mật trùng khớp với chứng chỉ đã chọn` (
           Khoá bí mật được bạn tạo ra yêu cầu cấp chứng chỉ )
@@ -96,7 +145,14 @@ const CreataDigitalSignature = () => {
       <Formik
         initialValues={{ password: "", confirmPassword: "" }}
         validationSchema={Yup.object({
-          password: Yup.string().min(12, "Mật khẩu phải có nhiều hơn 12 ký tự"),
+          password: Yup.string()
+            .min(12, "Mật khẩu phải có nhiều hơn 12 ký tự")
+            .matches(/[A-Z]/, "Mật khẩu phải có ít nhất 1 chữ hoa")
+            .matches(
+              /[^a-zA-Z0-9]/,
+              "Mật khẩu phải có ít nhất 1 ký tự đặc biệt"
+            )
+            .required("Mật khẩu là bắt buộc"),
           confirmPassword: Yup.string()
             .oneOf([Yup.ref("password"), null], "Mật khẩu không trùng khớp")
             .required("Vui lòng xác nhận mật khẩu"),
@@ -219,10 +275,7 @@ const CreataDigitalSignature = () => {
                   padding: "10px",
                 }}
               >
-                <button
-                  className="btn btn-outline-primary"
-                  onClick={() => handleClick()}
-                >
+                <button type="submit" className="btn btn-outline-primary">
                   Tạo chữ ký số
                 </button>
               </div>

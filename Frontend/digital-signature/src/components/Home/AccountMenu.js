@@ -151,7 +151,7 @@ export default function AccountMenu() {
           >
             {currentUser.userName[0]}
           </Avatar>
-          {userInfo?.firstName + " " + userInfo?.lastName}
+          {userInfo?.lastName + " " + userInfo?.firstName}
           {userInfo?.verified && (
             <Tooltip
               sx={{

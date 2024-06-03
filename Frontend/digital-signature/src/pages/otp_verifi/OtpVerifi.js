@@ -92,7 +92,7 @@ export default function OTPVerifi({ otpHandle }) {
               pauseOnHover: true,
               draggable: true,
               progress: undefined,
-              onClose: () => window.location.href("/"), // Navigate to home page after toast closes
+              onClose: () => (window.location.href = "/"), // Navigate to home page after toast closes
             });
           })
           .catch((error) => {
@@ -123,7 +123,7 @@ export default function OTPVerifi({ otpHandle }) {
               pauseOnHover: true,
               draggable: true,
               progress: undefined,
-              onClose: () => window.location.href("/"), // Navigate to home page after toast closes
+              onClose: () => (window.location.href = "/"), // Navigate to home page after toast closes
             });
           })
           .catch((error) => {

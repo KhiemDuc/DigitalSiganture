@@ -10,11 +10,12 @@ export const ProtectedRoute = () => {
   const location = useLocation();
 
   useEffect(() => {
-    PaymentService.getMySubCriptionPlan()
-      .then((response) => {
-        setMyPlan(response.data.data.plan);
-      })
-      .catch((error) => console.log(error));
+    if (location.pathname === "/subscription/student_verify")
+      PaymentService.getMySubCriptionPlan()
+        .then((response) => {
+          setMyPlan(response.data.data.plan);
+        })
+        .catch((error) => console.log(error));
   }, []);
 
   if (
