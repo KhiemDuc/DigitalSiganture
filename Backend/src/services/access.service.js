@@ -172,6 +172,7 @@ class AccessService {
     return {
       _id: foundUser._id,
       userName: foundUser.userName,
+      verified: foundUser.verified,
       ...newTokens,
     };
   };
@@ -358,7 +359,16 @@ class AccessService {
 
   static async getListUser() {
     const user = await User.find({}).populate("userInfo");
-    return user._doc;
+    const result = user.map((e) => ({
+      ...omitFields(e._doc, [
+        "password",
+        "secretKey",
+        "createdAt",
+        "updatedAt",
+        "__v",
+      ]),
+    }));
+    return result;
   }
 
   // static async unActivateUser(id) {

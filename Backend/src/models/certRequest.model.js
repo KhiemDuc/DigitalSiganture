@@ -8,38 +8,38 @@ const certRequestSchema = new mongoose.Schema(
     },
     firstName: {
       type: String,
-      required: true,
+      // required: true,
     },
     lastName: {
       type: String,
-      required: true,
+      // required: true,
     },
     address: {
       type: String,
-      required: true,
+      // required: true,
     },
     gender: {
       type: String,
       enum: ["Male", "Female"],
-      required: true,
+      // required: true,
     },
     dateOfBirth: {
       type: Date,
-      required: true,
+      // required: true,
     },
     nationality: {
       type: String,
-      required: true,
+      // required: true,
     },
     phone: {
       type: String,
       match: /^0\d{9}$/,
-      required: true,
+      // required: true,
     },
     email: {
       type: String,
       match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-      required: true,
+      // required: true,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -47,19 +47,19 @@ const certRequestSchema = new mongoose.Schema(
     },
     face: {
       type: String,
-      required: true,
+      // required: true,
     },
     IdNum: {
       type: String,
-      required: true,
+      // required: true,
     },
     CCCD: {
       type: String,
-      required: true,
+      // required: true,
     },
     CCCDBack: {
       type: String,
-      required: true,
+      // required: true,
     },
     status: {
       type: String,
@@ -69,6 +69,10 @@ const certRequestSchema = new mongoose.Schema(
     rejectedReason: {
       type: String,
       default: null,
+    },
+    isExtend: {
+      type: Boolean,
+      default: false,
     },
   },
   {

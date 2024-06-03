@@ -1,9 +1,9 @@
 const express = require("express");
 const path = require("path");
-const caAuth = require("../middlewares/ca.authentication");
 const asyncHandler = require("../utils/asyncHandler");
 const fs = require("fs");
 const CertificateController = require("../controllers/certificate.controller");
+const AccessController = require("../controllers/access.controller");
 const router = express.Router();
 // router.use("/", caAuth);
 router.get("/certificate", asyncHandler(CertificateController.getCertRequests));
@@ -11,6 +11,8 @@ router.post(
   "/certificate",
   asyncHandler(CertificateController.signCertificate)
 );
+
+router.get("/user", asyncHandler(AccessController.getListUser));
 
 router.get("/img/:name", (req, res) => {
   const imgPath = path.join(process.cwd(), "privateUploads", req.params.name);

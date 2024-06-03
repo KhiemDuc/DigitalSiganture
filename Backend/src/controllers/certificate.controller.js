@@ -1,14 +1,28 @@
 const CertificateService = require("../services/certificate.service");
 const { SuccessResponse } = require("../core/success.response");
+const { BadRequestError } = require("../core/error.response");
 
 class CertificateController {
-  static async requestCertificate(req, res) {
-    new SuccessResponse({
-      message: "Request sign certificate success",
-      data: await CertificateService.certificateRequest(req.user, req.body, {
+  static async requestCertificate(req, res, next) {
+    let files;
+    try {
+      files = {
         CCCD: req.files.CCCD[0],
         face: req.files.face[0],
         CCCDBack: req.files.CCCDBack[0],
+      };
+    } catch (err) {
+      next(
+        new BadRequestError(
+          "Bạn nhập thiếu thông tin",
+          "Bạn nhập thiếu thông tin"
+        )
+      );
+    }
+    new SuccessResponse({
+      message: "Request sign certificate success",
+      data: await CertificateService.certificateRequest(req.user, req.body, {
+        ...files,
       }),
     }).send(res);
   }
@@ -47,6 +61,15 @@ class CertificateController {
       message: "Get certificate requests success",
       data: await CertificateService.getMyCertificate(
         req.headers["x-client-id"]
+      ),
+    }).send(res);
+  }
+
+  static async extendCert(req, res) {
+    new SuccessResponse({
+      message: await CertificateService.extendCert(
+        req.user,
+        req.body.publicKey
       ),
     }).send(res);
   }

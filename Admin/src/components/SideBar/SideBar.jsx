@@ -285,11 +285,11 @@ export default function Sidebar({ children, appBarText }) {
               </ListItemIcon>
               <ListItemText primary="Orders" />
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton onClick={() => navigate("/admin/user")}>
               <ListItemIcon>
                 <PeopleIcon />
               </ListItemIcon>
-              <ListItemText primary="Customers" />
+              <ListItemText primary="User" />
             </ListItemButton>
             <ListItemButton>
               <ListItemIcon>

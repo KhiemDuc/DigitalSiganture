@@ -12,6 +12,7 @@ const fs = require("fs");
 const CAModel = require("../models/CA.model");
 const forge = require("node-forge");
 const omitFields = require("../utils/omitFields");
+const UserInfo = require("../models/userInfo.model");
 const constants = {
   idApi: "https://api.fpt.ai/vision/idr/vnm",
   faceApi: "https://api.fpt.ai/dmp/checkface/v1/",
@@ -21,6 +22,11 @@ const constants = {
 };
 class CertificateService {
   static certificateRequest = async (user, info, { CCCD, face, CCCDBack }) => {
+    const foundInfo = await UserInfo.findById(user.userInfo);
+    if (foundInfo.verified)
+      throw new BadRequestError(
+        "Bạn đã có chứng chỉ trước đó rồi, nếu hết hạn, hãy yêu cầu gia hạn"
+      );
     const foundRequest = await CertRequest.findOne({
       userId: user._id,
       status: "PENDING",
@@ -122,7 +128,7 @@ class CertificateService {
   };
 
   static getCertRequests = async () => {
-    return await CertRequest.find({ status: "PENDING" });
+    return await CertRequest.find({ status: "PENDING", isExtend: false });
   };
 
   static signCertificate = async (userId, certPem) => {
@@ -158,6 +164,7 @@ class CertificateService {
       const CA_Cert = forge.pki.certificateFromPem(foundCA.certificate);
       const checkingCert = forge.pki.certificateFromPem(certPem);
       const result = CA_Cert.verify(checkingCert);
+      // const searchResult = await
     } catch (e) {
       throw new BadRequestError(
         "Request failed",
@@ -181,6 +188,46 @@ class CertificateService {
         "Bạn chưa có chứng chỉ nào"
       );
     return foundCert.certPem;
+  };
+
+  static extendCert = async (user, publicKey) => {
+    const foundCertRequest = await CertRequest.findOne({
+      userId: user._id,
+      status: "PENDING",
+    });
+    if (foundCertRequest)
+      throw new BadRequestError(
+        "Bạn đang có yêu cầu trước đó rồi",
+        "Bạn đang có yêu cầu trước đó rồi"
+      );
+    if (!publicKey)
+      throw new BadRequestError(
+        "Cần cung cấp public key",
+        "Cần cung cấp public key"
+      );
+    const foundInfo = await UserInfo.findById(user.userInfo);
+    if (!foundInfo.verified)
+      throw new BadRequestError(
+        "Tài khoản chưa được xác thực bởi CA",
+        "Tài khoản chưa được xác thực bởi CA"
+      );
+
+    const hash = crypto.createHash("sha256");
+    hash.update(publicKey);
+    const result = hash.digest("hex");
+    const keyUsed = await PublicKeyUsed.findOne({ publicHashed: result });
+    if (keyUsed)
+      throw new BadRequestError(
+        "Request certificate failed",
+        "Some thing wrong, please try again"
+      );
+    await PublicKeyUsed.create({ publicHashed: result });
+
+    await CertRequest.create({
+      publicKey: publicKey,
+      userId: user._id,
+    });
+    return "Yêu cầu cấp lại chứng chỉ thành công";
   };
 }
 
