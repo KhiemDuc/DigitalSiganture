@@ -79,9 +79,12 @@ function RequestTicket() {
           {pendingItems.map((item) => {
             return (
               <CardCustom
+                key={item.id}
                 date={item.date}
                 status={item.status}
                 boxShadow={pendingColor}
+                isExtend={item.isExtend}
+                item={item}
               ></CardCustom>
             );
           })}
@@ -100,9 +103,12 @@ function RequestTicket() {
           {doneItems.map((item) => {
             return (
               <CardCustom
+                key={item.id}
                 date={item.date}
                 status={item.status}
                 boxShadow={doneColor}
+                isExtend={item.isExtend}
+                item={item}
               ></CardCustom>
             );
           })}
@@ -125,6 +131,8 @@ function RequestTicket() {
                 date={item.date}
                 status={item.status}
                 boxShadow={rejectColorRed}
+                isExtend={item.isExtend}
+                item={item}
               ></CardCustom>
             );
           })}

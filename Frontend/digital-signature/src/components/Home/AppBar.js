@@ -238,6 +238,18 @@ function AppAppBar({ mode, toggleColorMode, hideButton }) {
                   <MenuItem onClick={() => scrollToSection("team")}>
                     Team
                   </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      window.open(
+                        "https://www.coze.com/store/bot/7371504896325074951?bot_id=true"
+                      );
+                    }}
+                    sx={{ py: "6px", px: "12px" }}
+                  >
+                    <Typography variant="body2" color="text.primary">
+                      Hướng dẫn với AI
+                    </Typography>
+                  </MenuItem>
                   <MenuItem onClick={() => scrollToSection("faq")}>
                     FAQ
                   </MenuItem>

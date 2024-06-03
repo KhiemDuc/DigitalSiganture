@@ -23,13 +23,15 @@ instance.interceptors.request.use(
   }
 );
 
+let isRefreshing = false;
+
 instance.interceptors.response.use(
   (response) => {
     return response;
   },
   async (error) => {
     const originalConfig = error.config;
-    if (error.response.data.reason === "Token expired") {
+    if (error.response.data.reason === "Token expired" && !isRefreshing) {
       try {
         const user = JSON.parse(localStorage.getItem("user"));
         const result = await instance.get("/access/refresh-token", {
@@ -43,6 +45,7 @@ instance.interceptors.response.use(
         originalConfig.headers["authentication"] = result.data.data.accessToken;
         originalConfig.headers["x-client-id"] = result.data.data._id;
         store.dispatch(refreshToken(result.data.data));
+        isRefreshing = true;
         return instance(originalConfig);
       } catch (err) {
         console.log(err.response);

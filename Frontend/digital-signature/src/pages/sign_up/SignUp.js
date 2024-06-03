@@ -90,15 +90,16 @@ export default function SignUp() {
 
   const validationSchema = Yup.object({
     username: Yup.string().min(8, "Tài khoản phải có ít nhất 8 ký tự"),
-    password: Yup.string().min(12, "Mật khẩu phải có nhiều hơn 12 ký tự"),
-    confirmPassword: Yup.string().min(
-      12,
-      "Mật khẩu phải có nhiều hơn 12 ký tự"
-    ),
-    confirmPassword: Yup.string().oneOf(
-      [Yup.ref("password"), null],
-      "Mật khẩu không khớp"
-    ),
+    firstName: Yup.string().required("Tên là bắt buộc"),
+    lastName: Yup.string().required("Họ là bắt buộc"),
+    password: Yup.string()
+      .min(12, "Mật khẩu phải có nhiều hơn 12 ký tự")
+      .matches(/[A-Z]/, "Mật khẩu phải có ít nhất 1 chữ hoa")
+      .matches(/[^a-zA-Z0-9]/, "Mật khẩu phải có ít nhất 1 ký tự đặc biệt")
+      .required("Mật khẩu là bắt buộc"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), null], "Mật khẩu không trùng khớp")
+      .required("Vui lòng xác nhận mật khẩu"),
   });
 
   const initial = {
@@ -182,25 +183,6 @@ export default function SignUp() {
                       {...formik.getFieldProps("email")}
                     />
                   </Grid>
-                  {/* <Grid item xs={12}>
-                    <TextField
-                      required
-                      fullWidth
-                      id="phoneNumber"
-                      label="Số điện thoại"
-                      name="phoneNumber"
-                      autoComplete="phoneNumber"
-                      {...formik.getFieldProps("phoneNumber")}
-                    />
-                    {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
-                      <div
-                        className="form-text"
-                        style={{ textAlign: "start", color: "red" }}
-                      >
-                        {formik.errors.phoneNumber}
-                      </div>
-                    ) : null}
-                  </Grid> */}
                   <Grid item xs={12}>
                     <TextField
                       required
