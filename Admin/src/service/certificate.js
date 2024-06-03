@@ -1,5 +1,9 @@
 import axios from "../setup/axios";
-const getListRequests = () => {
-  return axios.get("/ca/certificate");
+const getListRequests = (extend = false) => {
+  return axios.get(`/ca/certificate`, {
+    params: {
+      extend: extend,
+    },
+  });
 };
 export { getListRequests };

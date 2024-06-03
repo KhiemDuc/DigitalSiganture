@@ -12,7 +12,6 @@ const publicRoutes = [
     path: "/admin/login",
     component: Login,
   },
-
   {
     path: "/admin/dashboard",
     component: Dashboard,

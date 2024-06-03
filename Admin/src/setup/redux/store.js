@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import signature from "./signatureSlice";
-export const store = configureStore({
+import sign from "./signatureSlice";
+export default configureStore({
   reducer: {
-    signature,
+    signature: sign,
   },
 });

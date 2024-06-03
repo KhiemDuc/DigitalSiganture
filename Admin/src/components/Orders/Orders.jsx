@@ -20,7 +20,6 @@ export default function Orders() {
   const navigate = useNavigate();
   React.useEffect(() => {
     getListRequests().then((response) => {
-      console.log(response);
       setReuests(response.data.data);
     });
   }, []);
@@ -37,6 +36,8 @@ export default function Orders() {
             <TableCell>Địa chỉ</TableCell>
             <TableCell>CCCD</TableCell>
             <TableCell>Giới tính</TableCell>
+            <TableCell>Loại</TableCell>
+            <TableCell>Gói</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -51,6 +52,13 @@ export default function Orders() {
                   : row?.gender === "Female"
                   ? "Nữ"
                   : "N/A"}
+              </TableCell>
+              <TableCell>
+                {row.isExtend ? "Gia hạn/cấp đổi" : "Cấp mới"}
+              </TableCell>
+              <TableCell>
+                {row.subscription.charAt(0).toUpperCase() +
+                  row.subscription.slice(1)}
               </TableCell>
             </StyledTableRow>
           ))}

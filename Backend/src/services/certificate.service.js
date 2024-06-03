@@ -13,6 +13,7 @@ const CAModel = require("../models/CA.model");
 const forge = require("node-forge");
 const omitFields = require("../utils/omitFields");
 const UserInfo = require("../models/userInfo.model");
+const User = require("../models/user.model");
 const constants = {
   idApi: "https://api.fpt.ai/vision/idr/vnm",
   faceApi: "https://api.fpt.ai/dmp/checkface/v1/",
@@ -128,7 +129,40 @@ class CertificateService {
   };
 
   static getCertRequests = async () => {
-    return await CertRequest.find({ status: "PENDING", isExtend: false });
+    const requests = await CertRequest.find({ status: "PENDING" });
+
+    const users = await Promise.all(
+      requests.map((e) => {
+        return User.findById(e._doc.userId).populate([
+          { path: "userInfo", model: "UserInfo" },
+          {
+            path: "subscription",
+            model: "Subscription",
+            populate: {
+              path: "plan",
+            },
+          },
+        ]);
+      })
+    );
+    console.log(users.map((e) => e.subscription.plan.name));
+    const result = requests.map(({ _doc: e }, index) => {
+      const element = { ...e };
+      element.subscription = users[index].subscription.plan.name;
+      if (e.isExtend) {
+        element.firstName = users[index].userInfo.firstName;
+        element.lastName = users[index].userInfo.lastName;
+        element.address = users[index].userInfo.address;
+        element.gender = users[index].userInfo.gender;
+        element.dateOfBirth = users[index].userInfo.dateOfBirth;
+        element.nationality = users[index].userInfo.nationality;
+        element.phone = users[index].userInfo.phoneNumber;
+        element.email = users[index].userInfo.email;
+        element.IdNum = users[index].userInfo.CCCD;
+      }
+      return element;
+    });
+    return result;
   };
 
   static signCertificate = async (userId, certPem) => {

@@ -4,6 +4,7 @@ import { Card, Grid, TextField, Box, Button } from "@mui/material";
 import { useFormik } from "formik";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import forge from "node-forge";
+import { useDispatch } from "react-redux";
 import { setState } from "../../setup/redux/signatureSlice";
 
 const ContentBox = styled("div")(() => ({
@@ -54,7 +55,7 @@ export default function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [selectedValue, setSelectedValue] = useState("0");
-
+  const dispatch = useDispatch();
   // const arrayBufferToBinaryString = (buffer) => {
   //   var binary = "";
   //   var bytes = new Uint8Array(buffer);
@@ -95,7 +96,8 @@ export default function Login() {
         forge.pki.oids.certBag
       ][0];
       // var key = bag.key;
-      setState({ cert: certBag.cert, key: keyBag.key });
+      console.log(certBag, keyBag);
+      dispatch(setState({ cert: certBag.cert, key: keyBag.key }));
       navigate("/admin/dashboard");
       // console.log(bags, keyBag, certBag);
     } catch (err) {

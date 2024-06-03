@@ -30,7 +30,7 @@ class CertificateController {
   static async getCertRequests(req, res) {
     new SuccessResponse({
       message: "Get certificate requests success",
-      data: await CertificateService.getCertRequests(),
+      data: await CertificateService.getCertRequests(req.query.extend),
     }).send(res);
   }
 

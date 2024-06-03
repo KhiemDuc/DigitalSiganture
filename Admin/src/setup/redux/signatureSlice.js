@@ -14,6 +14,7 @@ const slice = createSlice({
     },
   },
 });
+const { reducer, actions } = slice;
 
-export const { setState } = slice.actions;
-export default slice.reducer;
+export const { setState } = actions;
+export default reducer;

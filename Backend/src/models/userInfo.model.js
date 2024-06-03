@@ -13,10 +13,12 @@ const UserInfoSchema = new mongoose.Schema(
     email: {
       type: String,
       match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+      required: true,
     },
     phoneNumber: {
       type: String,
       match: /^0\d{9}$/,
+      default: null,
     },
     address: {
       type: String,
