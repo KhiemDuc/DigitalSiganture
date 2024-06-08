@@ -297,10 +297,10 @@ class CertificateService {
       path: "userId",
       model: "User",
     });
-    console.log(certList);
 
     const result = certList.map((e) => {
       const obj = {};
+      obj._id = e._doc._id;
       obj.certPem = e._doc.certPem;
       obj.userId = e._doc.userId._id;
       obj.userName = e._doc.userId.userName;
