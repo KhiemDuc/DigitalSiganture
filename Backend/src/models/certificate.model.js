@@ -6,10 +6,6 @@ const CertificateSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    history: {
-      type: Array,
-      default: [],
-    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

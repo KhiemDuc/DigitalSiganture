@@ -14,6 +14,7 @@ const forge = require("node-forge");
 const omitFields = require("../utils/omitFields");
 const UserInfo = require("../models/userInfo.model");
 const User = require("../models/user.model");
+const deletedCertModel = require("../models/deletedCert.model");
 const constants = {
   idApi: "https://api.fpt.ai/vision/idr/vnm",
   faceApi: "https://api.fpt.ai/dmp/checkface/v1/",
@@ -279,6 +280,17 @@ class CertificateService {
       userId: user._id,
     });
     return "Yêu cầu cấp lại chứng chỉ thành công";
+  };
+
+  static deleteCert = async (id) => {
+    const foundCert = await Certificate.findByIdAndDelete(id);
+    if (!foundCert) throw new BadRequestError(foundCert);
+    const newDeletedCert = await deletedCertModel.create({
+      certificate: foundCert.certPem,
+      userId: foundCert.userId,
+    });
+
+    return newDeletedCert;
   };
 }
 

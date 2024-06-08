@@ -73,5 +73,12 @@ class CertificateController {
       ),
     }).send(res);
   }
+
+  static async deleteCert(req, res) {
+    new SuccessResponse({
+      message: "Delete certificate success",
+      data: await CertificateService.deleteCert(req.params.id),
+    });
+  }
 }
 module.exports = CertificateController;

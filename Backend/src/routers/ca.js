@@ -13,6 +13,11 @@ router.post(
   asyncHandler(CertificateController.signCertificate)
 );
 
+router.delete(
+  "/certificate/:id",
+  asyncHandler(CertificateController.deleteCert)
+);
+
 router.get("/user", asyncHandler(AccessController.getListUser));
 
 router.get("/img/:name", (req, res) => {
