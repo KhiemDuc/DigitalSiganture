@@ -4,7 +4,6 @@ const Plan = require("./plans.model");
 const plan = {};
 Plan.findOne({ isDefault: true })
   .then((data) => {
-    console.log(data);
     plan.defaultPlan = data._doc;
   })
   .catch((err) => console.log(err));

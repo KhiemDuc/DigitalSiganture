@@ -6,4 +6,10 @@ const getListRequests = (extend = false) => {
     },
   });
 };
-export { getListRequests };
+const signCertificate = (certPem, userId) => {
+  return axios.post(`/ca/certificate`, {
+    certPem: certPem,
+    userId: userId,
+  });
+};
+export { getListRequests, signCertificate };

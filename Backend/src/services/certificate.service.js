@@ -169,6 +169,24 @@ class CertificateService {
     const foundCert = await Certificate.findOne({ userId });
     foundCert.certPem = certPem;
     await foundCert.save();
+    const foundRequest = await CertRequest.findOne({ userId });
+    foundRequest.status = "SUCCESS";
+    await foundRequest.save();
+    const foundUser = await User.findById(userId);
+    if (!foundRequest.isExtend) {
+      const foundInfo = await UserInfo.findById(foundUser.userInfo);
+      foundInfo.firstName = foundRequest.firstName;
+      foundInfo.lastName = foundRequest.lastName;
+      foundInfo.email = foundRequest.email;
+      foundInfo.address = foundRequest.address;
+      foundInfo.phoneNumber = foundRequest.phoneNumber;
+      foundInfo.CCCD = foundRequest.IdNum;
+      foundInfo.gender = foundRequest.gender;
+      foundInfo.dateOfBirth = foundRequest.dateOfBirth;
+      foundInfo.nationality = foundRequest.nationality;
+      foundInfo.verified = true;
+      await foundInfo.save();
+    }
     return "Sign certificate success";
   };
 
@@ -198,7 +216,6 @@ class CertificateService {
       const CA_Cert = forge.pki.certificateFromPem(foundCA.certificate);
       const checkingCert = forge.pki.certificateFromPem(certPem);
       const result = CA_Cert.verify(checkingCert);
-      // const searchResult = await
     } catch (e) {
       throw new BadRequestError(
         "Request failed",
