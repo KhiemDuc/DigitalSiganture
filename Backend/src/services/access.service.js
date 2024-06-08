@@ -358,15 +358,27 @@ class AccessService {
   }
 
   static async getListUser() {
-    const user = await User.find({}).populate("userInfo");
+    const user = await User.find({})
+      .populate("userInfo")
+      .populate({
+        path: "subscription",
+        populate: {
+          path: "plan",
+        },
+      });
     const result = user.map((e) => ({
       ...omitFields(e._doc, [
         "password",
         "secretKey",
-        // "createdAt",
-        // "updatedAt",
+        "refreshToken",
+        "refreshTokenUsed",
+        "isStudent",
+        "subscription",
         "__v",
       ]),
+      plan:
+        e._doc.subscription.plan.name.charAt(0).toUpperCase() +
+        e._doc.subscription.plan.name.slice(1),
     }));
     return result;
   }
