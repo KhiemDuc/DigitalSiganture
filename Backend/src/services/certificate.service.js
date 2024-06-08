@@ -293,7 +293,9 @@ class CertificateService {
     return newDeletedCert;
   };
   static getListCert = async () => {
-    const certList = await Certificate.find().populate({
+    const certList = await Certificate.find({
+      certPem: { $ne: null },
+    }).populate({
       path: "userId",
       model: "User",
     });
