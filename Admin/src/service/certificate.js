@@ -1,6 +1,6 @@
 import axios from "../setup/axios";
 const getListRequests = (extend = false) => {
-  return axios.get(`/ca/certificate`, {
+  return axios.get(`/ca/certificate/request`, {
     params: {
       extend: extend,
     },

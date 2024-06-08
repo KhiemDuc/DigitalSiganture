@@ -7,7 +7,11 @@ const AccessController = require("../controllers/access.controller");
 const PlanController = require("../controllers/plan.controller");
 const router = express.Router();
 // router.use("/", caAuth);
-router.get("/certificate", asyncHandler(CertificateController.getCertRequests));
+router.get("/certificate", CertificateController.getListCert);
+router.get(
+  "/certificate/request",
+  asyncHandler(CertificateController.getCertRequests)
+);
 router.post(
   "/certificate",
   asyncHandler(CertificateController.signCertificate)

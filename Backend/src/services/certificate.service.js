@@ -292,6 +292,24 @@ class CertificateService {
 
     return newDeletedCert;
   };
+  static getListCert = async () => {
+    const certList = await Certificate.find().populate({
+      path: "userId",
+      model: "User",
+    });
+    console.log(certList);
+
+    const result = certList.map((e) => {
+      const obj = {};
+      obj.certPem = e._doc.certPem;
+      obj.userId = e._doc.userId._id;
+      obj.userName = e._doc.userId.userName;
+      obj.iAt = e._doc.updatedAt;
+      return obj;
+    });
+
+    return result;
+  };
 }
 
 module.exports = CertificateService;

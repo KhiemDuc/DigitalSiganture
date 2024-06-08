@@ -78,7 +78,14 @@ class CertificateController {
     new SuccessResponse({
       message: "Delete certificate success",
       data: await CertificateService.deleteCert(req.params.id),
-    });
+    }).send(res);
+  }
+
+  static async getListCert(req, res) {
+    new SuccessResponse({
+      message: "Get list certificate success",
+      data: await CertificateService.getListCert(),
+    }).send(res);
   }
 }
 module.exports = CertificateController;
