@@ -3,10 +3,10 @@ import axios from "../../setup/axios";
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Avatar } from "@mui/material";
-import Title from "../Title/Title";
+import SearchInput from "../SearchInput/SearchInput";
 
 function DataTable({ rows }) {
-  const [plan, setPlan] = React.useState([]);
+  const [filteredRows, setFilteredRows] = React.useState([]);
   const columns = [
     {
       field: "id",
@@ -45,12 +45,7 @@ function DataTable({ rows }) {
       headerName: "Gói đăng ký",
       width: 130,
       valueGetter: (values, row) => {
-        const id = row.subscription;
-        console.log(id);
-        console.log(plan);
-        const planName = plan.find((p) => p._id === id)?.description;
-        console.log(planName);
-        return planName;
+        return row.plan;
       },
     },
     {
@@ -81,15 +76,41 @@ function DataTable({ rows }) {
         row?.userInfo.verified ? "Đã xác thực ✔️" : "Chưa xác thực",
     },
   ];
-  useEffect(() => {
-    axios.get("/plan").then((res) => {
-      setPlan(res.data.data);
+
+  const handleSearch = (value) => {
+    const filteredRows = rows.filter((row) => {
+      return (
+        row.userName.toLowerCase().includes(value.toLowerCase()) ||
+        row.userInfo.lastName.toLowerCase().includes(value.toLowerCase()) ||
+        row.userInfo.firstName.toLowerCase().includes(value.toLowerCase())
+      );
     });
-  }, []);
+    setFilteredRows(filteredRows);
+  };
+  console.log(filteredRows.length == 0);
+
   return (
-    <div style={{ height: "calc(100vh - 64px)", width: "100%" }}>
+    <div
+      style={{
+        height: "calc(100vh - 64px)",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        padding: "1rem 1rem 0rem 1rem",
+
+        justifyContent: "space-between",
+        gap: "1rem",
+      }}
+    >
+      <div
+        style={{
+          alignSelf: "flex-end",
+        }}
+      >
+        <SearchInput handleSearch={handleSearch} />
+      </div>
       <DataGrid
-        rows={rows}
+        rows={filteredRows.length != 0 ? filteredRows : rows}
         getRowId={(row) => row._id}
         columns={columns}
         initialState={{
@@ -115,7 +136,7 @@ const UserList = () => {
   }, []);
   return (
     <>
-      <DataTable rows={users}></DataTable>;
+      <DataTable rows={users}></DataTable>
     </>
   );
 };

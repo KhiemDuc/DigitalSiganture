@@ -34,7 +34,7 @@ export default function OrderDetail() {
     var attrs = [
       {
         name: "commonName",
-        value: `${state.lastName} ${state.firstName}`,
+        value: forge.util.encodeUtf8(`${state.lastName} ${state.firstName}`),
       },
       {
         name: "countryName",

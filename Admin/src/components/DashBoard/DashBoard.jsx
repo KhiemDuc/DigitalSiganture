@@ -1,6 +1,5 @@
 import * as React from "react";
 import { createTheme } from "@mui/material/styles";
-import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";

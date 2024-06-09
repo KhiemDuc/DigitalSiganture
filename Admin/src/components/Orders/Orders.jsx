@@ -4,10 +4,11 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Title from "./../Title/Title";
 import { getListRequests } from "../../service/certificate";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
+import SearchInput from "../SearchInput/SearchInput";
+import ReactSelect from "react-select";
 const StyledTableRow = styled(TableRow)(() => ({
   "&:hover": {
     backgroundColor: "#ccc",
@@ -27,10 +28,56 @@ export default function Orders() {
     navigate(`/admin/orders/${request._id}`, { state: request });
   };
   return (
-    <React.Fragment>
-      <Title>Danh sách yêu cầu</Title>
-      <Table size="small">
-        <TableHead>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "1rem",
+        padding: "1rem 1rem 0rem 1rem",
+      }}
+    >
+      <div
+        style={{
+          alignSelf: "flex-end",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          width: "50%",
+        }}
+      >
+        <ReactSelect
+          styles={{
+            control: (styles) => ({
+              ...styles,
+              width: "200px",
+              height: "100%",
+              boxShadow: "1px 1px 1px 1px #ccc",
+            }),
+          }}
+          placeholder="Lọc theo gói"
+          options={requests.map((request) => ({
+            label:
+              request.subscription?.charAt(0).toUpperCase() +
+              request.subscription?.slice(1),
+            value: request.subscription,
+          }))}
+          isMulti
+        ></ReactSelect>
+        <SearchInput></SearchInput>
+      </div>
+      <Table
+        size="small"
+        sx={{
+          border: "1px solid #ccc",
+          overflow: "hidden",
+        }}
+      >
+        <TableHead
+          sx={{
+            backgroundColor: "#fff",
+            height: "56px",
+          }}
+        >
           <TableRow>
             <TableCell>Họ Tên</TableCell>
             <TableCell>Địa chỉ</TableCell>
@@ -57,13 +104,13 @@ export default function Orders() {
                 {row.isExtend ? "Gia hạn/cấp đổi" : "Cấp mới"}
               </TableCell>
               <TableCell>
-                {row.subscription.charAt(0).toUpperCase() +
-                  row.subscription.slice(1)}
+                {row.subscription?.charAt(0).toUpperCase() +
+                  row.subscription?.slice(1)}
               </TableCell>
             </StyledTableRow>
           ))}
         </TableBody>
       </Table>
-    </React.Fragment>
+    </div>
   );
 }

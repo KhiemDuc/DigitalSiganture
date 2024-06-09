@@ -19,7 +19,6 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PeopleIcon from "@mui/icons-material/People";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import LayersIcon from "@mui/icons-material/Layers";
@@ -292,17 +291,21 @@ export default function Sidebar({ children, appBarText }) {
               </ListItemIcon>
               <ListItemText primary="Quản lý người dùng" />
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton onClick={() => navigate("/admin/plan")}>
               <ListItemIcon>
                 <BarChartIcon />
               </ListItemIcon>
-              <ListItemText primary="Reports" />
+              <ListItemText primary="Quản lý gói" />
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton
+              onClick={() => {
+                navigate("/admin/certificate_list");
+              }}
+            >
               <ListItemIcon>
                 <LayersIcon />
               </ListItemIcon>
-              <ListItemText primary="Integrations" />
+              <ListItemText primary="Quản lý chứng chỉ" />
             </ListItemButton>
           </List>
         </Drawer>
