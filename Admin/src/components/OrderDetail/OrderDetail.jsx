@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 import { signCertificate as sign } from "../../service/certificate";
 export default function OrderDetail() {
   const { state } = useLocation();
-  console.log(state);
   const [imgSrcs, setImgSrcs] = useState({});
   const CA = useSelector((state) => state.signature);
   useEffect(() => {
@@ -50,7 +49,21 @@ export default function OrderDetail() {
     const seri = forge.util.bytesToHex(bytes);
     certificate.serialNumber = seri;
     certificate.setSubject(attrs);
-    // console.log(CA.cert.subject.attributes);
+
+    const current = new Date();
+    certificate.validity.notBefore = current;
+
+    const exp = new Date();
+    if (state.subscription === "standard") {
+      // với gói mặc định, thời hạn sẽ là 6 tháng
+      exp.setMonth(exp.getMonth() + 6);
+    } else {
+      // với gói pro và sinh viên, thời hạn là 5 năm
+      exp.setFullYear(exp.getFullYear + 5);
+    }
+
+    certificate.validity.notAfter = exp;
+
     certificate.setIssuer(CA.cert.subject.attributes);
     certificate.setExtensions([
       {
