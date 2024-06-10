@@ -1,13 +1,7 @@
-import { ExpandLess, StarOutline, TrendingUp } from "@mui/icons-material";
-import {
-  Card,
-  Fab,
-  Grid,
-  Typography,
-  lighten,
-  styled,
-  useTheme,
-} from "@mui/material";
+import { ExpandLess, TrendingUp, TrendingDown } from "@mui/icons-material";
+import { Card, Fab, Grid, Typography, styled } from "@mui/material";
+import axios from "../../setup/axios";
+import React, { useEffect } from "react";
 
 // STYLED COMPONENTS
 const ContentBox = styled("div")(() => ({
@@ -51,9 +45,28 @@ const IconBox = styled("div")(() => ({
   "& .icon": { fontSize: "14px" },
 }));
 
-export default function StatCards2() {
-  const { palette } = useTheme();
-  const bgError = lighten(palette.error.main, 0.85);
+export default function StatCards2({ data }) {
+  const today = new Date().toISOString().split("T")[0];
+
+  const todayData = data?.find((item) => {
+    const itemDate = new Date(item.time).toISOString().split("T")[0];
+    return itemDate === today;
+  });
+  const yesterdayData = data?.find((item) => {
+    const itemDate = new Date(item.time).toISOString().split("T")[0];
+    return (
+      itemDate ===
+      new Date(new Date().setDate(new Date().getDate() - 1))
+        .toISOString()
+        .split("T")[0]
+    );
+  });
+
+  const todayDataAmount = todayData?.amount ? todayData?.amount : 0;
+  const yesterdayDataAmount = yesterdayData?.amount ? yesterdayData?.amount : 0;
+  const isIncrease = todayDataAmount > yesterdayDataAmount;
+  const perCent =
+    ((todayDataAmount - yesterdayDataAmount) / yesterdayDataAmount) * 100;
 
   return (
     <Grid container spacing={3} sx={{ mb: 3 }}>
@@ -67,17 +80,21 @@ export default function StatCards2() {
               <TrendingUp color="success" />
             </FabIcon>
 
-            <Typography color="#08ad6c">Active Users</Typography>
+            <Typography color="#08ad6c">
+              Số lượng User tăng lên trong ngày
+            </Typography>
           </ContentBox>
 
           <ContentBox sx={{ pt: 2 }}>
-            <Typography>10.8k</Typography>
+            <Typography variant="h5">
+              {todayData?.amount ? todayData?.amount : 0}
+            </Typography>
 
             <IconBox sx={{ backgroundColor: "success.main" }}>
               <ExpandLess className="icon" />
             </IconBox>
 
-            <Span color="#08ad6c">(+21%)</Span>
+            <Span color="#08ad6c">{perCent}%</Span>
           </ContentBox>
         </Card>
       </Grid>
@@ -87,22 +104,22 @@ export default function StatCards2() {
           <ContentBox>
             <FabIcon
               size="medium"
-              sx={{ backgroundColor: bgError, overflow: "hidden" }}
+              sx={{ overflow: "hidden", background: "rgba(9, 182, 109, 0.15)" }}
             >
-              <StarOutline color="error" />
+              <TrendingUp color="success" />
             </FabIcon>
 
-            <Typography color="error.main">Transactions</Typography>
+            <Typography color="#08ad6c">Active User</Typography>
           </ContentBox>
 
           <ContentBox sx={{ pt: 2 }}>
             <Typography variant="h5">$2.8M</Typography>
 
-            <IconBox sx={{ backgroundColor: "error.main" }}>
+            <IconBox sx={{ backgroundColor: "success.main" }}>
               <ExpandLess className="icon" />
             </IconBox>
 
-            <Span color="error.main">(+21%)</Span>
+            <Span color="success">(+21%)</Span>
           </ContentBox>
         </Card>
       </Grid>

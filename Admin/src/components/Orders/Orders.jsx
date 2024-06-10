@@ -9,6 +9,17 @@ import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import SearchInput from "../SearchInput/SearchInput";
 import ReactSelect from "react-select";
+import { addDays } from "date-fns";
+import { useState } from "react";
+import { DateRangePicker } from "react-date-range";
+import "react-date-range/dist/styles.css"; // main css file
+import "react-date-range/dist/theme/default.css"; // theme css file
+import { Modal } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import IconButton from "@mui/material/IconButton";
+import Button from "@mui/material/Button";
+import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
+
 const StyledTableRow = styled(TableRow)(() => ({
   "&:hover": {
     backgroundColor: "#ccc",
@@ -18,6 +29,22 @@ const StyledTableRow = styled(TableRow)(() => ({
 
 export default function Orders() {
   const [requests, setReuests] = React.useState([]);
+  const [open, setOpen] = React.useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const [state, setState] = useState([
+    {
+      startDate: new Date(),
+      endDate: addDays(new Date()),
+      key: "selection",
+    },
+  ]);
   const navigate = useNavigate();
   React.useEffect(() => {
     getListRequests().then((response) => {
@@ -36,15 +63,94 @@ export default function Orders() {
         padding: "1rem 1rem 0rem 1rem",
       }}
     >
+      <Modal open={open} onClose={handleClose}>
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: 24,
+            pt: 2,
+            px: 4,
+            pb: 3,
+            backgroundColor: "white",
+            padding: "10px",
+            borderRadius: "10px",
+          }}
+        >
+          <div
+            style={{
+              alignSelf: "flex-end",
+            }}
+          >
+            <IconButton
+              aria-label="CloseIcon"
+              onClick={() => {
+                handleClose();
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </div>
+          <DateRangePicker
+            onChange={(item) => setState([item.selection])}
+            showSelectionPreview={true}
+            moveRangeOnFirstSelection={false}
+            months={2}
+            ranges={state}
+            direction="horizontal"
+          />
+          <div
+            style={{
+              alignSelf: "flex-end",
+            }}
+          >
+            <Button variant="outlined">Xác Nhận</Button>
+          </div>
+        </div>
+      </Modal>
       <div
         style={{
           alignSelf: "flex-end",
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
-          width: "50%",
+          width: "100%",
         }}
       >
+        <Button
+          color="primary"
+          endIcon={<InsertInvitationIcon />}
+          onClick={handleOpen}
+          sx={{
+            border: "1px solid #ccc",
+            boxShadow: "1px 1px 1px 1px #ccc",
+            color: "hsl(0, 0%, 50%)",
+          }}
+        >
+          Lọc theo ngày
+        </Button>
+        <ReactSelect
+          styles={{
+            control: (styles) => ({
+              ...styles,
+              width: "200px",
+              height: "100%",
+              boxShadow: "1px 1px 1px 1px #ccc",
+            }),
+          }}
+          placeholder="Sắp xếp theo ngày"
+          options={[
+            { label: "Ngày mới nhất", value: "new" },
+            { label: "Ngày cũ nhất", value: "old" },
+          ]}
+        ></ReactSelect>
+
         <ReactSelect
           styles={{
             control: (styles) => ({
@@ -63,6 +169,7 @@ export default function Orders() {
           }))}
           isMulti
         ></ReactSelect>
+
         <SearchInput></SearchInput>
       </div>
       <Table

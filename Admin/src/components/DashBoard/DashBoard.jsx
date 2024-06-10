@@ -7,13 +7,41 @@ import Chart from "../Chart/Chart";
 import Deposits from "../Deposits/Deposits";
 import Orders from "../Orders/Orders";
 import StatCards2 from "./RowCard";
-
-const drawerWidth = 240;
-
-// TODO remove, this demo shouldn't need to reset the theme.
-const defaultTheme = createTheme();
+import axios from "../../setup/axios";
+import { useEffect, useState } from "react";
 
 export default function Dashboard() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("/ca/user")
+      .then((res) => {
+        setUsers(res.data.data);
+      })
+      .catch((err) => {});
+  }, []);
+
+  const groupByDate = (data) => {
+    return data.reduce((acc, current) => {
+      const date = current.createdAt.split("T")[0];
+      if (!acc[date]) {
+        acc[date] = 0;
+      }
+      acc[date]++;
+      return acc;
+    }, {});
+  };
+
+  // Get the grouped data
+  const groupedData = groupByDate(users);
+
+  // Convert the result to an array of objects
+  const result = Object.keys(groupedData).map((date) => {
+    return { time: date, amount: groupedData[date] };
+  });
+
+  console.log(result);
   return (
     <React.Fragment>
       {/* <Toolbar /> */}
@@ -22,7 +50,7 @@ export default function Dashboard() {
           {/* Chart */}
 
           <Grid item xs={12} md={8} lg={9}>
-            <StatCards2 />
+            <StatCards2 data={result} />
           </Grid>
 
           <Grid item xs={12} md={8} lg={9}>
@@ -34,7 +62,7 @@ export default function Dashboard() {
                 height: 240,
               }}
             >
-              <Chart />
+              <Chart data={result} />
             </Paper>
           </Grid>
 
