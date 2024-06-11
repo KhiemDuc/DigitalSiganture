@@ -182,6 +182,16 @@ export default function SignUp() {
                       autoComplete="email"
                       {...formik.getFieldProps("email")}
                     />
+                    <small
+                      id="emailHelp"
+                      class="form-text text-muted"
+                      style={{
+                        width: "100%",
+                        textAlign: "left",
+                      }}
+                    >
+                      Chúng tôi sẽ không chia sẻ email của bạn cho bất kỳ ai.
+                    </small>
                   </Grid>
                   <Grid item xs={12}>
                     <TextField

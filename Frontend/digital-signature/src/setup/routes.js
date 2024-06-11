@@ -20,6 +20,7 @@ import CreateKey from "../pages/create_key/CreateKey";
 import MyRequest from "./../pages/my_request/index";
 import CreataDigitalSignature from "../pages/create_digital_signature/CreateDigitalSignature";
 import ExtendCertificate from "../pages/extend_certificate/ExtendCertificate";
+import CancelCertificate from "../pages/cancel_certificate/CancelCertificate";
 
 const Routes = () => {
   const { isLoggedIn } = useSelector((state) => state.auth);
@@ -100,6 +101,10 @@ const Routes = () => {
         {
           path: "/certificate/extend",
           element: <ExtendCertificate />,
+        },
+        {
+          path: "/certificate/cancel",
+          element: <CancelCertificate />,
         },
       ],
     },

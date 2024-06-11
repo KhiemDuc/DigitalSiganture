@@ -103,7 +103,7 @@ export default function SignInSide() {
           </Box>
         </Grid>
 
-        <Grid item xs={12} sm={8} md={5} elevation={6} square>
+        <Grid item xs={12} sm={8} md={5} elevation={6}>
           <Box
             sx={{
               my: 8,
@@ -205,7 +205,7 @@ export default function SignInSide() {
                   )}
                   <button
                     style={{
-                      margin: "20px",
+                      margin: "20px 0px",
                       backgroundColor: "#6655ff",
                       borderRadius: "15px",
                       padding: "10px",
