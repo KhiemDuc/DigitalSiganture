@@ -151,6 +151,7 @@ function DataTable({ rows }) {
 }
 const CertiList = () => {
   const [certificates, setCertificates] = React.useState([]);
+
   useEffect(() => {
     axios.get("/ca/certificate").then((res) => {
       setCertificates(res.data.data);

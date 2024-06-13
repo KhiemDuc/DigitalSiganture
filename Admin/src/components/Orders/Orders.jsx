@@ -29,7 +29,50 @@ const StyledTableRow = styled(TableRow)(() => ({
 
 export default function Orders() {
   const [requests, setReuests] = React.useState([]);
+  const [filteredRows, setFilteredRows] = React.useState([]);
   const [open, setOpen] = React.useState(false);
+
+  const handleChangeMul = (op) => {
+    if (op.length === 0) return setFilteredRows(requests);
+    let opValues = op.map((o) => o.value);
+    console.log(opValues);
+    setFilteredRows(
+      filteredRows.filter((row) => opValues.includes(row.subscription))
+    );
+  };
+  const handleChange = (option) => {
+    if (option == "new") {
+      setFilteredRows(
+        requests.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      );
+    } else {
+      setFilteredRows(
+        requests.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+      );
+    }
+  };
+
+  const handleSearch = (value) => {
+    if (value === "") {
+      setFilteredRows(requests);
+    }
+    const filteredRows = requests.filter((row) => {
+      return (
+        row.firstName.toLowerCase().includes(value.toLowerCase()) ||
+        row.lastName.toLowerCase().includes(value.toLowerCase())
+      );
+    });
+    console.log(filteredRows);
+    setFilteredRows(filteredRows);
+  };
+
+  const handleFilter = () => {
+    const filteredRows = requests.filter((row) => {
+      return row.subscription.toLowerCase().includes(value.toLowerCase());
+    });
+    console.log(filteredRows);
+    setFilteredRows(filteredRows);
+  };
 
   const handleOpen = () => {
     setOpen(true);
@@ -49,6 +92,7 @@ export default function Orders() {
   React.useEffect(() => {
     getListRequests().then((response) => {
       setReuests(response.data.data);
+      setFilteredRows(response.data.data);
     });
   }, []);
   const hanldeOpenModal = (request) => {
@@ -149,6 +193,7 @@ export default function Orders() {
             { label: "Ngày mới nhất", value: "new" },
             { label: "Ngày cũ nhất", value: "old" },
           ]}
+          onChange={handleChange}
         ></ReactSelect>
 
         <ReactSelect
@@ -168,9 +213,10 @@ export default function Orders() {
             value: request.subscription,
           }))}
           isMulti
+          onChange={handleChangeMul}
         ></ReactSelect>
 
-        <SearchInput></SearchInput>
+        <SearchInput handleSearch={handleSearch}></SearchInput>
       </div>
       <Table
         size="small"
@@ -195,7 +241,7 @@ export default function Orders() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {requests.map((row) => (
+          {filteredRows.map((row) => (
             <StyledTableRow key={row._id} onClick={() => hanldeOpenModal(row)}>
               <TableCell>{row.lastName + " " + row.firstName}</TableCell>
               <TableCell>{row.address}</TableCell>

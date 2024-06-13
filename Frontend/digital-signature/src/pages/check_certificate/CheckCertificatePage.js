@@ -87,10 +87,10 @@ export default function CheckCertificatePage() {
             }}
           >
             <Typography component="h2" variant="h4" color="text.primary">
-              Kiểm tra chứng chỉ số
+              Xác thực chứng chỉ số
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Kiểm tra chứng chỉ được cấp bởi chứng tôi có hợp lệ hay còn hạn sử
+              Kiểm tra chứng chỉ được cấp bởi chúng tôi có hợp lệ hay còn hạn sử
               dụng hay không
             </Typography>
           </Box>

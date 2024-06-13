@@ -123,7 +123,12 @@ const ChangeCurrentPassword = () => {
         <Typography
           component="h3"
           variant="body1"
-          style={{ width: "100%", textAlign: "left", fontWeight: "550" }}
+          style={{
+            width: "100%",
+            textAlign: "left",
+            fontWeight: "550",
+            fontFamily: "'Be Vietnam Pro', sans-serif",
+          }}
         >
           Mật khẩu của bạn phải có tối thiểu 12 ký tự, đồng thời bao gồm cả chữ
           số, chữ cái và ký tự đặc biệt (!$@%).
@@ -155,6 +160,9 @@ const ChangeCurrentPassword = () => {
                     id="currentPassword"
                     autoComplete="currentPassword"
                     {...formik.getFieldProps("currentPassword")}
+                    sx={{
+                      fontFamily: "'Be Vietnam Pro', sans-serif",
+                    }}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
@@ -185,6 +193,9 @@ const ChangeCurrentPassword = () => {
                     type={showPassword ? "text" : "password"}
                     id="newPassword"
                     autoComplete="newPassword"
+                    sx={{
+                      fontFamily: "'Be Vietnam Pro', sans-serif",
+                    }}
                     {...formik.getFieldProps("newPassword")}
                     InputProps={{
                       endAdornment: (
@@ -211,6 +222,9 @@ const ChangeCurrentPassword = () => {
                     fullWidth
                     name="confirmPassword"
                     label="Xác Nhận Mật khẩu"
+                    sx={{
+                      fontFamily: "'Be Vietnam Pro', sans-serif",
+                    }}
                     type={showPasswordC ? "text" : "password"}
                     id="confirmPassword"
                     autoComplete="confirmPassword"
@@ -284,6 +298,8 @@ const ChangeCurrentPassword = () => {
                       padding: "10px",
                       color: "white",
                       border: "none",
+
+                      fontFamily: "'Be Vietnam Pro', sans-serif",
                     }}
                     type="submit"
                   >

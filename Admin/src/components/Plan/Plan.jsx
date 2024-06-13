@@ -21,6 +21,8 @@ import Modal from "@mui/material/Modal";
 import CloseIcon from "@mui/icons-material/Close";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddIcon from "@mui/icons-material/Add";
+import { addPlan, updatePlan, deletePlan } from "../../service/plan";
+import ModalNoti from "../ModalNoti";
 
 const StyledTableRow = styled(TableRow)(() => ({
   "&:hover": {
@@ -31,9 +33,33 @@ const StyledTableRow = styled(TableRow)(() => ({
 
 const Plan = () => {
   const [plans, setPlans] = React.useState([]);
+  const [planeName, setPlaneName] = React.useState("");
+  const [planeDesc, setPlaneDesc] = React.useState("");
+  const [planePrice, setPlanePrice] = React.useState("");
+  const [planeTier, setPlaneTier] = React.useState("");
   const [filteredPlans, setFilteredPlans] = React.useState([]);
   const [openIds, setOpenIds] = useState([]);
   const [benefits, setBenefits] = useState([""]);
+  const [planID, setPlanID] = useState("");
+  const [isCreate, setIsCreate] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [openNoti, setOpenNoti] = useState(false);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+
+  const handleCloseNoti = () => {
+    setOpenNoti(false);
+  };
+  const handleOpenNoti = () => {
+    setOpenNoti(true);
+  };
+  const handleOpenConfirm = () => {
+    setOpenConfirm(true);
+  };
+
+  const handleCloseConfirm = () => {
+    setOpenConfirm(false);
+  };
 
   const handleBenefitChange = (e, index) => {
     const newBenefits = [...benefits];
@@ -41,6 +67,23 @@ const Plan = () => {
     setBenefits(newBenefits);
   };
 
+  const deletePlanLayout = (id) => {
+    setFilteredPlans((plans) => {
+      console.log("Before deletion:", plans);
+      const updatedPlans = plans.filter((plan) => plan._id !== id);
+      console.log("After deletion:", updatedPlans);
+      return updatedPlans;
+    });
+  };
+
+  const updatePlanLayout = (id, data) => {
+    setFilteredPlans((plans) => {
+      const updatedPlans = plans.map((plan) =>
+        plan._id === id ? { ...plan, ...data } : plan
+      );
+      return updatedPlans;
+    });
+  };
   const handleAddBenefit = () => {
     setBenefits([...benefits, ""]);
   };
@@ -100,7 +143,15 @@ const Plan = () => {
         <Button
           variant="outlined"
           startIcon={<AddIcon />}
-          onClick={() => handleOpenModal()}
+          onClick={() => {
+            handleOpenModal();
+            setPlaneName("");
+            setPlaneDesc("");
+            setPlaneTier("");
+            setPlanePrice("");
+            setBenefits([""]);
+            setIsCreate(true);
+          }}
         >
           Thêm gói
         </Button>
@@ -158,12 +209,32 @@ const Plan = () => {
                   <TableCell>{row.price.toLocaleString("de-DE")} VND</TableCell>
                   <TableCell>{row.tier}</TableCell>
                   <TableCell>
-                    <Button variant="outlined" startIcon={<EditIcon />}>
+                    <Button
+                      variant="outlined"
+                      startIcon={<EditIcon />}
+                      onClick={() => {
+                        setIsCreate(false);
+                        handleOpenModal();
+                        setPlanID(row._id);
+                        setPlaneName(row.name);
+                        setPlaneDesc(row.description);
+                        setPlanePrice(row.price);
+                        setPlaneTier(row.tier);
+                        setBenefits(row.benefits);
+                      }}
+                    >
                       Sửa
                     </Button>
                   </TableCell>
                   <TableCell>
-                    <Button variant="outlined" startIcon={<DeleteIcon />}>
+                    <Button
+                      variant="outlined"
+                      startIcon={<DeleteIcon />}
+                      onClick={() => {
+                        setPlanID(row._id);
+                        handleOpenConfirm();
+                      }}
+                    >
                       Xoá
                     </Button>
                   </TableCell>
@@ -208,7 +279,69 @@ const Plan = () => {
             ))}
           </TableBody>
         </Table>
-
+        <Modal open={openConfirm} onClose={handleClose}>
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: 24,
+              pt: 2,
+              px: 4,
+              pb: 3,
+              backgroundColor: "white",
+              padding: " 1rem 2rem",
+              borderRadius: "10px",
+              gap: "1rem",
+              width: "400px",
+              overflow: "auto",
+              height: "200px",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: "550",
+              }}
+            >
+              Xác nhận xoá gói
+            </p>
+            Bạn có chắc chắn muốn xoá gói này không?
+            <div
+              style={{
+                display: "flex",
+                gap: "1rem",
+              }}
+            >
+              <Button
+                variant="contained"
+                onClick={() => {
+                  deletePlan(planID)
+                    .then((res) => {
+                      handleCloseConfirm();
+                      deletePlanLayout(planID);
+                    })
+                    .catch((err) => {});
+                }}
+              >
+                Xác nhận
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  handleCloseConfirm();
+                }}
+              >
+                Hủy
+              </Button>
+            </div>
+          </div>
+        </Modal>
         {/* Modal */}
         <Modal open={open} onClose={handleClose}>
           <div
@@ -230,6 +363,7 @@ const Plan = () => {
               borderRadius: "10px",
               gap: "0.5rem",
               width: "600px",
+              overflow: "auto",
             }}
           >
             <IconButton
@@ -240,48 +374,56 @@ const Plan = () => {
             >
               <CloseIcon />
             </IconButton>
-            <div class="form-group w-100">
-              <label for="exampleInputEmail1">Tên gói: </label>
+            <div className="form-group w-100">
+              <label htmlFor="exampleInputEmail1">Tên gói: </label>
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 id="exampleInputEmail1"
                 aria-describedby="emailHelp"
                 placeholder="Nhập tên gói"
+                value={planeName}
+                onChange={(e) => setPlaneName(e.target.value)}
               />
             </div>
-            <div class="form-group w-100">
-              <label for="exampleInputEmail1">Mô tả:</label>
+            <div className="form-group w-100">
+              <label htmlFor="exampleInputEmail1">Mô tả:</label>
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 id="exampleInputEmail1"
                 aria-describedby="emailHelp"
                 placeholder="Nhập mô tả"
+                value={planeDesc}
+                onChange={(e) => setPlaneDesc(e.target.value)}
               />
             </div>
-            <div class="form-group w-100">
-              <label for="exampleInputEmail1">Giá:</label>
+            <div className="form-group w-100">
+              <label htmlFor="exampleInputEmail1">Giá:</label>
               <input
                 type="number"
-                class="form-control"
+                className="form-control"
                 id="exampleInputEmail1"
                 aria-describedby="emailHelp"
                 placeholder="Nhập giá tiền"
+                value={planePrice}
+                onChange={(e) => setPlanePrice(e.target.value)}
               />
             </div>
-            <div class="form-group w-100">
-              <label for="exampleInputEmail1">Tier:</label>
+            <div className="form-group w-100">
+              <label htmlFor="exampleInputEmail1">Tier:</label>
               <input
                 type="number"
-                class="form-control"
+                className="form-control"
                 id="exampleInputEmail1"
                 aria-describedby="emailHelp"
                 placeholder="Tier .."
+                value={planeTier}
+                onChange={(e) => setPlaneTier(e.target.value)}
               />
             </div>
             <div
-              class="form-group w-100"
+              className="form-group w-100"
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -309,37 +451,53 @@ const Plan = () => {
                   />
                 </IconButton>
               </div>
-              {benefits.map((benefit, index) => (
-                <div
-                  style={{
-                    position: "relative",
-                  }}
-                >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id={index}
-                    aria-describedby="emailHelp"
-                    placeholder="Nhập lợi ích"
-                  />
-                  <IconButton
-                    aria-label="expand row"
-                    size="small"
-                    onClick={() => handleRemoveBenefit(index)}
-                    sx={{
-                      position: "absolute",
-                      right: "0",
-                      top: "5px",
+              <div
+                className="scrollbar"
+                id="scrollbar1"
+                style={{
+                  maxHeight: "250px",
+                  overflow: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.5rem",
+                  scrollbarWidth: "none", // for Firefox
+                  scrollbarColor: "rgba(25, 118, 210, 0.5) transparent", // for Firefox
+                }}
+              >
+                {benefits.map((benefit, index) => (
+                  <div
+                    style={{
+                      position: "relative",
                     }}
                   >
-                    <RemoveCircleOutlineIcon
-                      sx={{
-                        fontSize: "1rem",
-                      }}
+                    <input
+                      type="text"
+                      className="form-control"
+                      id={index}
+                      aria-describedby="emailHelp"
+                      placeholder="Nhập lợi ích"
+                      value={benefit}
+                      onChange={(e) => handleBenefitChange(e, index)}
                     />
-                  </IconButton>
-                </div>
-              ))}
+                    <IconButton
+                      aria-label="expand row"
+                      size="small"
+                      onClick={() => handleRemoveBenefit(index)}
+                      sx={{
+                        position: "absolute",
+                        right: "0",
+                        top: "5px",
+                      }}
+                    >
+                      <RemoveCircleOutlineIcon
+                        sx={{
+                          fontSize: "1rem",
+                        }}
+                      />
+                    </IconButton>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <Button
@@ -349,11 +507,59 @@ const Plan = () => {
                 marginTop: "1rem",
                 alignSelf: "flex-end",
               }}
+              onClick={() => {
+                if (isCreate) {
+                  addPlan({
+                    name: planeName,
+                    price: planePrice,
+                    description: planeDesc,
+                    tier: planeTier,
+                    benefits: benefits,
+                  })
+                    .then((res) => {
+                      handleClose();
+                      handleOpenNoti();
+                      setTitle("Thành công");
+                      setContent("Thêm gói thành công");
+                    })
+                    .catch((err) => {});
+                } else {
+                  updatePlan(planID, {
+                    name: planeName,
+                    price: planePrice,
+                    description: planeDesc,
+                    tier: planeTier,
+                    benefits: benefits,
+                  })
+                    .then((res) => {
+                      handleClose();
+                      updatePlanLayout(planID, {
+                        name: planeName,
+                        price: planePrice,
+                        description: planeDesc,
+                        tier: planeTier,
+                        benefits: benefits,
+                      });
+                      handleOpenNoti();
+                      setTitle("Thành công");
+                      setContent("Cập nhật thành công");
+                    })
+                    .catch((err) => {});
+                }
+              }}
             >
-              Thêm gói
+              {isCreate ? "Thêm gói" : "Lưu thay đổi"}
             </Button>
           </div>
         </Modal>
+        <ModalNoti
+          show={openNoti}
+          handleClose={handleCloseNoti}
+          title={title}
+          content={content}
+          isDone={true}
+        />
+        ;
       </div>
     </div>
   );
