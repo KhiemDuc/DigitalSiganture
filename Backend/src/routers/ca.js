@@ -17,9 +17,13 @@ router.post(
   asyncHandler(CertificateController.signCertificate)
 );
 
+router.patch(
+  "/certificate/:id",
+  asyncHandler(CertificateController.rejectCertificate)
+);
 router.delete(
   "/certificate/:id",
-  asyncHandler(CertificateController.deleteCert)
+  asyncHandler(CertificateController.deleteCertByCa)
 );
 
 router.get("/user", asyncHandler(AccessController.getListUser));

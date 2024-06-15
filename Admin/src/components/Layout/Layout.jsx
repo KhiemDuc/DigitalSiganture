@@ -1,9 +1,11 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../SideBar/SideBar";
-import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useSelector } from "react-redux";
+import { Navigate, useLocation } from "react-router-dom";
 
 const Layout = () => {
+  const admin = useSelector((state) => state.signature);
+  if (!admin.key && !admin.cert) return <Navigate to={"/admin/login"} />;
   const location = useLocation();
   const path = location.pathname;
   const endPath = path.split("/").pop();

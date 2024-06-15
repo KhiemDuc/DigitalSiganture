@@ -29,6 +29,19 @@ class CertificateService {
       throw new BadRequestError(
         "Bạn đã có chứng chỉ trước đó rồi, nếu hết hạn, hãy yêu cầu gia hạn"
       );
+    if (foundInfo.email !== info.email.toLowerCase())
+      throw new BadRequestError(
+        "Email bạn nhập không hợp lệ",
+        "Email bạn nhập không hợp lệ"
+      );
+    //check if id number used by another
+    const inf = await UserInfo.findOne({ CCCD: info.IdNum });
+    if (inf !== null)
+      throw new BadRequestError(
+        "Căn cước đã được sử dụng bởi người khác, vui lòng liên hệ cơ quan CA để biết thêm chi tiết",
+        "Căn cước đã được sử dụng bởi người khác, vui lòng liên hệ cơ quan CA để biết thêm chi tiết"
+      );
+    //
     const foundRequest = await CertRequest.findOne({
       userId: user._id,
       status: "PENDING",
@@ -39,7 +52,7 @@ class CertificateService {
         "Bạn đã yêu cầu 1 chứng chỉ từ trước đó rồi"
       );
     const foundCert = await Certificate.findOne({ userId: user._id });
-    if (foundCert.certPem !== null)
+    if (foundCert && foundCert.certPem !== null)
       throw new BadRequestError(
         "Request sign certificate failed",
         "Bạn đã có chứng chỉ rồi, vui lòng hủy chứng chỉ cũ trước khi yêu cầu 1 chứng chỉ mới"
@@ -105,8 +118,8 @@ class CertificateService {
       );
 
     //check date of birth, nationality, home(placeOfOrigin), address
+
     //end
-    // await changeUserInfo(user, { ...info });
 
     const newReq = await CertRequest.create({
       publicKey: info.publicKey,
@@ -146,7 +159,7 @@ class CertificateService {
         ]);
       })
     );
-    console.log(users.map((e) => e.subscription.plan.name));
+    // console.log(users.map((e) => e.subscription.plan.name));
     const result = requests.map(({ _doc: e }, index) => {
       const element = { ...e };
       element.subscription = users[index].subscription.plan.name;
@@ -166,11 +179,15 @@ class CertificateService {
     return result;
   };
 
-  static signCertificate = async (userId, certPem) => {
-    const foundCert = await Certificate.findOne({ userId });
+  static signCertificate = async (userId, certPem, isExtend) => {
+    let foundCert = await Certificate.findOne({ userId });
     foundCert.certPem = certPem;
     await foundCert.save();
-    const foundRequest = await CertRequest.findOne({ userId });
+    const foundRequest = await CertRequest.findOne({
+      userId,
+      isExtend,
+      status: "PENDING",
+    });
     foundRequest.status = "SUCCESS";
     await foundRequest.save();
     const foundUser = await User.findById(userId);
@@ -180,7 +197,7 @@ class CertificateService {
       foundInfo.lastName = foundRequest.lastName;
       foundInfo.email = foundRequest.email;
       foundInfo.address = foundRequest.address;
-      foundInfo.phoneNumber = foundRequest.phoneNumber;
+      foundInfo.phoneNumber = foundRequest.phone;
       foundInfo.CCCD = foundRequest.IdNum;
       foundInfo.gender = foundRequest.gender;
       foundInfo.dateOfBirth = foundRequest.dateOfBirth;
@@ -191,6 +208,15 @@ class CertificateService {
     return "Sign certificate success";
   };
 
+  static rejectSign = async (id, reason) => {
+    const foundRequest = await CertRequest.findById(id);
+    if (!foundRequest)
+      throw new BadRequestError("Không tìm thấy certificate request");
+    foundRequest.rejectedReason = reason;
+    foundRequest.status = "REJECTED";
+    const result = await foundRequest.save();
+    return result;
+  };
   static getMyCertRequest = async (user) => {
     const foundCertRequest = await CertRequest.find({
       userId: user._id,
@@ -252,6 +278,16 @@ class CertificateService {
         "Bạn đang có yêu cầu trước đó rồi",
         "Bạn đang có yêu cầu trước đó rồi"
       );
+
+    const foundCert = await Certificate.findOne({ userId: user._id });
+    if (foundCert && foundCert.certPem) {
+      // nếu chứng chỉ đã tồn tại và còn hạn
+      const certificate = forge.pki.certificateFromPem(foundCert.certPem);
+      if (new Date(certificate.validity.notAfter) > new Date())
+        throw new BadRequestError(
+          "Bạn có chứng chỉ đang còn hạn, không thể gia hạn"
+        );
+    }
     if (!publicKey)
       throw new BadRequestError(
         "Cần cung cấp public key",
@@ -268,28 +304,27 @@ class CertificateService {
     hash.update(publicKey);
     const result = hash.digest("hex");
     const keyUsed = await PublicKeyUsed.findOne({ publicHashed: result });
-    if (keyUsed)
-      throw new BadRequestError(
-        "Request certificate failed",
-        "Some thing wrong, please try again"
-      );
+    if (keyUsed) throw new BadRequestError("Có lỗi xảy ra, vui lòng thử lại");
     await PublicKeyUsed.create({ publicHashed: result });
 
     await CertRequest.create({
       publicKey: publicKey,
       userId: user._id,
+      isExtend: true,
     });
     return "Yêu cầu cấp lại chứng chỉ thành công";
   };
 
   static deleteCert = async (id) => {
-    const foundCert = await Certificate.findByIdAndDelete(id);
+    const foundCert = await Certificate.findById(id);
     if (!foundCert) throw new BadRequestError(foundCert);
+
     const newDeletedCert = await deletedCertModel.create({
       certificate: foundCert.certPem,
       userId: foundCert.userId,
     });
-
+    foundCert.certPem = null;
+    await foundCert.save();
     return newDeletedCert;
   };
   static getListCert = async () => {

@@ -3,7 +3,7 @@ import { store } from "../redux/Store";
 import { refreshToken } from "../redux/authSlice";
 
 const instance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: process.env.REACT_APP_API_URL || "http://localhost:8080/",
   // timeout: 5000,
 });
 

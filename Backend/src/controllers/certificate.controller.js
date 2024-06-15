@@ -44,7 +44,8 @@ class CertificateController {
     new SuccessResponse({
       message: await CertificateService.signCertificate(
         req.body.userId,
-        req.body.certPem
+        req.body.certPem,
+        req.body.isExtend
       ),
     }).send(res);
   }
@@ -77,7 +78,7 @@ class CertificateController {
   static async deleteCert(req, res) {
     new SuccessResponse({
       message: "Delete certificate success",
-      data: await CertificateService.deleteCert(req.params.id),
+      data: await CertificateService.deleteCert(req.certId),
     }).send(res);
   }
 
@@ -87,5 +88,18 @@ class CertificateController {
       data: await CertificateService.getListCert(),
     }).send(res);
   }
+  static async rejectCertificate(req, res) {
+    new SuccessResponse({
+      message: "Reject sign success",
+      data: await CertificateService.rejectSign(req.params.id, req.body.reason),
+    }).send(res);
+  }
+  static async deleteCertByCa(req, res) {
+    new SuccessResponse({
+      message: "Delete certificate success",
+      data: await CertificateService.deleteCert(req.params.id),
+    }).send(res);
+  }
 }
+
 module.exports = CertificateController;

@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { getImg } from "../../service/imgaes";
 import forge from "node-forge";
 import { useSelector } from "react-redux";
-import { signCertificate as sign } from "../../service/certificate";
+import { signCertificate as sign, rejectSign } from "../../service/certificate";
 import ModalNoti from "./../ModalNoti/index";
 import { Modal } from "@mui/material";
 export default function OrderDetail() {
@@ -12,6 +12,7 @@ export default function OrderDetail() {
   const [isDone, setIsDone] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [reason, setReason] = useState("");
   const [openReject, setOpenReject] = useState(false);
   const handleCloseReject = () => {
     setOpenReject(false);
@@ -19,7 +20,17 @@ export default function OrderDetail() {
   const handleOpenReject = () => {
     setOpenReject(true);
   };
-
+  const handleReject = () => {
+    rejectSign(state._id, reason)
+      .then((res) => {
+        setOpenReject(false);
+        setContent("Từ chối ký thành công");
+        setShowModal(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   const handleClose = () => {
     setShowModal(false);
   };
@@ -112,7 +123,7 @@ export default function OrderDetail() {
     ]);
     certificate.sign(CA.key, forge.md.sha256.create());
     const certPem = forge.pki.certificateToPem(certificate);
-    sign(certPem, state.userId)
+    sign(certPem, state.userId, state.isExtend)
       .then((res) => {
         console.log(res.data);
         setTitle("Thành công");
@@ -258,6 +269,8 @@ export default function OrderDetail() {
           <div className="w-100">
             <label for="reject">Nhập lý do từ chối</label>
             <input
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
               type="text"
               className="form-control"
               id="reject"
@@ -272,7 +285,9 @@ export default function OrderDetail() {
               gap: "1rem",
             }}
           >
-            <button className="btn btn-success">Từ chối</button>
+            <button onClick={handleReject} className="btn btn-success">
+              Từ chối
+            </button>
             <button
               className="btn btn-outline-danger"
               onClick={() => {

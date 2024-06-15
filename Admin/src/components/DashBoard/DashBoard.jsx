@@ -43,7 +43,6 @@ export default function Dashboard() {
     return acc;
   }, {});
 
-  console.log(groupedUsers);
   // Get the grouped data
   const groupedData = groupByDate(users);
 
@@ -62,9 +61,6 @@ export default function Dashboard() {
       color: colors[i++ % colors.length], // Chọn màu sắc từ mảng 'colors', nếu hết màu thì quay lại từ đầu
     };
   });
-
-  console.log(data);
-
   const sizing = {
     margin: { right: 5 },
     width: 200,
@@ -78,7 +74,6 @@ export default function Dashboard() {
     return `${(percent * 100).toFixed(0)}%`;
   };
 
-  console.log(result);
   return (
     <React.Fragment>
       {/* <Toolbar /> */}

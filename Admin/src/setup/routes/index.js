@@ -1,4 +1,3 @@
-import Login from "../../components/Login/Login";
 import Dashboard from "../../components/DashBoard/DashBoard";
 import NotFound from "../../components/404NotFound/NotFound";
 import Orders from "../../components/Orders/Orders";
@@ -9,10 +8,6 @@ import CertiList from "../../components/CertificateList/CertiList";
 const privateRoutes = [];
 
 const publicRoutes = [
-  {
-    path: "/admin/login",
-    component: Login,
-  },
   {
     path: "/admin/dashboard",
     component: Dashboard,

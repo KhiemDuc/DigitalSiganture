@@ -33,7 +33,7 @@ class SubscriptionService {
       );
     // check student info
     const fullName =
-      `${studentInfo.firstName} ${studentInfo.lastName}`.toLocaleLowerCase();
+      `${studentInfo.lastName} ${studentInfo.firstName}`.toLocaleLowerCase();
     const foundStudent = await Student.findOne({
       studentId: studentInfo.studentId.toUpperCase(),
     });

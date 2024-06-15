@@ -1,12 +1,10 @@
 import Layout from "../../components/Layout";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Grid, TextField, Button } from "@mui/material";
 import { useFormik } from "formik";
 import { styled } from "@mui/material/styles";
 import forge from "node-forge";
-import { useDispatch } from "react-redux";
-
+import certService from "../../services/certificate.service";
 const ContentBox = styled("div")(() => ({
   height: "100%",
   padding: "32px",
@@ -97,9 +95,7 @@ const CancelCertificate = () => {
       var certBag = p12.getBags({ bagType: forge.pki.oids.certBag })[
         forge.pki.oids.certBag
       ][0];
-      // var key = bag.key;
-
-      // console.log(bags, keyBag, certBag);
+      return { key: keyBag.key, cert: certBag.cert };
     } catch (err) {
       console.log(err);
     }
@@ -107,10 +103,18 @@ const CancelCertificate = () => {
 
   const formik = useFormik({
     initialValues: {},
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       if (selectedValue === "2") {
         if (values.pfx) {
-          readPfxFormat(values.pfx, values.password);
+          const user = await readPfxFormat(values.pfx, values.password);
+          const message = "Delete Certificate";
+          const md = forge.md.sha256.create();
+          md.update(message);
+          console.log("submit", user);
+          const signature = forge.util.encode64(user.key.sign(md));
+          // console.log(forge.util.encode64(signature));
+          const response = await certService.deleteCertificate(signature);
+          console.log("Deleted", response.data);
         }
       } else if (selectedValue === "1") {
         if (values.pem && values.crt) readPemFormat(values.pem, values.crt);

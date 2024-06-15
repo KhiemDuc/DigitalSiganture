@@ -16,11 +16,20 @@ const extendCertificate = (publicKey) => {
   return axios.post("certificate/extend", { publicKey });
 };
 
+const deleteCertificate = (signature) => {
+  return axios.delete(`certificate/`, {
+    data: {
+      signature,
+    },
+  });
+};
+
 const CertificateService = {
   checkCertificate,
   myRequest,
   getCertificate,
   extendCertificate,
+  deleteCertificate,
 };
 
 export default CertificateService;

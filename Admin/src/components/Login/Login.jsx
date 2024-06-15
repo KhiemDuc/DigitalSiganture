@@ -96,13 +96,10 @@ export default function Login() {
         forge.pki.oids.certBag
       ][0];
       // var key = bag.key;
-      console.log(certBag, keyBag);
       dispatch(setState({ cert: certBag.cert, key: keyBag.key }));
       navigate("/admin/dashboard");
       // console.log(bags, keyBag, certBag);
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
 
   const formik = useFormik({

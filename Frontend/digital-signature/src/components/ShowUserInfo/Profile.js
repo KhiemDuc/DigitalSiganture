@@ -55,7 +55,8 @@ function Profile({ user }) {
           userProfile
             ? userProfile
             : user?.avatar
-            ? process.env.REACT_APP_API_URL + "public/" + user?.avatar
+            ? process.env.REACT_APP_API_URL ||
+              "http://localhost:8080/" + "public/" + user?.avatar
             : "/static/img/avatarDefault.png"
         }
       >

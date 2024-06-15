@@ -51,9 +51,9 @@ export default function ExtendCertificate() {
         console.log(response);
         showToast("Yêu cầu gia hạn chứng chỉ thành công", ToastType.SUCCESS);
       })
-      .catch((error) => {
-        console.log(error);
-        showToast(error.response.data.reason, ToastType.ERROR);
+      .catch((err) => {
+        console.log(err);
+        showToast(err.response.data.message, ToastType.ERROR);
       });
   };
 

@@ -21,7 +21,7 @@ function DataTable({ rows }) {
       width: 100,
       renderCell: (values, row) => (
         <Avatar
-          src={`http://localhost:8081/public/${values.row?.userInfo.avatar}`}
+          src={`http://localhost:8080/public/${values.row?.userInfo.avatar}`}
           style={{
             width: 35,
             height: 35,

@@ -127,11 +127,11 @@ const CardCustom = ({ date, status, boxShadow, isExtend, item }) => {
               <p
                 style={{
                   color:
-                    item.status === "DONE"
+                    item.status === "SUCCESS"
                       ? "green"
                       : item.status === "PENDING"
                       ? "#f9b23d"
-                      : item.status === "REJECT"
+                      : item.status === "REJECTED"
                       ? "red"
                       : "black",
                 }}
@@ -139,7 +139,7 @@ const CardCustom = ({ date, status, boxShadow, isExtend, item }) => {
                 Trạng thái: {item?.status}
               </p>
             )}
-            {isExtend && item?.rejectedReason && (
+            {item?.rejectedReason && (
               <p>Lý do từ chối: {item?.rejectedReason}</p>
             )}
           </Box>

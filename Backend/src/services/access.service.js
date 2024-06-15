@@ -24,6 +24,12 @@ class AccessService {
     if (!email || !userName || !password || !firstName || !lastName)
       throw new BadRequestError("Sign up failed", "Missing information");
 
+    email = email.toLowerCase();
+    userName = userName.toLowerCase();
+    firstName =
+      firstName.charAt(0).toUpperCase() + firstName.toLowerCase().slice(1);
+    lastName =
+      lastName.charAt(0).toUpperCase() + lastName.toLowerCase().slice(1);
     const foundUser = await User.findOne({
       userName: userName,
     });
@@ -103,7 +109,7 @@ class AccessService {
     if (!foundUser)
       throw new BadRequestError(
         "Sign in failed",
-        "User name or password is incorrect"
+        "Tên đăng nhập hoặc mật khẩu không chính xác"
       );
     const result = bcrypt.compareSync(password, foundUser.password);
 

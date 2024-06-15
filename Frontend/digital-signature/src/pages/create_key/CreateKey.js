@@ -29,7 +29,7 @@ const CreateKey = () => {
 
   const generateKeyPair = () => {
     const { publicKey, privateKey } = forge.pki.rsa.generateKeyPair({
-      bits: 2048,
+      bits: 4096,
       e: 0x10001,
     });
 

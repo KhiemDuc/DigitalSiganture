@@ -4,6 +4,7 @@ const authentication = require("../middlewares/authentication");
 const CertificateController = require("../controllers/certificate.controller");
 const router = express.Router();
 const multer = require("multer");
+const deleteCertAuth = require("../middlewares/deleteCertAuth");
 const storage = multer.diskStorage({
   destination: "privateUploads/",
   filename: (req, file, cb) => {
@@ -43,4 +44,10 @@ router.post(
 
 router.get("/request", asyncHandler(CertificateController.getMyRequest));
 router.post("/extend", asyncHandler(CertificateController.extendCert));
+// delete cert: DELETE /certificate/:id?signature=signature
+router.delete(
+  "/",
+  deleteCertAuth,
+  asyncHandler(CertificateController.deleteCert)
+);
 module.exports = router;

@@ -8,9 +8,17 @@ import { Button } from "@mui/material";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import { saveAs } from "file-saver";
 import SearchInput from "../SearchInput/SearchInput";
-
+import { deleteCert } from "../../service/certificate";
 function DataTable({ rows }) {
   const [filteredRows, setFilteredRows] = React.useState([]);
+  const handleDelete = async (id) => {
+    try {
+      const data = await deleteCert(id);
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const columns = [
     {
       field: "id",
@@ -66,7 +74,11 @@ function DataTable({ rows }) {
       width: 190,
       renderCell: (values, row) => {
         return (
-          <Button variant="outlined" startIcon={<DeleteIcon />}>
+          <Button
+            variant="outlined"
+            onClick={() => handleDelete(values.row?._id)}
+            startIcon={<DeleteIcon />}
+          >
             Huỷ chứng chỉ
           </Button>
         );
