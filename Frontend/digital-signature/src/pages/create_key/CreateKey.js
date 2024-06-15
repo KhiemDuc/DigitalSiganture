@@ -62,17 +62,37 @@ const CreateKey = () => {
             width: "65%",
           }}
         />
-        <button
-          className="btn btn-outline-dark"
+        <div
           style={{
-            boxShadow: "5px 5px 5px #d1c1f1",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
+            display: "flex",
+            gap: "1rem",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
-          onClick={() => generateKeyPair()}
         >
-          Tạo cặp khoá 🔐
-        </button>
+          <button
+            className="btn btn-outline-dark"
+            style={{
+              boxShadow: "5px 5px 5px #d1c1f1",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+            }}
+            onClick={() => generateKeyPair()}
+          >
+            Tạo cặp khoá 🔐
+          </button>
+          <button
+            style={{
+              textDecoration: "underline",
+            }}
+            onClick={() => {
+              navigate("/certificate/document");
+            }}
+          >
+            {" "}
+            Mã hoá công khai là gì {">>"}
+          </button>
+        </div>
         <div
           style={{
             display: "flex",

@@ -41,7 +41,8 @@ export default function Pricing() {
   const [myPlan, setMyPlan] = React.useState({});
   const [data, setData] = React.useState({});
   const [loading, setLoading] = React.useState(false);
-  const { open } = usePayOS(payOSconfig(data.link, data.returnUrl, showToast));
+  var { open } = usePayOS(payOSconfig(data.link, data.returnUrl, showToast));
+
   const navigate = useNavigate();
 
   console.log(tiers);
@@ -73,7 +74,12 @@ export default function Pricing() {
   };
 
   if (loading) {
-    open();
+    try {
+      open();
+    } catch (error) {
+      console.log(error);
+    }
+    // open();
   }
 
   React.useEffect(() => {
@@ -214,10 +220,10 @@ export default function Pricing() {
                   }}
                 >
                   <Typography component="h3" variant="h2">
-                    {tier.price}
+                    {tier.price.toLocaleString("de-DE")}
                   </Typography>
                   <Typography component="h3" variant="h6">
-                    &nbsp;vnd/ tháng
+                    &nbsp;VND/ tháng
                   </Typography>
                 </Box>
                 <Divider

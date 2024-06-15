@@ -23,8 +23,10 @@ import ReactSelect from "react-select";
 import axios from "../../setup/axios";
 import { CloseButton } from "@chakra-ui/react";
 import { InfoOutlineIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
 
 function RequestForm({ changeStep }) {
+  const navigate = useNavigate();
   const [toggle, setToggle] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const fileValidate = useDisclosure();
@@ -185,6 +187,7 @@ function RequestForm({ changeStep }) {
         })
         .then((response) => {
           setIsSuccess(true);
+          setIsFail(false);
           setMessage("Gửi yêu cầu thành công");
         })
         .catch((error) => {
@@ -630,6 +633,17 @@ function RequestForm({ changeStep }) {
                 <Text fontSize={17} id="modal-modal-title">
                   {message}
                 </Text>
+                {isFail && (
+                  <button
+                    type="button"
+                    class="btn btn-link"
+                    onClick={() => {
+                      navigate("/certificate/my_request");
+                    }}
+                  >
+                    Xem vé yêu cầu
+                  </button>
+                )}
               </Box>
             </ModalBody>
             <ModalFooter></ModalFooter>

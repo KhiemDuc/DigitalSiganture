@@ -119,7 +119,7 @@ export default function Dashboard() {
               <PieChart
                 series={[
                   {
-                    outerRadius: 80,
+                    outerRadius: 100,
                     data,
                     arcLabel: getArcLabel,
                   },

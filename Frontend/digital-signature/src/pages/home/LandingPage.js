@@ -92,6 +92,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     const script = document.createElement("script");
+    document.title = "Trang chủ";
     script.src =
       "https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/0.1.0-beta.2/libs/oversea/index.js";
     script.onload = () => {
