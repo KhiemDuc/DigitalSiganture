@@ -23,6 +23,7 @@ import PaymentService from "../../services/payment.service";
 import PaymentIcon from "@mui/icons-material/Payment";
 import ScheduleSendIcon from "@mui/icons-material/ScheduleSend";
 import HourglassFullIcon from "@mui/icons-material/HourglassFull";
+import GppBadIcon from "@mui/icons-material/GppBad";
 
 const SmallIcon = styled(CheckCircleIcon)(({ theme }) => ({
   width: 16,
@@ -221,6 +222,16 @@ export default function AccountMenu() {
             <CreateIcon fontSize="small" />
           </ListItemIcon>
           Tạo chữ ký số
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            navigate("/certificate/cancel");
+          }}
+        >
+          <ListItemIcon>
+            <GppBadIcon fontSize="small" />
+          </ListItemIcon>
+          Huỷ chứng chỉ số
         </MenuItem>
         <MenuItem
           onClick={() => {

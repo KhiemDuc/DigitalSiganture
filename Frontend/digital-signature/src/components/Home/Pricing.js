@@ -157,7 +157,9 @@ export default function Pricing() {
                     : tier.description ===
                       "Gói dành cho sinh viên trường Đại học Thăng Long"
                     ? "#020066"
-                    : undefined,
+                    : tier.description === "Gói cơ bản"
+                    ? undefined
+                    : "linear-gradient(#033363, #021F3B)",
               }}
             >
               <CardContent>
@@ -283,7 +285,8 @@ export default function Pricing() {
                     >
                       {myPlan?._id === tier._id ? "Gói của bạn" : " ✔️"}
                     </button>
-                  ) : (
+                  ) : tier.description ===
+                    "Gói dành cho sinh viên trường Đại học Thăng Long" ? (
                     <button
                       className={
                         myPlan?._id === tier._id
@@ -305,6 +308,20 @@ export default function Pricing() {
                       {myPlan?._id === tier._id
                         ? "Gói của bạn ✔️"
                         : "Xác thực ngay"}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        onBuy(tier._id, tier.tier);
+                      }}
+                      className={
+                        myPlan?._id === tier._id
+                          ? "btn btn-outline-light"
+                          : "btn btn-outline-light"
+                      }
+                      disabled={myPlan?._id === tier._id}
+                    >
+                      {myPlan?._id === tier._id ? "Gói của bạn" : "Mua ngay"}
                     </button>
                   )}
                 </CardActions>

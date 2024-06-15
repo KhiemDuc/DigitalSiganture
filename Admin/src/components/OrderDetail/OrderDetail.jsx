@@ -4,8 +4,28 @@ import { getImg } from "../../service/imgaes";
 import forge from "node-forge";
 import { useSelector } from "react-redux";
 import { signCertificate as sign } from "../../service/certificate";
+import ModalNoti from "./../ModalNoti/index";
+import { Modal } from "@mui/material";
 export default function OrderDetail() {
   const { state } = useLocation();
+  const [showModal, setShowModal] = useState(false);
+  const [isDone, setIsDone] = useState(false);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [openReject, setOpenReject] = useState(false);
+  const handleCloseReject = () => {
+    setOpenReject(false);
+  };
+  const handleOpenReject = () => {
+    setOpenReject(true);
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+  };
+  const handleOpen = () => {
+    setShowModal(true);
+  };
   const [imgSrcs, setImgSrcs] = useState({});
   const CA = useSelector((state) => state.signature);
   useEffect(() => {
@@ -95,25 +115,37 @@ export default function OrderDetail() {
     sign(certPem, state.userId)
       .then((res) => {
         console.log(res.data);
+        setTitle("Thành công");
+        setContent("Ký chứng chỉ số thành công");
+        setIsDone(true);
+        handleOpen();
       })
       .catch((err) => {
         console.log(err);
       });
   };
   return (
-    <div>
-      <p>Họ tên: {state.firstName + " " + state.lastName}</p>
-      <p>Số điện thoại: {state.phone}</p>
-      <p>Email: {state.email}</p>
-      <p>Số căn cước: {state.IdNum}</p>
-      <p>Địa chỉ: {state.address}</p>
-      <p>Giới tính: {state.gender === "Male" ? "Nam" : "Nữ"}</p>
-      <p>Quốc tịch: {state.nationality}</p>
-      <p>Loại: {state.isExtend ? "Gia hạn/cấp đổi" : "Cấp mới"}</p>
+    <div
+      style={{
+        padding: "1rem",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       {!state.isExtend && (
-        <div className="container">
+        <div
+          className="container"
+          style={{
+            height: "250px",
+          }}
+        >
           <div className="row">
             <div className="col">
+              <label>
+                <strong>Ảnh mặt</strong>
+              </label>
               <img
                 className="img-thumbnail"
                 src={imgSrcs?.face}
@@ -121,6 +153,9 @@ export default function OrderDetail() {
               />
             </div>
             <div className="col">
+              <label>
+                <strong>Ảnh CCCD mặt trước</strong>
+              </label>
               <img
                 className="col img-thumbnail"
                 src={imgSrcs?.CCCD}
@@ -128,6 +163,9 @@ export default function OrderDetail() {
               />
             </div>
             <div className="col">
+              <label>
+                <strong>Ảnh CCCD mặt sau</strong>
+              </label>
               <img
                 className=" col img-thumbnail"
                 src={imgSrcs?.CCCDBack}
@@ -137,18 +175,122 @@ export default function OrderDetail() {
           </div>
         </div>
       )}
-      <div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.5rem",
+          paddingBottom: "1rem",
+        }}
+      >
+        <p>
+          <strong>Họ tên:</strong> {state.lastName + " " + state.firstName}
+        </p>
+        <p>
+          <strong>Số điện thoại:</strong> {state.phone}
+        </p>
+        <p>
+          <strong>Email:</strong> {state.email}
+        </p>
+        <p>
+          <strong>Số căn cước:</strong> {state.IdNum}
+        </p>
+        <p>
+          <strong>Địa chỉ:</strong> {state.address}
+        </p>
+        <p>
+          <strong>Giới tính:</strong> {state.gender === "Male" ? "Nam" : "Nữ"}
+        </p>
+        <p>
+          <strong>Quốc tịch:</strong> {state.nationality}
+        </p>
+        <p>
+          <strong>Loại:</strong>{" "}
+          {state.isExtend ? "Gia hạn/cấp đổi" : "Cấp mới"}
+        </p>
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "5rem",
+          marginTop: "1rem",
+        }}
+      >
         <button
           type="button"
           className="btn btn-success"
           onClick={signCertificate}
         >
-          Accept
+          Chấp nhận
         </button>
-        <button type="button" className="btn btn-danger ml-10">
-          Reject
+        <button
+          type="button"
+          className="btn btn-outline-danger"
+          onClick={() => {
+            handleOpenReject();
+          }}
+        >
+          Từ chối
         </button>
       </div>
+      <Modal open={openReject}>
+        <div
+          style={{
+            backgroundColor: "white",
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            gap: "1rem",
+            alignItems: "center",
+            padding: "2rem",
+            borderRadius: "10px",
+            width: "30%",
+          }}
+        >
+          <div className="w-100">
+            <label for="reject">Nhập lý do từ chối</label>
+            <input
+              type="text"
+              className="form-control"
+              id="reject"
+              aria-describedby="emailHelp"
+              placeholder="Nhập lý do tại đây ..."
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: "1rem",
+            }}
+          >
+            <button className="btn btn-success">Từ chối</button>
+            <button
+              className="btn btn-outline-danger"
+              onClick={() => {
+                handleCloseReject();
+              }}
+            >
+              Huỷ
+            </button>
+          </div>
+        </div>
+      </Modal>
+      <ModalNoti
+        show={showModal}
+        handleClose={handleClose}
+        isDone={isDone}
+        title={title}
+        content={content}
+      />
     </div>
   );
 }
