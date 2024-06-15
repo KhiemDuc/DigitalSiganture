@@ -102,7 +102,7 @@ function DataTable({ rows }) {
     const blob = new Blob(
       [new Uint8Array(der.split("").map((c) => c.charCodeAt(0)))],
       {
-        type: "application/x-x509-ca-cert",
+        type: "application/x-x509-ca-cert;charset=utf-8",
       }
     );
     saveAs(blob, fileName);
@@ -112,7 +112,6 @@ function DataTable({ rows }) {
     const filteredRows = rows.filter((row) => {
       return row.userName.toLowerCase().includes(value.toLowerCase());
     });
-    console.log(filteredRows);
     setFilteredRows(filteredRows);
   };
 

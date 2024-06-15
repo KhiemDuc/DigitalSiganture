@@ -31,10 +31,12 @@ export default function OrderDetail() {
     const certificate = forge.pki.createCertificate();
     certificate.publicKey = forge.pki.publicKeyFromPem(state.publicKey);
     const province = state.address.split(", ")[2] || state.address;
+    const local = state.address.split(",")[1] || state.address;
     var attrs = [
       {
         name: "commonName",
-        value: forge.util.encodeUtf8(`${state.lastName} ${state.firstName}`),
+        value: state.lastName + " " + state.firstName,
+        valueTagClass: forge.asn1.Type.UTF8,
       },
       {
         name: "countryName",
@@ -43,8 +45,19 @@ export default function OrderDetail() {
       {
         shortName: "ST",
         value: province,
+        valueTagClass: forge.asn1.Type.UTF8,
+      },
+      {
+        shortName: "E",
+        value: state.email,
+      },
+      {
+        shortName: "L",
+        value: local,
+        valueTagClass: forge.asn1.Type.UTF8,
       },
     ];
+
     const bytes = forge.random.getBytesSync(10);
     const seri = forge.util.bytesToHex(bytes);
     certificate.serialNumber = seri;
@@ -56,7 +69,7 @@ export default function OrderDetail() {
     const exp = new Date();
     if (state.subscription === "standard") {
       // với gói mặc định, thời hạn sẽ là 6 tháng
-      exp.setMonth(exp.getMonth() + 6);
+      exp.setFullYear(exp.getFullYear() + 1);
     } else {
       // với gói pro và sinh viên, thời hạn là 5 năm
       exp.setFullYear(exp.getFullYear + 5);
@@ -79,7 +92,6 @@ export default function OrderDetail() {
     ]);
     certificate.sign(CA.key, forge.md.sha256.create());
     const certPem = forge.pki.certificateToPem(certificate);
-    console.log(certPem);
     sign(certPem, state.userId)
       .then((res) => {
         console.log(res.data);
