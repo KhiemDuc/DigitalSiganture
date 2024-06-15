@@ -21,6 +21,7 @@ import MyRequest from "./../pages/my_request/index";
 import CreataDigitalSignature from "../pages/create_digital_signature/CreateDigitalSignature";
 import ExtendCertificate from "../pages/extend_certificate/ExtendCertificate";
 import CancelCertificate from "../pages/cancel_certificate/CancelCertificate";
+import Wic from "./../pages/wic/index";
 
 const Routes = () => {
   const { isLoggedIn } = useSelector((state) => state.auth);
@@ -55,6 +56,10 @@ const Routes = () => {
     {
       path: "/certificate/create_digital_signature",
       element: <CreataDigitalSignature />,
+    },
+    {
+      path: "/certificate/document",
+      element: <Wic />,
     },
   ];
 
