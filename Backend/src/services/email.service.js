@@ -20,16 +20,22 @@ const MAIL_SETTINGS = {
 const gmailTransporter = nodemailer.createTransport(MAIL_SETTINGS.gmail);
 let eduTransporter = nodemailer.createTransport(MAIL_SETTINGS.eduMail);
 
-module.exports.sendMail = async ({ to, OTP, edu = false }) => {
+module.exports.sendMail = async ({
+  to,
+  OTP,
+  edu = false,
+  certificate = false,
+}) => {
   const transporter = edu ? eduTransporter : gmailTransporter;
+
   const from = edu
     ? MAIL_SETTINGS.eduMail.auth.user
     : MAIL_SETTINGS.gmail.auth.user;
-  let info = await transporter.sendMail({
-    from: from,
-    to: to,
-    subject: "OTP",
-    html: `
+  const mailConfig = {
+    from,
+    to,
+  };
+  const html = `
     <div
       class="container"
       style="max-width: 90%; margin: auto; padding-top: 20px"
@@ -39,7 +45,11 @@ module.exports.sendMail = async ({ to, OTP, edu = false }) => {
       <p style="margin-bottom: 30px; font-weight: bold">!!!Tuyệt đối không chia sẻ mã này cho bất kỳ ai!!!</p>
       <h1 style="font-size: 40px; letter-spacing: 2px; text-align:center;">${OTP}</h1>
   </div>
-  `,
-  });
+  `;
+  mailConfig.subject = certificate ? "Cập nhật yêu cầu chứng chỉ số" : "OTP";
+  mailConfig.html = certificate
+    ? "Đã xử lý yêu cầu cấp mới/cấp đổi chứng chỉ, vui lòng đăng nhập hệ thống để xem"
+    : html;
+  let info = await transporter.sendMail(mailConfig);
   return info;
 };

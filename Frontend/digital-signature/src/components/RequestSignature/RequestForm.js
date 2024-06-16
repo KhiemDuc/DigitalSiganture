@@ -633,7 +633,7 @@ function RequestForm({ changeStep }) {
                 <Text fontSize={17} id="modal-modal-title">
                   {message}
                 </Text>
-                {isFail && (
+                {!isFail && (
                   <button
                     type="button"
                     class="btn btn-link"

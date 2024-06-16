@@ -11,10 +11,11 @@ const axios = require("axios");
 const fs = require("fs");
 const CAModel = require("../models/CA.model");
 const forge = require("node-forge");
-const omitFields = require("../utils/omitFields");
 const UserInfo = require("../models/userInfo.model");
 const User = require("../models/user.model");
 const deletedCertModel = require("../models/deletedCert.model");
+const Subscription = require("../models/subscription.model");
+const { sendMail } = require("./email.service");
 const constants = {
   idApi: "https://api.fpt.ai/vision/idr/vnm",
   faceApi: "https://api.fpt.ai/dmp/checkface/v1/",
@@ -22,6 +23,35 @@ const constants = {
   apiKeyValue: "UCX1X6G3x9blzxGazvo1wdGJhgAe8Nco",
   image: "image",
 };
+
+function getModulusLength(rsaKey) {
+  const n = rsaKey.n; // Lấy modulus
+  const modulusHex = n.toString(16); // Chuyển đổi modulus thành chuỗi hex
+  const modulusLengthInBits = modulusHex.length * 4; // Mỗi ký tự hex đại diện cho 4 bits
+  return modulusLengthInBits;
+}
+
+const checkPublicKey = async (user, publicKey) => {
+  try {
+    const key = forge.pki.publicKeyFromPem(publicKey);
+    console.log("publicKey::", key);
+    const modLength = getModulusLength(key);
+    const foundSubscription = await Subscription.findOne({
+      user: user._id,
+    }).populate("plan");
+    const validModuleLength =
+      foundSubscription.plan.name === "standard" ? 2048 : 4096;
+    console.log(modLength, validModuleLength);
+    if (modLength !== validModuleLength) throw new Error();
+  } catch (err) {
+    console.log(err);
+    throw new BadRequestError(
+      "Khoá công khai không hợp lệ, vui lòng thử lại",
+      "Khoá công khai không hợp lệ, vui lòng thử lại"
+    );
+  }
+};
+
 class CertificateService {
   static certificateRequest = async (user, info, { CCCD, face, CCCDBack }) => {
     const foundInfo = await UserInfo.findById(user.userInfo);
@@ -191,8 +221,8 @@ class CertificateService {
     foundRequest.status = "SUCCESS";
     await foundRequest.save();
     const foundUser = await User.findById(userId);
+    const foundInfo = await UserInfo.findById(foundUser.userInfo);
     if (!foundRequest.isExtend) {
-      const foundInfo = await UserInfo.findById(foundUser.userInfo);
       foundInfo.firstName = foundRequest.firstName;
       foundInfo.lastName = foundRequest.lastName;
       foundInfo.email = foundRequest.email;
@@ -205,6 +235,11 @@ class CertificateService {
       foundInfo.verified = true;
       await foundInfo.save();
     }
+
+    sendMail({ to: foundInfo.email, certificate: true }).catch((err) =>
+      console.log(err)
+    );
+
     return "Sign certificate success";
   };
 
@@ -215,6 +250,15 @@ class CertificateService {
     foundRequest.rejectedReason = reason;
     foundRequest.status = "REJECTED";
     const result = await foundRequest.save();
+    let mail;
+    if (!foundRequest.isExtend) mail = foundRequest.email;
+    else {
+      const foundUser = await User.findById(foundRequest.userId).populate(
+        "userInfo"
+      );
+      mail = foundUser.userInfo.email;
+    }
+    sendMail({ to: mail, certificate: true }).catch((err) => console.log(err));
     return result;
   };
   static getMyCertRequest = async (user) => {
@@ -242,6 +286,8 @@ class CertificateService {
     try {
       const CA_Cert = forge.pki.certificateFromPem(foundCA.certificate);
       const checkingCert = forge.pki.certificateFromPem(certPem);
+      if (new Date(checkingCert.validity.notAfter) < new Date())
+        throw new Error();
       const result = CA_Cert.verify(checkingCert);
     } catch (e) {
       throw new BadRequestError(
@@ -293,6 +339,8 @@ class CertificateService {
         "Cần cung cấp public key",
         "Cần cung cấp public key"
       );
+    await checkPublicKey(user, publicKey);
+
     const foundInfo = await UserInfo.findById(user.userInfo);
     if (!foundInfo.verified)
       throw new BadRequestError(

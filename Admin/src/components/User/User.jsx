@@ -87,7 +87,6 @@ function DataTable({ rows }) {
     });
     setFilteredRows(filteredRows);
   };
-  console.log(filteredRows.length == 0);
 
   return (
     <div
@@ -131,6 +130,7 @@ const UserList = () => {
       .get("/ca/user")
       .then((res) => {
         setUsers(res.data.data);
+        console.log(res.data.data);
       })
       .catch((err) => {});
   }, []);

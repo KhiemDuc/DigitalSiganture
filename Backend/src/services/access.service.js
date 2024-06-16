@@ -12,6 +12,7 @@ const Certificate = require("../models/certificate.model");
 const Subscription = require("../models/subscription.model");
 const cacheService = require("./cache.service");
 const crypto = require("crypto");
+const signInBlocker = require("../utils/signInBlocker");
 
 class AccessService {
   static singUp = async ({
@@ -111,14 +112,27 @@ class AccessService {
         "Sign in failed",
         "Tên đăng nhập hoặc mật khẩu không chính xác"
       );
+    if (foundUser.isLocked)
+      throw new BadRequestError(
+        "Tài khoản đang bị tạm khoá, vui lòng liên hệ cơ quan CA để mở",
+        "Tài khoản đang bị tạm khoá, vui lòng liên hệ cơ quan CA để mở"
+      );
+    const isBlocked = signInBlocker.check(foundUser._id);
+    if (isBlocked)
+      throw new BadRequestError(
+        "Tài khoản bị khoá do đăng nhập sai quá nhiều lần, thử lại sau 30s",
+        "Tài khoản bị khoá do đăng nhập sai quá nhiều lần, thử lại sau 30s"
+      );
     const result = bcrypt.compareSync(password, foundUser.password);
 
-    if (!result)
+    if (!result) {
+      signInBlocker.increase(foundUser._id);
       throw new BadRequestError(
         "Sign in failed",
-        "User name or password is incorrect"
+        "Tên đăng nhập hoặc mật khẩu không chính xác"
       );
-
+    }
+    signInBlocker.clear(foundUser._id);
     const secret = createSecretKey();
 
     const tokens = createTokens({
@@ -389,10 +403,12 @@ class AccessService {
     return result;
   }
 
-  // static async unActivateUser(id) {
-  //   const id = await User.findById(id);
-
-  // }
+  static async toggleLockUser(id) {
+    const user = await User.findById(id);
+    user.isLocked = !user.isLocked;
+    await user.save();
+    return "Khoá tài khoản thành công";
+  }
 }
 
 module.exports = AccessService;

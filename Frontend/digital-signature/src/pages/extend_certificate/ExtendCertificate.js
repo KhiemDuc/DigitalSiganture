@@ -4,7 +4,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import React from "react";
+import React, { useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CertificateService from "../../services/certificate.service";
 import { useEffect } from "react";
@@ -12,8 +12,10 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { saveAs } from "file-saver";
 import { showToast, ToastType } from "../../common/toast";
 import { ToastContainer } from "react-toastify";
+import payment from "../../services/payment.service";
 
 export default function ExtendCertificate() {
+  const [modulusLength, setModulusLength] = useState(2048);
   useEffect(() => {
     document.title = "Gia hạn chứng chỉ số";
     let element = document.querySelector(".fda3723591e0b38e7e52");
@@ -21,6 +23,12 @@ export default function ExtendCertificate() {
     if (element) {
       element.remove();
     }
+    payment
+      .getMySubCriptionPlan()
+      .then((res) => {
+        setModulusLength(res.data.data.plan.name === "standard" ? 2048 : 4096);
+      })
+      .catch((err) => console.log(err));
   }, []);
   const [showPassword, setShowPassword] = React.useState(true);
   const [privateKey, setPrivateKey] = React.useState("");
@@ -29,7 +37,7 @@ export default function ExtendCertificate() {
 
   const generateKeyPair = () => {
     const { publicKey, privateKey } = forge.pki.rsa.generateKeyPair({
-      bits: 2048,
+      bits: modulusLength,
       e: 0x10001,
     });
 

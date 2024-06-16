@@ -108,6 +108,12 @@ class AccessController {
       data: await accessService.getListUser(),
     }).send(res);
   }
+
+  static async toggleLock(req, res) {
+    new SuccessResponse({
+      message: await accessService.toggleLockUser(req.params.id),
+    }).send(res);
+  }
 }
 
 module.exports = AccessController;

@@ -6,7 +6,8 @@ const CertificateController = require("../controllers/certificate.controller");
 const AccessController = require("../controllers/access.controller");
 const PlanController = require("../controllers/plan.controller");
 const router = express.Router();
-// router.use("/", caAuth);
+const caAuth = require("../middlewares/ca.authentication");
+router.use("/", caAuth);
 router.get("/certificate", CertificateController.getListCert);
 router.get(
   "/certificate/request",
@@ -27,7 +28,7 @@ router.delete(
 );
 
 router.get("/user", asyncHandler(AccessController.getListUser));
-
+router.patch("/user/:id", asyncHandler(AccessController.toggleLock));
 router.get("/img/:name", (req, res) => {
   const imgPath = path.join(process.cwd(), "privateUploads", req.params.name);
   const base64Img = fs.readFileSync(imgPath).toString("base64");

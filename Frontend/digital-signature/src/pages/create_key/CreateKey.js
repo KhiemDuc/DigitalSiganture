@@ -11,7 +11,7 @@ import BackHome from "./../../components/BackHome";
 import { useEffect } from "react";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { saveAs } from "file-saver";
-
+import payment from "../../services/payment.service";
 const CreateKey = () => {
   useEffect(() => {
     document.title = "Tạo cặp khoá - Hệ thống chữ ký số";
@@ -20,6 +20,11 @@ const CreateKey = () => {
     if (element) {
       element.remove();
     }
+    console.log("abc");
+    // (async () => {
+    //   const data = await payment.getMySubCriptionPlan();
+    //   console.log(data);
+    // })();
   }, []);
   const [showPassword, setShowPassword] = React.useState(true);
   const [privateKey, setPrivateKey] = React.useState("");
@@ -29,7 +34,7 @@ const CreateKey = () => {
 
   const generateKeyPair = () => {
     const { publicKey, privateKey } = forge.pki.rsa.generateKeyPair({
-      bits: 4096,
+      bits: 2048,
       e: 0x10001,
     });
 
@@ -85,9 +90,7 @@ const CreateKey = () => {
             style={{
               textDecoration: "underline",
             }}
-            onClick={() => {
-              navigate("/certificate/document");
-            }}
+            onClick={() => window.open("/certificate/document", "_blank")}
           >
             {" "}
             Mã hoá công khai là gì {">>"}

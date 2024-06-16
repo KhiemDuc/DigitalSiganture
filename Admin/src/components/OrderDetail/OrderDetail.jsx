@@ -103,7 +103,7 @@ export default function OrderDetail() {
       exp.setFullYear(exp.getFullYear() + 1);
     } else {
       // với gói pro và sinh viên, thời hạn là 5 năm
-      exp.setFullYear(exp.getFullYear + 5);
+      exp.setFullYear(exp.getFullYear() + 5);
     }
 
     certificate.validity.notAfter = exp;
