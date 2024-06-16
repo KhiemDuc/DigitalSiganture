@@ -36,40 +36,19 @@ const CreateKey = () => {
 
   const generateKeyPair = () => {
     setIsLoading(true);
-    const worker = new Worker(
-      URL.createObjectURL(
-        new Blob(
-          [
-            `
-      self.onmessage = function(e) {
-        const forge = e.data.forge;
-    
-        const { publicKey, privateKey } = forge.pki.rsa.generateKeyPair({
-          bits: 2048,
-          e: 0x10001,
-        });
-    
-        const publicKeyPem = forge.pki.publicKeyToPem(publicKey);
-        const privateKeyPem = forge.pki.privateKeyToPem(privateKey);
-    
-        self.postMessage({ publicKeyPem, privateKeyPem });
-      };
-    `,
-          ],
-          { type: "text/javascript" }
-        )
-      )
-    );
+    console.log(isLoading);
+    const { publicKey, privateKey } = forge.pki.rsa.generateKeyPair({
+      bits: 4096,
+      e: 0x10001,
+    });
 
-    // Lắng nghe sự kiện message từ Web Worker
-    worker.onmessage = function (e) {
-      setPrivateKey(e.data.privateKeyPem);
-      setPublicKey(e.data.publicKeyPem);
-      setIsLoading(false);
-    };
-
-    // Gửi một message tới Web Worker để bắt đầu quá trình tạo khóa
-    worker.postMessage({ type: "update", data: forge });
+    // Convert keys to PEM format
+    const publicKeyPem = forge.pki.publicKeyToPem(publicKey);
+    const privateKeyPem = forge.pki.privateKeyToPem(privateKey);
+    console.log(publicKeyPem);
+    setPrivateKey(privateKeyPem);
+    setPublicKey(publicKeyPem);
+    setIsLoading(false);
   };
 
   return (

@@ -60,74 +60,6 @@ function DataTable({ rows }) {
     },
 
     { field: "userName", headerName: "Tài khoản", width: 140 },
-
-    {
-      field: "iAt",
-      headerName: "Tạo ngày",
-      width: 100,
-      valueGetter: (values, row) => {
-        const date = new Date(row.iAt);
-        return date.toLocaleDateString("vi-VN");
-      },
-    },
-    {
-      field: "endDate",
-      headerName: "Hết hạn ngày",
-      width: 100,
-      valueGetter: (values, row) => {
-        let certificate;
-        try {
-          //   Parse the PEM data and extract the certificate details
-          certificate = forge.pki.certificateFromPem(row.certPem);
-        } catch (error) {
-          console.log(error);
-        }
-        const date = new Date(certificate?.validity.notAfter);
-        return date.toLocaleDateString("vi-VN");
-      },
-    },
-    {
-      field: "certPem",
-      headerName: "Chứng chỉ số",
-      width: 130,
-    },
-    {
-      field: "activiti",
-      headerName: "Hành động",
-      width: 190,
-      renderCell: (values, row) => {
-        return (
-          <Button
-            variant="outlined"
-            onClick={() => {
-              handleSetID(values.row._id);
-              handleOpenConfirm();
-            }}
-            startIcon={<DeleteIcon />}
-          >
-            Huỷ chứng chỉ
-          </Button>
-        );
-      },
-    },
-    {
-      field: "download",
-      headerName: "Tải xuống chứng chỉ",
-      width: 160,
-      renderCell: (values, row) => {
-        return (
-          <Button
-            variant="outlined"
-            startIcon={<SaveAltIcon />}
-            onClick={() => {
-              downloadCert(values.row?.certPem, values.row?.userName);
-            }}
-          >
-            Tải xuống
-          </Button>
-        );
-      },
-    },
   ];
   const downloadCert = (pem, nameOfFile) => {
     const fileName = `${nameOfFile}_cert.crt`;
@@ -244,7 +176,7 @@ const History = () => {
   const [certificates, setCertificates] = React.useState([]);
 
   useEffect(() => {
-    axios.get("/ca/certificate").then((res) => {
+    axios.get("/ca/history").then((res) => {
       setCertificates(res.data.data);
     });
   }, []);
