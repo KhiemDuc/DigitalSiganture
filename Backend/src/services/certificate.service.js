@@ -16,6 +16,8 @@ const User = require("../models/user.model");
 const deletedCertModel = require("../models/deletedCert.model");
 const Subscription = require("../models/subscription.model");
 const { sendMail } = require("./email.service");
+const SigningHistory = require("../models/signingHistory.model");
+const { default: mongoose } = require("mongoose");
 const constants = {
   idApi: "https://api.fpt.ai/vision/idr/vnm",
   faceApi: "https://api.fpt.ai/dmp/checkface/v1/",
@@ -236,6 +238,11 @@ class CertificateService {
       await foundInfo.save();
     }
 
+    SigningHistory.create({
+      user: mongoose.Types.ObjectId(userId),
+      action: "SIGNED",
+    });
+
     sendMail({ to: foundInfo.email, certificate: true }).catch((err) =>
       console.log(err)
     );
@@ -258,6 +265,10 @@ class CertificateService {
       );
       mail = foundUser.userInfo.email;
     }
+    SigningHistory.create({
+      user: mongoose.Types.ObjectId(foundRequest.userId),
+      action: "REJECTED",
+    });
     sendMail({ to: mail, certificate: true }).catch((err) => console.log(err));
     return result;
   };
