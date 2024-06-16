@@ -24,17 +24,18 @@ const defaultTheme = createTheme();
 
 const ChangeCurrentPassword = () => {
   const { message } = useSelector((state) => state.message);
+  const navigate = useNavigate();
   const [successful, setSuccessful] = React.useState(false);
   const dispatch = useDispatch();
 
   const handleSubmit = (values) => {
+    dispatch(setMessage(""));
     UserService.changeCurrentPasssword({
       password: values.currentPassword,
       newPassword: values.newPassword,
     })
       .then((response) => {
         notify();
-        window.location.reload();
       })
       .catch((error) => {
         const resMessage =
@@ -73,10 +74,7 @@ const ChangeCurrentPassword = () => {
   };
 
   const validationSchema = Yup.object({
-    currentPassword: Yup.string().min(
-      12,
-      "Mật khẩu phải có nhiều hơn 12 ký tự"
-    ),
+    currentPassword: Yup.string().required("Mật khẩu không được để trống"),
     newPassword: Yup.string().min(12, "Mật khẩu phải có nhiều hơn 12 ký tự"),
     confirmPassword: Yup.string().min(
       12,
@@ -190,7 +188,7 @@ const ChangeCurrentPassword = () => {
                     fullWidth
                     name="newPassword"
                     label="Mật khẩu mới"
-                    type={showPassword ? "text" : "password"}
+                    type={showPasswordC ? "text" : "password"}
                     id="newPassword"
                     autoComplete="newPassword"
                     sx={{
@@ -200,8 +198,8 @@ const ChangeCurrentPassword = () => {
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton onClick={handleClickShowPassword}>
-                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          <IconButton onClick={handleClickShowPasswordC}>
+                            {showPasswordC ? <Visibility /> : <VisibilityOff />}
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -252,17 +250,8 @@ const ChangeCurrentPassword = () => {
                 </Grid>
 
                 {message && (
-                  <div className="form-group">
-                    <div
-                      className={
-                        successful
-                          ? "alert alert-success"
-                          : "alert alert-danger"
-                      }
-                      role="alert"
-                    >
-                      Có lỗi xảy ra, vui lòng thử lại sau !!
-                    </div>
+                  <div style={{ width: "100%", padding: "1rem", color: "red" }}>
+                    Mật khẩu không chính xác
                   </div>
                 )}
                 <Divider sx={{ margin: "20px", opacity: "1", width: "100%" }} />
@@ -285,7 +274,7 @@ const ChangeCurrentPassword = () => {
                       border: "none",
                     }}
                     onClick={() => {
-                      // Logic to navigate to home goes here
+                      navigate("/");
                     }}
                   >
                     Huỷ
