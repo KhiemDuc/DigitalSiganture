@@ -7,6 +7,7 @@ const AccessController = require("../controllers/access.controller");
 const PlanController = require("../controllers/plan.controller");
 const router = express.Router();
 const caAuth = require("../middlewares/ca.authentication");
+const SigningHistoryController = require("../controllers/signingHistory.controller");
 router.use("/", caAuth);
 router.get("/certificate", CertificateController.getListCert);
 router.get(
@@ -39,4 +40,11 @@ router.get("/img/:name", (req, res) => {
 router.post("/plan", asyncHandler(PlanController.addPlan));
 router.put("/plan/:id", asyncHandler(PlanController.updatePlan));
 router.delete("/plan/:id", asyncHandler(PlanController.deletePlan));
+
+// Lịch sử ký/từ chối
+router.get(
+  "/history",
+  asyncHandler(SigningHistoryController.getSigningHistory)
+);
+
 module.exports = router;
