@@ -4,8 +4,22 @@ import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Avatar } from "@mui/material";
 import SearchInput from "../SearchInput/SearchInput";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+import { Button } from "@mui/material";
+import LockIcon from "@mui/icons-material/Lock";
+import { toggleLockUser } from "../../service/user";
 
-function DataTable({ rows }) {
+function DataTable() {
+  const [rows, setRows] = React.useState([]);
+  useEffect(() => {
+    axios
+      .get("/ca/user")
+      .then((res) => {
+        setRows(res.data.data);
+        setFilteredRows(res.data.data);
+      })
+      .catch((err) => {});
+  }, []);
   const [filteredRows, setFilteredRows] = React.useState([]);
   const columns = [
     {
@@ -49,18 +63,6 @@ function DataTable({ rows }) {
       },
     },
     {
-      field: "gender",
-      headerName: "Giới tính",
-      width: 90,
-      valueGetter: (values, row) => {
-        return row?.userInfo.gender === "Male"
-          ? "Nam"
-          : row?.userInfo.gender === "Female"
-          ? "Nữ"
-          : "N/A";
-      },
-    },
-    {
       field: "fullName",
       headerName: "Họ và tên",
       sortable: false,
@@ -75,9 +77,41 @@ function DataTable({ rows }) {
       valueGetter: (value, row) =>
         row?.userInfo.verified ? "Đã xác thực ✔️" : "Chưa xác thực",
     },
+    {
+      field: "activiti",
+      headerName: "Khoá tài khoản",
+      width: 150,
+      renderCell: (values, row) => {
+        return (
+          <Button
+            variant="outlined"
+            onClick={() => {
+              toggleLockUser(values.row._id)
+                .then((res) => {
+                  const newRows = filteredRows.map((row) => {
+                    if (row._id === values.row._id) {
+                      return { ...row, isLocked: !row.isLocked };
+                    }
+                    return row;
+                  });
+                  setFilteredRows(newRows);
+                })
+                .catch((err) => {});
+            }}
+            startIcon={!values.row.isLocked ? <LockOpenIcon /> : <LockIcon />}
+          >
+            {!values.row.isLocked ? "Khoá" : "Mở khoá"}
+          </Button>
+        );
+      },
+    },
   ];
 
   const handleSearch = (value) => {
+    if (!value) {
+      setFilteredRows(rows);
+      return;
+    }
     const filteredRows = rows.filter((row) => {
       return (
         row.userName.toLowerCase().includes(value.toLowerCase()) ||
@@ -124,19 +158,9 @@ function DataTable({ rows }) {
 }
 
 const UserList = () => {
-  const [users, setUsers] = React.useState([]);
-  useEffect(() => {
-    axios
-      .get("/ca/user")
-      .then((res) => {
-        setUsers(res.data.data);
-        console.log(res.data.data);
-      })
-      .catch((err) => {});
-  }, []);
   return (
     <>
-      <DataTable rows={users}></DataTable>
+      <DataTable></DataTable>
     </>
   );
 };

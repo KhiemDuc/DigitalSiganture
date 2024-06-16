@@ -7,7 +7,7 @@ export const ToastType = {
   WARNING: 8,
 };
 
-export const showToast = (message, type = ToastType.SUCCESS) => {
+export const showToast = (message, type = ToastType.SUCCESS, onClose) => {
   if (type === ToastType.SUCCESS) {
     toast.success(message, {
       position: "top-right",
@@ -18,6 +18,7 @@ export const showToast = (message, type = ToastType.SUCCESS) => {
       draggable: true,
       progress: undefined,
       theme: "light",
+      onClose: onClose,
       // transition: Bounce,
     });
   } else if (type === ToastType.ERROR) {
@@ -30,6 +31,7 @@ export const showToast = (message, type = ToastType.SUCCESS) => {
       draggable: true,
       progress: undefined,
       theme: "light",
+      onClose: onClose,
       // transition: Bounce,
     });
   } else if (type === "info") {
@@ -44,6 +46,7 @@ export const showToast = (message, type = ToastType.SUCCESS) => {
       draggable: true,
       progress: undefined,
       theme: "light",
+      onClose: onClose,
       // transition: Bounce,
     });
   }

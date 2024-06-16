@@ -11,7 +11,8 @@ import BackHome from "./../../components/BackHome";
 import { useEffect } from "react";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { saveAs } from "file-saver";
-import payment from "../../services/payment.service";
+import CircularProgress from "@mui/material/CircularProgress";
+
 const CreateKey = () => {
   useEffect(() => {
     document.title = "Tạo cặp khoá - Hệ thống chữ ký số";
@@ -29,21 +30,46 @@ const CreateKey = () => {
   const [showPassword, setShowPassword] = React.useState(true);
   const [privateKey, setPrivateKey] = React.useState("");
   const [publicKey, setPublicKey] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
   const navigate = useNavigate();
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const generateKeyPair = () => {
-    const { publicKey, privateKey } = forge.pki.rsa.generateKeyPair({
-      bits: 2048,
-      e: 0x10001,
-    });
+    setIsLoading(true);
+    const worker = new Worker(
+      URL.createObjectURL(
+        new Blob(
+          [
+            `
+      self.onmessage = function(e) {
+        const forge = e.data.forge;
+    
+        const { publicKey, privateKey } = forge.pki.rsa.generateKeyPair({
+          bits: 2048,
+          e: 0x10001,
+        });
+    
+        const publicKeyPem = forge.pki.publicKeyToPem(publicKey);
+        const privateKeyPem = forge.pki.privateKeyToPem(privateKey);
+    
+        self.postMessage({ publicKeyPem, privateKeyPem });
+      };
+    `,
+          ],
+          { type: "text/javascript" }
+        )
+      )
+    );
 
-    // Convert keys to PEM format
-    const publicKeyPem = forge.pki.publicKeyToPem(publicKey);
-    const privateKeyPem = forge.pki.privateKeyToPem(privateKey);
+    // Lắng nghe sự kiện message từ Web Worker
+    worker.onmessage = function (e) {
+      setPrivateKey(e.data.privateKeyPem);
+      setPublicKey(e.data.publicKeyPem);
+      setIsLoading(false);
+    };
 
-    setPrivateKey(privateKeyPem);
-    setPublicKey(publicKeyPem);
+    // Gửi một message tới Web Worker để bắt đầu quá trình tạo khóa
+    worker.postMessage({ type: "update", data: forge });
   };
 
   return (
@@ -60,6 +86,25 @@ const CreateKey = () => {
           marginTop: "20px",
         }}
       >
+        {isLoading && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              zIndex: 1000,
+            }}
+          >
+            <CircularProgress />
+          </div>
+        )}
+
         <BackHome />
         <StepperCustom
           step={1}

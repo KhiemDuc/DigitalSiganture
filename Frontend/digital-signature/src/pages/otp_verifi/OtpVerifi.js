@@ -173,7 +173,6 @@ export default function OTPVerifi({ otpHandle }) {
           theme="light"
         />
         <CssBaseline />
-        <BackHome />
         <Box
           sx={{
             display: "flex",

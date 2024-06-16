@@ -5,6 +5,9 @@ import { useFormik } from "formik";
 import { styled } from "@mui/material/styles";
 import forge from "node-forge";
 import certService from "../../services/certificate.service";
+import { ToastContainer } from "react-toastify";
+import { showToast, ToastType } from "../../common/toast";
+
 const ContentBox = styled("div")(() => ({
   height: "100%",
   padding: "32px",
@@ -17,31 +20,6 @@ const ContentBox = styled("div")(() => ({
   gap: "1rem",
 }));
 
-const StyledRoot = styled("div")(() => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  backgroundColor: "#1A2038",
-  minHeight: "100% !important",
-  "& .card": {
-    maxWidth: 800,
-    minHeight: 400,
-    margin: "1rem",
-    display: "flex",
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  ".img-wrapper": {
-    height: "100%",
-    minWidth: 320,
-    display: "flex",
-    padding: "2rem",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-}));
 const readFile = (file, format) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -114,6 +92,9 @@ const CancelCertificate = () => {
           const signature = forge.util.encode64(user.key.sign(md));
           // console.log(forge.util.encode64(signature));
           const response = await certService.deleteCertificate(signature);
+          if (response.status === 200) {
+            showToast("Huỷ chứng chỉ số thành công", ToastType.SUCCESS);
+          }
           console.log("Deleted", response.data);
         }
       } else if (selectedValue === "1") {
@@ -138,6 +119,7 @@ const CancelCertificate = () => {
       }
     >
       <Grid item sm={6} xs={12}>
+        <ToastContainer />
         <ContentBox>
           <form onSubmit={formik.handleSubmit}>
             <div

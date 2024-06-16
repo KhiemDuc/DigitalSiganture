@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { signCertificate as sign, rejectSign } from "../../service/certificate";
 import ModalNoti from "./../ModalNoti/index";
 import { Modal } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 export default function OrderDetail() {
   const { state } = useLocation();
   const [showModal, setShowModal] = useState(false);
@@ -14,6 +15,7 @@ export default function OrderDetail() {
   const [content, setContent] = useState("");
   const [reason, setReason] = useState("");
   const [openReject, setOpenReject] = useState(false);
+  const navigate = useNavigate();
   const handleCloseReject = () => {
     setOpenReject(false);
   };
@@ -33,6 +35,7 @@ export default function OrderDetail() {
   };
   const handleClose = () => {
     setShowModal(false);
+    navigate("/admin/orders");
   };
   const handleOpen = () => {
     setShowModal(true);

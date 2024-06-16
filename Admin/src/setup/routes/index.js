@@ -5,6 +5,7 @@ import OrderDetail from "../../components/OrderDetail/OrderDetail";
 import UserList from "../../components/User/User";
 import Plan from "../../components/Plan/Plan";
 import CertiList from "../../components/CertificateList/CertiList";
+import History from "../../components/History/History";
 const privateRoutes = [];
 
 const publicRoutes = [
@@ -36,6 +37,10 @@ const publicRoutes = [
   {
     path: "/admin/certificate_list",
     component: CertiList,
+  },
+  {
+    path: "/admin/histories",
+    component: History,
   },
 ];
 

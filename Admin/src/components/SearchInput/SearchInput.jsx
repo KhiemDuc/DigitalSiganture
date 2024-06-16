@@ -8,7 +8,6 @@ export default function SearchInput({ handleSearch = () => {} }) {
   const [value, setValue] = React.useState("");
   return (
     <Paper
-      component="form"
       sx={{
         p: "2px 4px",
         display: "flex",

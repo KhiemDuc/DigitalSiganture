@@ -8,13 +8,14 @@ const Layout = () => {
   if (!admin.key && !admin.cert) return <Navigate to={"/admin/login"} />;
   const location = useLocation();
   const path = location.pathname;
+  const pathParts = path.split("/");
   const endPath = path.split("/").pop();
   switch (endPath) {
     case "dashboard":
       var header = "Trang chủ";
       break;
     case "orders":
-      var header = "Danh sách yêu cầu";
+      header = "Chi tiết yêu cầu";
       break;
     case "user":
       var header = "Danh sách người dùng";
@@ -22,9 +23,18 @@ const Layout = () => {
     case "plan":
       var header = "Quản lý gói";
       break;
+    case "certificate_list":
+      var header = "Danh sách chứng chỉ số";
+      break;
+    case "histories":
+      var header = "Lịch sử";
+      break;
     default:
-      var header = "Trang chủ";
+      if (pathParts[pathParts.length - 2] === "orders") {
+        header = "Chi tiết yêu cầu";
+      }
   }
+
   return (
     <Sidebar appBarText={header}>
       <Outlet />

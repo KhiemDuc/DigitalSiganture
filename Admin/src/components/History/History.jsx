@@ -240,7 +240,7 @@ function DataTable({ rows }) {
     </div>
   );
 }
-const CertiList = () => {
+const History = () => {
   const [certificates, setCertificates] = React.useState([]);
 
   useEffect(() => {
@@ -254,4 +254,4 @@ const CertiList = () => {
     </div>
   );
 };
-export default CertiList;
+export default History;

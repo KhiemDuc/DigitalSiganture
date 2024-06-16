@@ -27,6 +27,7 @@ import { Clear } from "@mui/icons-material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import MoveToInboxIcon from "@mui/icons-material/MoveToInbox";
+import HistoryIcon from "@mui/icons-material/History";
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -306,6 +307,16 @@ export default function Sidebar({ children, appBarText }) {
                 <LayersIcon />
               </ListItemIcon>
               <ListItemText primary="Quản lý chứng chỉ" />
+            </ListItemButton>
+            <ListItemButton
+              onClick={() => {
+                navigate("/admin/histories");
+              }}
+            >
+              <ListItemIcon>
+                <HistoryIcon />
+              </ListItemIcon>
+              <ListItemText primary="Xem lịch sử ký" />
             </ListItemButton>
           </List>
         </Drawer>
