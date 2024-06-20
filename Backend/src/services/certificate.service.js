@@ -239,9 +239,11 @@ class CertificateService {
     }
 
     SigningHistory.create({
-      user: mongoose.Types.ObjectId(userId),
+      user: foundRequest.userId,
       action: "SIGNED",
-    });
+    })
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
 
     sendMail({ to: foundInfo.email, certificate: true }).catch((err) =>
       console.log(err)
@@ -266,9 +268,9 @@ class CertificateService {
       mail = foundUser.userInfo.email;
     }
     SigningHistory.create({
-      user: mongoose.Types.ObjectId(foundRequest.userId),
+      user: foundRequest.userId,
       action: "REJECTED",
-    });
+    }).then((data) => console.log(data));
     sendMail({ to: mail, certificate: true }).catch((err) => console.log(err));
     return result;
   };
@@ -281,9 +283,6 @@ class CertificateService {
         "Get certificate request failed",
         "Bạn không có yêu cầu chứng chỉ nào"
       );
-
-    // const result = omitFields(foundCertRequest._doc, ["__v", "updatedAt"]);
-
     return foundCertRequest;
   };
 

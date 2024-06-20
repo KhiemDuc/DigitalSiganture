@@ -17,14 +17,7 @@ class PlanService {
     );
     return result;
   }
-  static async addPlan({
-    name,
-    price,
-    description,
-    isDefault = false,
-    tier,
-    benefits = [],
-  }) {
+  static async addPlan({ name, price, description, tier, benefits = [] }) {
     if (!name || price == null)
       throw new BadRequestError("Bạn nhập thiếu thông tin");
     try {
@@ -32,7 +25,6 @@ class PlanService {
         name,
         price,
         description,
-        isDefault,
         tier,
         benefits,
       });
@@ -43,7 +35,7 @@ class PlanService {
   }
   static async updatePlan(
     id,
-    { name, price, description, isDefault = false, tier, benefits = [] }
+    { name, price, description, tier, benefits = [] }
   ) {
     if (!name || price == null)
       throw new BadRequestError("Bạn nhập thiếu thông tin");
@@ -52,7 +44,6 @@ class PlanService {
     foundPlan.name = name;
     foundPlan.price = price;
     foundPlan.description = description;
-    foundPlan.isDefault = isDefault;
     foundPlan.tier = tier;
     foundPlan.benefits = benefits;
     await foundPlan.save();

@@ -44,4 +44,3 @@ const subscriptionSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("Subscription", subscriptionSchema);
-// module.exports.SubscriptionHistorySchema = SubscriptionHistorySchema
