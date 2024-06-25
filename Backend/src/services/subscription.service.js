@@ -14,9 +14,16 @@ const constants = {
 };
 class SubscriptionService {
   static async getCurrentSubscription(user) {
-    const foundSubscription = await Subscription.findById(
+    let foundSubscription = await Subscription.findById(
       user.subscription
     ).populate("plan");
+    // hết hạn: Chuyển về gói mặc định
+    if (!foundSubscription.plan.isDefault) {
+      if (foundSubscription.end < Date.now()) {
+        await this.unsubscribePlan({ user: user });
+        foundSubscription = await Subscription.findById(user.subscription);
+      }
+    }
     return { ...pickFields(foundSubscription._doc, "plan", "start", "end") };
   }
 
@@ -87,10 +94,11 @@ class SubscriptionService {
     subscriptionHistory.start = foundSubscription.start;
     subscriptionHistory.end = foundSubscription.end;
     foundSubscription.history.push(subscriptionHistory);
-
+    let end = new Date(Date.now());
+    end.setFullYear(end.getFullYear() + 4);
     foundSubscription.plan = foundPlan._id;
     foundSubscription.start = Date.now();
-
+    foundSubscription.end = end;
     await foundSubscription.save();
     return "Verify student success";
   }

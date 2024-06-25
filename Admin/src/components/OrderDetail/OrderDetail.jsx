@@ -97,19 +97,12 @@ export default function OrderDetail() {
     certificate.serialNumber = seri;
     certificate.setSubject(attrs);
 
-    const current = new Date();
-    certificate.validity.notBefore = current;
+    const end = new Date(Date.now());
+    end.setMonth(end.getMonth() + 3);
+    certificate.validity.notBefore = new Date();
 
-    const exp = new Date();
-    if (state.subscription === "standard") {
-      // với gói mặc định, thời hạn sẽ là 6 tháng
-      exp.setFullYear(exp.getFullYear() + 1);
-    } else {
-      // với gói pro và sinh viên, thời hạn là 5 năm
-      exp.setFullYear(exp.getFullYear() + 5);
-    }
-
-    certificate.validity.notAfter = exp;
+    certificate.validity.notAfter =
+      state.subscriptionEnd === null ? end : new Date(state.subscriptionEnd);
 
     certificate.setIssuer(CA.cert.subject.attributes);
     certificate.setExtensions([

@@ -17,7 +17,6 @@ const deletedCertModel = require("../models/deletedCert.model");
 const Subscription = require("../models/subscription.model");
 const { sendMail } = require("./email.service");
 const SigningHistory = require("../models/signingHistory.model");
-const { default: mongoose } = require("mongoose");
 const constants = {
   idApi: "https://api.fpt.ai/vision/idr/vnm",
   faceApi: "https://api.fpt.ai/dmp/checkface/v1/",
@@ -27,26 +26,30 @@ const constants = {
 };
 
 function getModulusLength(rsaKey) {
-  const n = rsaKey.n; // Lấy modulus
-  const modulusHex = n.toString(16); // Chuyển đổi modulus thành chuỗi hex
-  const modulusLengthInBits = modulusHex.length * 4; // Mỗi ký tự hex đại diện cho 4 bits
+  const n = rsaKey.n;
+  const modulusHex = n.toString(16);
+  const modulusLengthInBits = modulusHex.length * 4;
   return modulusLengthInBits;
 }
 
 const checkPublicKey = async (user, publicKey) => {
   try {
     const key = forge.pki.publicKeyFromPem(publicKey);
-    console.log("publicKey::", key);
     const modLength = getModulusLength(key);
     const foundSubscription = await Subscription.findOne({
       user: user._id,
     }).populate("plan");
+    if (!foundSubscription.plan.isDefault && foundSubscription.end < Date.now())
+      throw new Error("SubEnded");
     const validModuleLength =
       foundSubscription.plan.name === "standard" ? 2048 : 4096;
-    console.log(modLength, validModuleLength);
     if (modLength !== validModuleLength) throw new Error();
   } catch (err) {
-    console.log(err);
+    if (err.message === "SubEnded")
+      throw new BadRequestError(
+        "Gói của bạn đã hết hạn, vui lòng huỷ hoặc gia hạn để tiếp tục sử dụng hệ thống",
+        "Gói của bạn đã hết hạn, vui lòng huỷ hoặc gia hạn để tiếp tục sử dụng hệ thống"
+      );
     throw new BadRequestError(
       "Khoá công khai không hợp lệ, vui lòng thử lại",
       "Khoá công khai không hợp lệ, vui lòng thử lại"
@@ -80,23 +83,24 @@ class CertificateService {
     });
     if (foundRequest)
       throw new BadRequestError(
-        "Request sign certificate failed",
+        "Bạn đã yêu cầu 1 chứng chỉ từ trước đó rồi",
         "Bạn đã yêu cầu 1 chứng chỉ từ trước đó rồi"
       );
     const foundCert = await Certificate.findOne({ userId: user._id });
     if (foundCert && foundCert.certPem !== null)
       throw new BadRequestError(
-        "Request sign certificate failed",
+        "Bạn đã có chứng chỉ rồi, vui lòng hủy chứng chỉ cũ trước khi yêu cầu 1 chứng chỉ mới",
         "Bạn đã có chứng chỉ rồi, vui lòng hủy chứng chỉ cũ trước khi yêu cầu 1 chứng chỉ mới"
       );
+    await checkPublicKey(user, info.publicKey);
     const hash = crypto.createHash("sha256");
     hash.update(info.publicKey);
     const result = hash.digest("hex");
     const keyUsed = await PublicKeyUsed.findOne({ publicHashed: result });
     if (keyUsed)
       throw new BadRequestError(
-        "Request certificate failed",
-        "Some thing wrong, please try again"
+        "Có lỗi xảy ra, vui lòng thử lại",
+        "Có lỗi xảy ra, vui lòng thử lại"
       );
     //face check
     const CCCD64 = fs.readFileSync(CCCD.path, "base64");
@@ -195,6 +199,7 @@ class CertificateService {
     const result = requests.map(({ _doc: e }, index) => {
       const element = { ...e };
       element.subscription = users[index].subscription.plan.name;
+      element.subscriptionEnd = users[index].subscription.end;
       if (e.isExtend) {
         element.firstName = users[index].userInfo.firstName;
         element.lastName = users[index].userInfo.lastName;
