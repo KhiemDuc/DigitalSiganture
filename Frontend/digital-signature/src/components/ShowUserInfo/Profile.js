@@ -55,8 +55,7 @@ function Profile({ user }) {
           userProfile
             ? userProfile
             : user?.avatar
-            ? process.env.REACT_APP_API_URL ||
-              "http://localhost:8080/" + "public/" + user?.avatar
+            ? process.env.REACT_APP_API_URL + "public/" + user?.avatar
             : "/static/img/avatarDefault.png"
         }
       >
@@ -103,7 +102,7 @@ function Profile({ user }) {
           {user?.firstName} {user?.lastName}
         </Heading>
         <Text color="brand.gray" fontSize="sm">
-          Founder of KnB
+          User of KnB
         </Text>
       </VStack>
     </VStack>

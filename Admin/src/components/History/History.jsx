@@ -4,12 +4,13 @@ import { DataGrid } from "@mui/x-data-grid";
 import React from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import forge from "node-forge";
-import { Button, Modal } from "@mui/material";
+import { Button, Modal, colors } from "@mui/material";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import { saveAs } from "file-saver";
 import SearchInput from "../SearchInput/SearchInput";
 import { deleteCert } from "../../service/certificate";
 import ModalNoti from "../ModalNoti";
+import { render } from "react-dom";
 function DataTable({ rows }) {
   const [filteredRows, setFilteredRows] = React.useState([]);
   const [isDelete, setIsDelete] = React.useState(false);
@@ -46,7 +47,7 @@ function DataTable({ rows }) {
     {
       field: "id",
       headerName: "ID Chứng chỉ",
-      width: 220,
+      width: 250,
       valueGetter: (value, row) => `${row._id || ""}`,
       sx: {
         padding: "1rem !important",
@@ -54,33 +55,53 @@ function DataTable({ rows }) {
     },
 
     {
-      field: "userId",
+      field: "user",
       headerName: "ID người dùng",
-      width: 220,
+      width: 250,
     },
 
-    { field: "userName", headerName: "Tài khoản", width: 140 },
+    {
+      field: "action",
+      headerName: "Hành Động",
+      width: 200,
+      renderCell: (values) => {
+        return (
+          <p
+            style={{
+              color:
+                values.row.action === "SIGNED"
+                  ? "green"
+                  : values.row.action === "EXTEND"
+                  ? "blue"
+                  : "red",
+              cursor: "pointer",
+            }}
+          >
+            {values.row.action}{" "}
+            {values.row.action === "SIGNED"
+              ? "✍️"
+              : values.row.action === "EXTEND"
+              ? "↗️"
+              : "❌"}
+          </p>
+        );
+      },
+    },
+    {
+      field: "signAt",
+      headerName: "Ngày ký",
+      width: 250,
+      valueGetter: (value, row) =>
+        new Date(row?.signAt).toLocaleDateString("vi-VN"),
+    },
   ];
-  const downloadCert = (pem, nameOfFile) => {
-    const fileName = `${nameOfFile}_cert.crt`;
-    const certificate = forge.pki.certificateFromPem(pem);
-
-    const der = forge.asn1
-      .toDer(forge.pki.certificateToAsn1(certificate))
-      .getBytes();
-
-    const blob = new Blob(
-      [new Uint8Array(der.split("").map((c) => c.charCodeAt(0)))],
-      {
-        type: "application/x-x509-ca-cert;charset=utf-8",
-      }
-    );
-    saveAs(blob, fileName);
-  };
 
   const handleSearch = (value) => {
     const filteredRows = rows.filter((row) => {
-      return row.userName.toLowerCase().includes(value.toLowerCase());
+      return (
+        row.user.toLowerCase().includes(value.toLowerCase()) ||
+        row.id.toLowerCase().includes(value.toLowerCase())
+      );
     });
     setFilteredRows(filteredRows);
   };

@@ -2,6 +2,8 @@ import { ExpandLess, TrendingUp, TrendingDown } from "@mui/icons-material";
 import { Card, Fab, Grid, Typography, styled } from "@mui/material";
 import axios from "../../setup/axios";
 import React, { useEffect } from "react";
+import Stack from "@mui/material/Stack";
+import { Gauge } from "@mui/x-charts/Gauge";
 
 // STYLED COMPONENTS
 const ContentBox = styled("div")(() => ({
@@ -45,7 +47,7 @@ const IconBox = styled("div")(() => ({
   "& .icon": { fontSize: "14px" },
 }));
 
-export default function StatCards2({ data }) {
+export default function StatCards2({ data, usersData }) {
   const today = new Date().toISOString().split("T")[0];
 
   const todayData = data?.find((item) => {
@@ -71,7 +73,14 @@ export default function StatCards2({ data }) {
   return (
     <Grid container spacing={3} sx={{ mb: 3 }}>
       <Grid item xs={12} md={6}>
-        <Card elevation={3} sx={{ p: 2 }}>
+        <Card
+          elevation={3}
+          sx={{ p: 2 }}
+          style={{
+            boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.1)",
+            borderRadius: "8px",
+          }}
+        >
           <ContentBox>
             <FabIcon
               size="medium"
@@ -100,28 +109,52 @@ export default function StatCards2({ data }) {
       </Grid>
 
       <Grid item xs={12} md={6}>
-        <Card elevation={3} sx={{ p: 2 }}>
-          <ContentBox>
-            <FabIcon
-              size="medium"
-              sx={{ overflow: "hidden", background: "rgba(9, 182, 109, 0.15)" }}
-            >
-              <TrendingUp color="success" />
-            </FabIcon>
-
-            <Typography color="#08ad6c">Active User</Typography>
-          </ContentBox>
-
-          <ContentBox sx={{ pt: 2 }}>
-            <Typography variant="h5">$2.8M</Typography>
-
-            <IconBox sx={{ backgroundColor: "success.main" }}>
-              <ExpandLess className="icon" />
-            </IconBox>
-
-            <Span color="success">(+21%)</Span>
-          </ContentBox>
-        </Card>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-evenly",
+            alignItems: "center",
+            flexDirection: "row",
+            backgroundColor: "white",
+            borderRadius: "8px",
+            boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.1)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <Typography color="#1976d2">User đã xác thực</Typography>
+            <Gauge
+              width={100}
+              height={100}
+              value={usersData}
+              startAngle={-90}
+              endAngle={90}
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <Typography>User chưa xác thực</Typography>
+            <Gauge
+              width={100}
+              height={100}
+              value={60}
+              startAngle={-90}
+              endAngle={90}
+            />
+          </div>
+        </div>
       </Grid>
     </Grid>
   );

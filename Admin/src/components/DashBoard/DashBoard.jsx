@@ -43,9 +43,13 @@ export default function Dashboard() {
     return acc;
   }, {});
 
+  console.log(users);
   // Get the grouped data
   const groupedData = groupByDate(users);
-
+  let verifiedUsersCount = users.filter(
+    (user) => user.userInfo.verified === false
+  ).length;
+  console.log(verifiedUsersCount);
   // Convert the result to an array of objects
   const result = Object.keys(groupedData).map((date) => {
     return { time: date, amount: groupedData[date] };
@@ -82,7 +86,7 @@ export default function Dashboard() {
           {/* Chart */}
           <Grid item xs={12} md={8} lg={8}>
             <Grid item xs={12} md={8} lg={12}>
-              <StatCards2 data={result} />
+              <StatCards2 data={result} usersData={verifiedUsersCount} />
             </Grid>
 
             <Grid item xs={12} md={8} lg={12}>

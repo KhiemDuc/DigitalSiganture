@@ -38,7 +38,7 @@ const CreateKey = () => {
     setIsLoading(true);
     console.log(isLoading);
     const { publicKey, privateKey } = forge.pki.rsa.generateKeyPair({
-      bits: 4096,
+      bits: 2048,
       e: 0x10001,
     });
 

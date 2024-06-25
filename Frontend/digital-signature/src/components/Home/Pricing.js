@@ -223,7 +223,7 @@ export default function Pricing() {
                     {tier.price.toLocaleString("de-DE")}
                   </Typography>
                   <Typography component="h3" variant="h6">
-                    &nbsp;VND/ tháng
+                    &nbsp;VND/ năm
                   </Typography>
                 </Box>
                 <Divider
@@ -299,6 +299,9 @@ export default function Pricing() {
                           ? "btn btn-outline"
                           : "btn btn-outline-light"
                       }
+                      style={{
+                        color: myPlan?._id === tier._id ? "white" : "whitexpor",
+                      }}
                       disabled={myPlan?._id === tier._id}
                       onClick={() => {
                         if (myPlan?._id === tier._id) {

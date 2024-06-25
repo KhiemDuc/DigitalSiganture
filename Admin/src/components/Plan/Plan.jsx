@@ -46,6 +46,7 @@ const Plan = () => {
   const [openNoti, setOpenNoti] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleCloseNoti = () => {
     setOpenNoti(false);
@@ -473,6 +474,7 @@ const Plan = () => {
                     <input
                       type="text"
                       className="form-control"
+                      required
                       id={index}
                       aria-describedby="emailHelp"
                       placeholder="Nhập lợi ích"
@@ -499,7 +501,13 @@ const Plan = () => {
                 ))}
               </div>
             </div>
-
+            <div
+              style={{
+                color: "red",
+              }}
+            >
+              {message && message}
+            </div>
             <Button
               variant="outlined"
               href="#outlined-buttons"
@@ -522,7 +530,9 @@ const Plan = () => {
                       setTitle("Thành công");
                       setContent("Thêm gói thành công");
                     })
-                    .catch((err) => {});
+                    .catch((err) => {
+                      setMessage(err.response.data.message);
+                    });
                 } else {
                   updatePlan(planID, {
                     name: planeName,
@@ -544,7 +554,9 @@ const Plan = () => {
                       setTitle("Thành công");
                       setContent("Cập nhật thành công");
                     })
-                    .catch((err) => {});
+                    .catch((err) => {
+                      setMessage(err.response.data.message);
+                    });
                 }
               }}
             >

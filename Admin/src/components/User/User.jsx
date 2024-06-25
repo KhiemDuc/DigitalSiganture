@@ -35,7 +35,7 @@ function DataTable() {
       width: 100,
       renderCell: (values, row) => (
         <Avatar
-          src={`http://localhost:8080/public/${values.row?.userInfo.avatar}`}
+          src={`http://localhost:8081/public/${values.row?.userInfo.avatar}`}
           style={{
             width: 35,
             height: 35,
@@ -58,8 +58,35 @@ function DataTable() {
       field: "subscription",
       headerName: "Gói đăng ký",
       width: 130,
-      valueGetter: (values, row) => {
-        return row.plan;
+      renderCell: (values, row) => {
+        return (
+          <div
+            style={{
+              color: values.row.plan === "Standard" ? "black" : "white",
+              backgroundColor:
+                values.row.plan === "Standard" ? "white" : "#020066",
+              fontWeight: "bold",
+              padding: "5px",
+              borderRadius: "20px",
+              width: "100px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 1,
+              height: "45px",
+              marginTop: "10px",
+            }}
+          >
+            {values.row.plan}{" "}
+            {values.row.plan === "Student" && (
+              <img
+                src="../../../src/assets/images/tlu_white.png"
+                width={"15px"}
+                height={"15px"}
+              />
+            )}
+          </div>
+        );
       },
     },
     {
