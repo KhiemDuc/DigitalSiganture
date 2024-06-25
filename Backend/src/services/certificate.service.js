@@ -280,7 +280,7 @@ class CertificateService {
     });
     if (!foundCertRequest)
       throw new BadRequestError(
-        "Get certificate request failed",
+        "Bạn không có yêu cầu chứng chỉ nào",
         "Bạn không có yêu cầu chứng chỉ nào"
       );
     return foundCertRequest;
@@ -290,8 +290,8 @@ class CertificateService {
     const foundCA = await CAModel.findOne({ name: "KnB root CA" });
     if (!foundCA)
       throw new InternalServerError(
-        "Some thing wrong",
-        "Could not find root CA"
+        "Có lỗi xảy ra, vui lòng thử lại sau",
+        "Có lỗi xảy ra, vui lòng thử lại sau"
       );
     try {
       const CA_Cert = forge.pki.certificateFromPem(foundCA.certificate);
@@ -301,10 +301,15 @@ class CertificateService {
       const result = CA_Cert.verify(checkingCert);
     } catch (e) {
       throw new BadRequestError(
-        "Request failed",
+        "Chứng chỉ không hợp lệ hoặc hết hạn",
         "Chứng chỉ không hợp lệ hoặc hết hạn"
       );
     }
+    const foundDeletedCert = await deletedCertModel.findOne({
+      certificate: certPem,
+    });
+    if (foundDeletedCert)
+      throw new BadRequestError("Chứng chỉ đã bị huỷ", "Chứng chỉ đã bị huỷ");
 
     return "Chứng chỉ hợp lệ";
   };

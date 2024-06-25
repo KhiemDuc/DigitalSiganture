@@ -35,13 +35,16 @@ class AccessService {
       userName: userName,
     });
     if (foundUser)
-      throw new BadRequestError("Sign up failed", "User name existed");
+      throw new BadRequestError(
+        "Tên đăng nhập đã tồn tại",
+        "User name existed"
+      );
 
     const foundInfo = await UserInfo.findOne({
       email: email,
     });
     if (foundInfo)
-      throw new BadRequestError("Sign up failed", "Email or password existed");
+      throw new BadRequestError("Email này đã tồn tại", "Email existed");
 
     const signUpToken = crypto.randomBytes(32).toString("hex");
     const OTPgen = generateOTP();
