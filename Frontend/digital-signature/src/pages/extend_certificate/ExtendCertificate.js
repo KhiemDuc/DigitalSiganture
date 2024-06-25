@@ -13,9 +13,11 @@ import { saveAs } from "file-saver";
 import { showToast, ToastType } from "../../common/toast";
 import { ToastContainer } from "react-toastify";
 import payment from "../../services/payment.service";
+import { CircularProgress } from "@mui/material";
 
 export default function ExtendCertificate() {
   const [modulusLength, setModulusLength] = useState(2048);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     document.title = "Gia hạn chứng chỉ số";
     let element = document.querySelector(".fda3723591e0b38e7e52");
@@ -35,18 +37,32 @@ export default function ExtendCertificate() {
   const [publicKey, setPublicKey] = React.useState("");
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  const generateKeyPair = () => {
-    const { publicKey, privateKey } = forge.pki.rsa.generateKeyPair({
-      bits: modulusLength,
-      e: 0x10001,
+  const generateKeyPair = async () => {
+    setIsLoading(true);
+    const promise = new Promise((resolve, reject) => {
+      forge.pki.rsa.generateKeyPair(
+        {
+          bits: modulusLength,
+          e: 0x10001,
+        },
+        (err, keyPair) => {
+          if (err) return reject(err);
+          return resolve(keyPair);
+        }
+      );
     });
+    try {
+      const { publicKey, privateKey } = await promise;
+      // Convert keys to PEM format
+      const publicKeyPem = forge.pki.publicKeyToPem(publicKey);
+      const privateKeyPem = forge.pki.privateKeyToPem(privateKey);
 
-    // Convert keys to PEM format
-    const publicKeyPem = forge.pki.publicKeyToPem(publicKey);
-    const privateKeyPem = forge.pki.privateKeyToPem(privateKey);
-
-    setPrivateKey(privateKeyPem);
-    setPublicKey(publicKeyPem);
+      setPrivateKey(privateKeyPem);
+      setPublicKey(publicKeyPem);
+      setIsLoading(false);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleClick = () => {
@@ -72,6 +88,24 @@ export default function ExtendCertificate() {
         "Gửi yêu cầu gia hạn lại hoặc cấp lại chứng chỉ số của bạn khi đã hết hạn"
       }
     >
+      {isLoading && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1000,
+          }}
+        >
+          <CircularProgress />
+        </div>
+      )}
       <ToastContainer
         position="top-right"
         autoClose={5000}

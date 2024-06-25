@@ -15,7 +15,7 @@ class SignInBlocker {
     if (this.users[id.toString()] === 5) {
       setTimeout(() => {
         this.clear(id);
-      }, 30000);
+      }, 300000);
     }
   }
 

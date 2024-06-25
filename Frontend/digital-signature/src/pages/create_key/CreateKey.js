@@ -3,7 +3,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import React from "react";
+import React, { useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { useNavigate } from "react-router-dom";
 import StepperCustom from "../../components/Steper";
@@ -12,8 +12,10 @@ import { useEffect } from "react";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { saveAs } from "file-saver";
 import CircularProgress from "@mui/material/CircularProgress";
+import payment from "../../services/payment.service";
 
 const CreateKey = () => {
+  const [modulusLength, setModulusLength] = useState(2048);
   useEffect(() => {
     document.title = "Tạo cặp khoá - Hệ thống chữ ký số";
     let element = document.querySelector(".fda3723591e0b38e7e52");
@@ -22,10 +24,12 @@ const CreateKey = () => {
       element.remove();
     }
     console.log("abc");
-    // (async () => {
-    //   const data = await payment.getMySubCriptionPlan();
-    //   console.log(data);
-    // })();
+    payment
+      .getMySubCriptionPlan()
+      .then((res) => {
+        setModulusLength(res.data.data.plan.name === "standard" ? 2048 : 4096);
+      })
+      .catch((err) => console.log(err));
   }, []);
   const [showPassword, setShowPassword] = React.useState(true);
   const [privateKey, setPrivateKey] = React.useState("");
@@ -34,21 +38,34 @@ const CreateKey = () => {
   const navigate = useNavigate();
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  const generateKeyPair = () => {
+  const generateKeyPair = async () => {
     setIsLoading(true);
     console.log(isLoading);
-    const { publicKey, privateKey } = forge.pki.rsa.generateKeyPair({
-      bits: 2048,
-      e: 0x10001,
+    const promise = new Promise((resolve, reject) => {
+      forge.pki.rsa.generateKeyPair(
+        {
+          bits: modulusLength,
+          e: 0x10001,
+        },
+        (err, keyPair) => {
+          if (err) return reject(err);
+          return resolve(keyPair);
+        }
+      );
     });
 
+    try {
+      const { privateKey, publicKey } = await promise;
+      const publicKeyPem = forge.pki.publicKeyToPem(publicKey);
+      const privateKeyPem = forge.pki.privateKeyToPem(privateKey);
+      console.log(publicKeyPem);
+      setPrivateKey(privateKeyPem);
+      setPublicKey(publicKeyPem);
+      setIsLoading(false);
+    } catch (err) {
+      console.log(err);
+    }
     // Convert keys to PEM format
-    const publicKeyPem = forge.pki.publicKeyToPem(publicKey);
-    const privateKeyPem = forge.pki.privateKeyToPem(privateKey);
-    console.log(publicKeyPem);
-    setPrivateKey(privateKeyPem);
-    setPublicKey(publicKeyPem);
-    setIsLoading(false);
   };
 
   return (
