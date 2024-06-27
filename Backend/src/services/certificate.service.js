@@ -133,7 +133,7 @@ class CertificateService {
       );
 
     const token = info.token;
-    const { publicKey, verified } = getPubKey(token);
+    const { publicKey, verified } = getPubKey(user._id.toString());
     if (!verified)
       throw new BadRequestError(
         "Public key chưa được kiểm tra",
