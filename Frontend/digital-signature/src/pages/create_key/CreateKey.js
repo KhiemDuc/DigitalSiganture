@@ -13,8 +13,37 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { saveAs } from "file-saver";
 import CircularProgress from "@mui/material/CircularProgress";
 import payment from "../../services/payment.service";
+<<<<<<< HEAD
 import { millerRabinTest } from "../../utils/prime";
+=======
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import { border, borderRadius } from "@mui/system";
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "1px solid #ccc",
+  borderRadius: "1rem",
+  pt: 2,
+  px: 4,
+  pb: 3,
+};
+
+>>>>>>> 9e208a3423a1c1b73fc28c3cb0c9f12adf6c219b
 const CreateKey = () => {
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const [modulusLength, setModulusLength] = useState(2048);
   useEffect(() => {
     document.title = "Tạo cặp khoá - Hệ thống chữ ký số";
@@ -346,13 +375,53 @@ const CreateKey = () => {
             style={{ alignSelf: "end" }}
             className="btn btn-outline-primary"
             onClick={() => {
-              navigate("/certificate/request");
+              handleOpen();
             }}
           >
             Tiếp tục
           </button>
         </Tooltip>
       </div>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="child-modal-title"
+        aria-describedby="child-modal-description"
+      >
+        <Box sx={{ ...style, width: 500 }}>
+          <h2 id="child-modal-title">Xác thực khoá công khai</h2>
+          <div
+            style={{
+              margin: "10px 0",
+            }}
+          >
+            <p
+              style={{
+                margin: 0,
+                fontSize: "1rem",
+                fontWeight: "bold",
+              }}
+            >
+              Khoá công khai:{" "}
+            </p>
+            <textarea
+              className="w-100 px-4 "
+              style={{
+                height: "120px",
+                outline: "none",
+                border: "1px solid #ccc",
+                borderRadius: "5px",
+                padding: "5px",
+              }}
+              onChange={(e) => setPublicKey(e.target.value)}
+              value={publicKey}
+            ></textarea>
+          </div>
+          <Button variant="outlined" onClick={handleClose}>
+            Gửi xác thực
+          </Button>
+        </Box>
+      </Modal>
     </>
   );
 };
