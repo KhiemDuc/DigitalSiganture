@@ -67,12 +67,10 @@ class CertificateService {
     const encryptedMessage = forge.util.encode64(
       publicKeyObj.encrypt(originMessage)
     );
-    const token = crypto.randomBytes(32).toString("hex");
 
     const userIdString = user._id.toString();
 
     const data = {
-      token,
       publicKey: publicKey,
       message: originMessage,
       verified: false,
@@ -80,7 +78,7 @@ class CertificateService {
 
     putPubKey(userIdString, data);
 
-    return { token, encryptedMessage };
+    return { encryptedMessage };
   };
 
   static verifyMessage = async (user, decrypted) => {
@@ -132,7 +130,6 @@ class CertificateService {
         "Bạn đã có chứng chỉ rồi, vui lòng hủy chứng chỉ cũ trước khi yêu cầu 1 chứng chỉ mới"
       );
 
-    const token = info.token;
     const { publicKey, verified } = getPubKey(user._id.toString());
     if (!verified)
       throw new BadRequestError(
