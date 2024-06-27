@@ -21,17 +21,14 @@ const steps = [
   {
     title: "Bước 1",
     description: "Tạo cặp khoá",
-    navigate: "/certificate/create_key",
   },
   {
     title: "Bước 2",
     description: "Điền thông tin",
-    navigate: "/certificate/request",
   },
   {
     title: "Bước 3",
     description: "Gửi yêu cầu và chờ kết quả",
-    navigate: "/certificate/request",
   },
 ];
 
@@ -56,12 +53,7 @@ const StepperCustom = ({ step, sx }) => {
         justifyContent={"space-between"}
       >
         {steps.map((step, index) => (
-          <Step
-            key={index}
-            onClick={() => {
-              navigate(step.navigate);
-            }}
-          >
+          <Step key={index}>
             <StepIndicator>
               <StepStatus
                 complete={<StepIcon />}

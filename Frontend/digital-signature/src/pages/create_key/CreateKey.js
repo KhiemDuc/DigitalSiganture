@@ -16,7 +16,8 @@ import payment from "../../services/payment.service";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { border, borderRadius } from "@mui/system";
+import CertificateService from "../../services/certificate.service";
+import InfoIcon from "@mui/icons-material/Info";
 const style = {
   position: "absolute",
   top: "50%",
@@ -32,12 +33,85 @@ const style = {
 };
 
 const CreateKey = () => {
+  const [isVerifiedFail, setIsVerifiedFail] = useState(false);
+  const handleVerifyPublicKey = (message) => {
+    CertificateService.verifyPublicKey(message)
+      .then((res) => {
+        navigate("/certificate/request/", { state: { publicKey } });
+      })
+      .catch((err) => setMessage(err.response.data.message));
+  };
+
+  const [decryptMessage, setDecryptMessage] = useState("");
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0]; // Get the selected file
+
+    if (file) {
+      // Check if the file is a .pem file
+      if (file.name.endsWith(".pem")) {
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          const privateKey = e.target.result;
+          // Process the private key here
+          setDecryptMessage(decryptWithPrivateKey(privateKey, encryptMessage));
+        };
+
+        reader.onerror = (e) => {
+          console.error("Error reading file", e);
+        };
+
+        reader.readAsText(file); // Read the file content as text
+      } else {
+        alert("Please select a .pem file.");
+      }
+    }
+  };
+
+  function decryptWithPrivateKey(privateKeyPem, encryptedMessage) {
+    let decryptedMessage = "";
+    try {
+      // Convert the PEM-formatted private key to a Forge private key object
+      const privateKey = forge.pki.privateKeyFromPem(privateKeyPem);
+
+      // Assuming the encrypted message is Base64 encoded
+      const encryptedBytes = forge.util.decode64(encryptedMessage);
+
+      // Decrypt the message
+      const decryptedBytes = privateKey.decrypt(encryptedBytes);
+
+      // Convert decrypted bytes to a string
+      decryptedMessage = forge.util.decodeUtf8(decryptedBytes);
+    } catch (err) {
+      setMessage("Khoá bí mật không hợp lệ! Vui lòng thử lại!");
+    }
+    return decryptedMessage;
+  }
+
+  const [showFullMessage, setShowFullMessage] = useState(false);
+  const [message, setMessage] = useState("");
+  const [token, setToken] = useState("");
+  const [encryptMessage, setEncryptMessage] = useState("");
+  const handleCheckPublicKey = (publicKey) => {
+    if (publicKey === "") {
+      return;
+    }
+    console.log(publicKey);
+    CertificateService.checkPublicKey(publicKey)
+      .then((res) => {
+        setToken(res.data.data.token);
+        setEncryptMessage(res.data.data.encryptedMessage);
+        console.log(res.data.data.encryptedMessage);
+      })
+      .catch((err) => setMessage(err.response.data.message));
+  };
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
+    setMessage("");
   };
 
   const [modulusLength, setModulusLength] = useState(2048);
@@ -63,10 +137,17 @@ const CreateKey = () => {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const generateKeyPair = async () => {
-    const url = new URL("http://localhost:3000/");
-    const worker = new Worker(`/certificate/miller.worker.js`);
-    console.log(worker);
-    worker.terminate();
+    setPublicKey("");
+    setPrivateKey("");
+    setMessage("");
+    setDecryptMessage("");
+    setEncryptMessage("");
+    setToken("");
+    setMessage("");
+    // const url = new URL("http://localhost:3000/");
+    // const worker = new Worker(`/certificate/miller.worker.js`);
+    // console.log(worker);
+    // worker.terminate();
     setIsLoading(true);
     const promise = new Promise((resolve, reject) => {
       forge.pki.rsa.generateKeyPair(
@@ -359,36 +440,123 @@ const CreateKey = () => {
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
       >
-        <Box sx={{ ...style, width: 500 }}>
+        <Box
+          sx={{
+            ...style,
+            width: 500,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           <h2 id="child-modal-title">Xác thực khoá công khai</h2>
-          <div
-            style={{
-              margin: "10px 0",
-            }}
-          >
-            <p
+          {!encryptMessage ? (
+            <div
               style={{
-                margin: 0,
-                fontSize: "1rem",
-                fontWeight: "bold",
+                margin: "10px 0",
               }}
             >
-              Khoá công khai:{" "}
-            </p>
-            <textarea
-              className="w-100 px-4 "
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "1rem",
+                  fontWeight: "bold",
+                }}
+              >
+                Khoá công khai:{" "}
+              </p>
+              <textarea
+                className="w-100 px-4 "
+                style={{
+                  height: "120px",
+                  outline: "none",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  padding: "5px",
+                }}
+                onChange={(e) => setPublicKey(e.target.value)}
+                value={publicKey}
+              ></textarea>
+              <p style={{ color: "red" }}>{message}</p>
+            </div>
+          ) : (
+            <div
               style={{
-                height: "120px",
-                outline: "none",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-                padding: "5px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
               }}
-              onChange={(e) => setPublicKey(e.target.value)}
-              value={publicKey}
-            ></textarea>
-          </div>
-          <Button variant="outlined" onClick={handleClose}>
+            >
+              <span>
+                <h5
+                  style={{
+                    margin: 0,
+                  }}
+                >
+                  Chuỗi mã hoá:
+                </h5>
+                <p
+                  style={{
+                    margin: 0,
+                  }}
+                >
+                  {encryptMessage.length > 200 && !showFullMessage
+                    ? encryptMessage.slice(0, 200) + "..."
+                    : encryptMessage}
+                </p>
+                {encryptMessage.length > 200 && (
+                  <a
+                    href="#"
+                    onClick={() => setShowFullMessage(!showFullMessage)}
+                    style={{
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {showFullMessage ? "Thu gọn" : "Xem thêm"}
+                  </a>
+                )}
+              </span>
+              {decryptMessage && (
+                <span>
+                  <h5>Chuỗi giải mã</h5>
+                  <p>{decryptMessage}</p>
+                </span>
+              )}
+              <div class="input-group">
+                <div class="custom-file">
+                  <label class="custom-file-label" for="inputGroupFile04">
+                    Chọn file khoá bí mật để giải mã và xác thực
+                  </label>
+                  <Tooltip title="Chúng tôi chỉ dùng khoá bí mật của bạn để giải mã thông điệp chứ không lưu trữ hoặc sử dụng cho bất kỳ mục đích nào khác">
+                    <IconButton>
+                      <InfoIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <input
+                    type="file"
+                    id="inputGroupFile04"
+                    accept=".pem"
+                    onChange={handleFileSelect}
+                  />
+                </div>
+              </div>
+              <p style={{ color: "red" }}>{message}</p>
+            </div>
+          )}
+
+          <Button
+            variant="outlined"
+            style={{
+              marginTop: "15px",
+              alignSelf: "left",
+            }}
+            onClick={() => {
+              if (decryptMessage) {
+                handleVerifyPublicKey(decryptMessage);
+              } else if (publicKey && !isVerifiedFail) {
+                handleCheckPublicKey(publicKey);
+              }
+            }}
+          >
             Gửi xác thực
           </Button>
         </Box>

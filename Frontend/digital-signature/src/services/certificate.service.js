@@ -8,6 +8,15 @@ const myRequest = () => {
   return axios.get("certificate/request");
 };
 
+const checkPublicKey = (publicKey) => {
+  console.log(publicKey);
+  return axios.post("certificate/check_key", { publicKey });
+};
+
+const verifyPublicKey = (message) => {
+  return axios.post("certificate/verify", { message });
+};
+
 const getCertificate = () => {
   return axios.get("certificate/");
 };
@@ -30,6 +39,8 @@ const CertificateService = {
   getCertificate,
   extendCertificate,
   deleteCertificate,
+  checkPublicKey,
+  verifyPublicKey,
 };
 
 export default CertificateService;

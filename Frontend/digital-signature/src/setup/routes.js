@@ -100,7 +100,7 @@ const Routes = () => {
           element: <MyRequest />,
         },
         {
-          path: "/certificate/request",
+          path: "/certificate/request/",
           element: <RequestSignature />,
         },
         {

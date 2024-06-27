@@ -124,6 +124,7 @@ const putPubKey = (userIdStr, data) => {
   let cached = cache.get("publicKeys");
   if (cached === undefined) cached = {};
   cached[userIdStr] = data;
+  cache.set("publicKeys", cached);
   return data;
 };
 
@@ -131,6 +132,7 @@ const delPubKey = (userIdStr) => {
   let cached = cache.get("publicKeys");
   if (cached === undefined) cached = {};
   delete cached[userIdStr];
+  cache.set("publicKeys", cached);
   return true;
 };
 module.exports = {

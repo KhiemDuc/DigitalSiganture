@@ -24,9 +24,14 @@ import axios from "../../setup/axios";
 import { CloseButton } from "@chakra-ui/react";
 import { InfoOutlineIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 function RequestForm({ changeStep }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  if (!location.state) {
+    navigate("/certificate/create_key");
+  }
   const [toggle, setToggle] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const fileValidate = useDisclosure();
@@ -419,12 +424,12 @@ function RequestForm({ changeStep }) {
                 </Tooltip>
               </FormLabel>
               <Input
-                onInput={(e) => setPublicKey(e.target.value)}
+                isReadOnly
                 borderRadius={"15px"}
                 focusBorderColor="brand.blue"
                 type="text"
                 isRequired
-                value={publicKey}
+                value={location.state.publicKey}
               />
             </FormControl>
             <FormControl id="cccd_img_front">

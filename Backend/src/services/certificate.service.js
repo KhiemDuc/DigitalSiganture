@@ -77,7 +77,7 @@ class CertificateService {
       message: originMessage,
       verified: false,
     };
-
+    console.log(userIdString, data);
     putPubKey(userIdString, data);
 
     return { token, encryptedMessage };
@@ -86,7 +86,8 @@ class CertificateService {
   static verifyMessage = async (user, decrypted) => {
     const userIdString = user._id.toString();
     const cachedData = getPubKey(userIdString);
-    if (cachedData !== decrypted)
+    console.log(cachedData, userIdString);
+    if (cachedData.message !== decrypted)
       throw new BadRequestError(
         "Public key và private key không phải là một cặp, xin vui lòng thử lại",
         "Public key và private key không phải là một cặp, xin vui lòng thử lại"
@@ -133,7 +134,7 @@ class CertificateService {
       );
 
     const token = info.token;
-    const { publicKey, verified } = getPubKey(token);
+    const { publicKey, verified } = getPubKey(user._id.toString());
     if (!verified)
       throw new BadRequestError(
         "Public key chưa được kiểm tra",
