@@ -13,14 +13,11 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { saveAs } from "file-saver";
 import CircularProgress from "@mui/material/CircularProgress";
 import payment from "../../services/payment.service";
-<<<<<<< HEAD
-import { millerRabinTest } from "../../utils/prime";
-=======
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import CertificateService from "../../services/certificate.service";
+import { Box, Button, Modal } from "@mui/material";
+import { millerRabinTest } from "../../utils/millerRabin";
 import InfoIcon from "@mui/icons-material/Info";
+import CertificateService from "../../services/certificate.service";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -28,14 +25,13 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 400,
   bgcolor: "background.paper",
-  border: "1px solid #ccc",
-  borderRadius: "1rem",
+  border: "2px solid #000",
+  boxShadow: 24,
   pt: 2,
   px: 4,
   pb: 3,
 };
 
->>>>>>> 9e208a3423a1c1b73fc28c3cb0c9f12adf6c219b
 const CreateKey = () => {
   const [isVerifiedFail, setIsVerifiedFail] = useState(false);
   const handleVerifyPublicKey = (message) => {
