@@ -13,6 +13,9 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { saveAs } from "file-saver";
 import CircularProgress from "@mui/material/CircularProgress";
 import payment from "../../services/payment.service";
+<<<<<<< HEAD
+import { millerRabinTest } from "../../utils/prime";
+=======
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -32,6 +35,7 @@ const style = {
   pb: 3,
 };
 
+>>>>>>> 9e208a3423a1c1b73fc28c3cb0c9f12adf6c219b
 const CreateKey = () => {
   const [isVerifiedFail, setIsVerifiedFail] = useState(false);
   const handleVerifyPublicKey = (message) => {
@@ -149,29 +153,57 @@ const CreateKey = () => {
     // console.log(worker);
     // worker.terminate();
     setIsLoading(true);
-    const promise = new Promise((resolve, reject) => {
-      forge.pki.rsa.generateKeyPair(
-        {
-          bits: modulusLength,
-          e: 0x10001,
-        },
-        (err, keyPair) => {
-          if (err) return reject(err);
-          return resolve(keyPair);
-        }
-      );
-    });
-
+    var options = {
+      algorithm: {
+        name: "PRIMEINC",
+        workers: -1, // auto-optimize # of workers
+      },
+    };
     try {
-      const { privateKey, publicKey } = await promise;
-      const publicKeyPem = forge.pki.publicKeyToPem(publicKey);
-      const privateKeyPem = forge.pki.privateKeyToPem(privateKey);
-      setPrivateKey(privateKeyPem);
-      setPublicKey(publicKeyPem);
+      const data = await Promise.all([
+        new Promise((resolve, reject) => {
+          forge.prime.generateProbablePrime(
+            modulusLength,
+            options,
+            function (err, num) {
+              if (err) return reject(err);
+              return resolve(num);
+            }
+          );
+        }),
+      ]);
+
+      const result = millerRabinTest(data[0], 20);
+      const result2 = millerRabinTest(data[1], 20);
+      console.log(result, result2);
       setIsLoading(false);
+      console.log(data);
     } catch (err) {
       console.log(err);
+      setIsLoading(false);
     }
+    // const promise = new Promise((resolve, reject) => {
+    //   forge.pki.rsa.generateKeyPair(
+    //     {
+    //       bits: modulusLength,
+    //       e: 0x10001,
+    //     },
+    //     (err, keyPair) => {
+    //       if (err) return reject(err);
+    //       return resolve(keyPair);
+    //     }
+    //   );
+    // });
+    // try {
+    //   const { privateKey, publicKey } = await promise;
+    //   const publicKeyPem = forge.pki.publicKeyToPem(publicKey);
+    //   const privateKeyPem = forge.pki.privateKeyToPem(privateKey);
+    //   setPrivateKey(privateKeyPem);
+    //   setPublicKey(publicKeyPem);
+    //   setIsLoading(false);
+    // } catch (err) {
+    //   console.log(err);
+    // }
     // Convert keys to PEM format
   };
 

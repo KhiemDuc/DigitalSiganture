@@ -67,12 +67,10 @@ class CertificateService {
     const encryptedMessage = forge.util.encode64(
       publicKeyObj.encrypt(originMessage)
     );
-    const token = crypto.randomBytes(32).toString("hex");
 
     const userIdString = user._id.toString();
 
     const data = {
-      token,
       publicKey: publicKey,
       message: originMessage,
       verified: false,
@@ -80,7 +78,7 @@ class CertificateService {
     console.log(userIdString, data);
     putPubKey(userIdString, data);
 
-    return { token, encryptedMessage };
+    return { encryptedMessage };
   };
 
   static verifyMessage = async (user, decrypted) => {
