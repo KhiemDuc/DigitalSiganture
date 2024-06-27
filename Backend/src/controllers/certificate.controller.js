@@ -3,6 +3,25 @@ const { SuccessResponse } = require("../core/success.response");
 const { BadRequestError } = require("../core/error.response");
 
 class CertificateController {
+  static async checkPublicKey(req, res, next) {
+    new SuccessResponse({
+      data: await CertificateService.checkPublicKey(
+        req.user,
+        req.body.publicKey
+      ),
+    }).send(res);
+  }
+
+  static async verifyMessage(req, res, next) {
+    new SuccessResponse({
+      message: (await CertificateService.verifyMessage(
+        req.user,
+        req.body.message
+      ))
+        ? "Xác thực thành công"
+        : "",
+    }).send(res);
+  }
   static async requestCertificate(req, res, next) {
     let files;
     try {

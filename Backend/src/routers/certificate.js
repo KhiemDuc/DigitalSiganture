@@ -32,6 +32,8 @@ router.post("/check", asyncHandler(CertificateController.checkCertificate));
 
 router.use("/", authentication);
 router.get("/", asyncHandler(CertificateController.getCertificate));
+router.post("/check", asyncHandler(CertificateController.checkPublicKey));
+router.post("/verify", asyncHandler(CertificateController.verifyMessage));
 router.post(
   "/",
   upload.fields([

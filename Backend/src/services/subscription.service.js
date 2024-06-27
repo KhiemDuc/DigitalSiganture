@@ -1,4 +1,4 @@
-const { putOTP, getOTP } = require("./cache.service");
+const { putOTP, getOTP, delOTP } = require("./cache.service");
 const { sendMail } = require("./email.service");
 const { generateOTP } = require("./otp.service");
 const getRandomToken = require("../utils/getRandomToken");
@@ -84,7 +84,7 @@ class SubscriptionService {
       throw new ForbiddenError("Verify student failed", "Access denied");
     if (OTP !== storedOTP.OTP)
       throw new BadRequestError("Verify student failed", "OTP is invalid");
-
+    delOTP(token);
     // add student subscription to db
     const foundSubscription = await Subscription.findById(user.subscription);
     const foundPlan = await plansModel.findOne({ name: "student" });

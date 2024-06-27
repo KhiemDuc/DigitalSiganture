@@ -23,7 +23,6 @@ const CreateKey = () => {
     if (element) {
       element.remove();
     }
-    console.log("abc");
     payment
       .getMySubCriptionPlan()
       .then((res) => {
@@ -39,8 +38,11 @@ const CreateKey = () => {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const generateKeyPair = async () => {
+    const url = new URL("http://localhost:3000/");
+    const worker = new Worker(`/certificate/miller.worker.js`);
+    console.log(worker);
+    worker.terminate();
     setIsLoading(true);
-    console.log(isLoading);
     const promise = new Promise((resolve, reject) => {
       forge.pki.rsa.generateKeyPair(
         {
@@ -58,7 +60,6 @@ const CreateKey = () => {
       const { privateKey, publicKey } = await promise;
       const publicKeyPem = forge.pki.publicKeyToPem(publicKey);
       const privateKeyPem = forge.pki.privateKeyToPem(privateKey);
-      console.log(publicKeyPem);
       setPrivateKey(privateKeyPem);
       setPublicKey(publicKeyPem);
       setIsLoading(false);

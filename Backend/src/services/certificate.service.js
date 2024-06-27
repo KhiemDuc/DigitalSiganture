@@ -17,6 +17,7 @@ const deletedCertModel = require("../models/deletedCert.model");
 const Subscription = require("../models/subscription.model");
 const { sendMail } = require("./email.service");
 const SigningHistory = require("../models/signingHistory.model");
+const { putPubKey, getPubKey } = require("./cache.service");
 const constants = {
   idApi: "https://api.fpt.ai/vision/idr/vnm",
   faceApi: "https://api.fpt.ai/dmp/checkface/v1/",
@@ -32,7 +33,7 @@ function getModulusLength(rsaKey) {
   return modulusLengthInBits;
 }
 
-const checkPublicKey = async (user, publicKey) => {
+const checkKeyLength = async (user, publicKey) => {
   try {
     const key = forge.pki.publicKeyFromPem(publicKey);
     const modLength = getModulusLength(key);
@@ -43,7 +44,9 @@ const checkPublicKey = async (user, publicKey) => {
       throw new Error("SubEnded");
     const validModuleLength =
       foundSubscription.plan.name === "standard" ? 2048 : 4096;
-    if (modLength !== validModuleLength) throw new Error();
+    if (modLength < validModuleLength - 5 || modLength > validModuleLength + 5)
+      throw new Error();
+    return key;
   } catch (err) {
     if (err.message === "SubEnded")
       throw new BadRequestError(
@@ -58,6 +61,42 @@ const checkPublicKey = async (user, publicKey) => {
 };
 
 class CertificateService {
+  static checkPublicKey = async (user, publicKey) => {
+    const publicKeyObj = await checkKeyLength(user, publicKey);
+    const originMessage = crypto.randomBytes(64).toString("hex");
+    const encryptedMessage = forge.util.encode64(
+      publicKeyObj.encrypt(originMessage)
+    );
+    const token = crypto.randomBytes(32).toString("hex");
+
+    const userIdString = user._id.toString();
+
+    const data = {
+      token,
+      publicKey: publicKey,
+      message: originMessage,
+      verified: false,
+    };
+
+    putPubKey(userIdString, data);
+
+    return { token, encryptedMessage };
+  };
+
+  static verifyMessage = async (user, decrypted) => {
+    const userIdString = user._id.toString();
+    const cachedData = getPubKey(userIdString);
+    if (cachedData !== decrypted)
+      throw new BadRequestError(
+        "Public key và private key không phải là một cặp, xin vui lòng thử lại",
+        "Public key và private key không phải là một cặp, xin vui lòng thử lại"
+      );
+
+    cachedData.verified = true;
+    putPubKey(userIdString, cachedData);
+    return true;
+  };
+
   static certificateRequest = async (user, info, { CCCD, face, CCCDBack }) => {
     const foundInfo = await UserInfo.findById(user.userInfo);
     if (foundInfo.verified)
@@ -92,9 +131,16 @@ class CertificateService {
         "Bạn đã có chứng chỉ rồi, vui lòng hủy chứng chỉ cũ trước khi yêu cầu 1 chứng chỉ mới",
         "Bạn đã có chứng chỉ rồi, vui lòng hủy chứng chỉ cũ trước khi yêu cầu 1 chứng chỉ mới"
       );
-    await checkPublicKey(user, info.publicKey);
+
+    const token = info.token;
+    const { publicKey, verified } = getPubKey(token);
+    if (!verified)
+      throw new BadRequestError(
+        "Public key chưa được kiểm tra",
+        "Public key chưa được kiểm tra"
+      );
     const hash = crypto.createHash("sha256");
-    hash.update(info.publicKey);
+    hash.update(publicKey);
     const result = hash.digest("hex");
     const keyUsed = await PublicKeyUsed.findOne({ publicHashed: result });
     if (keyUsed)
@@ -140,17 +186,20 @@ class CertificateService {
     } catch (err) {
       throw new BadRequestError(
         `Can't request certificate`,
-        "Id card id invalid"
+        "Ảnh căn cước không hợp lệ"
       );
     }
     const received = idData.data.data[0];
     if (info.IdNum !== received.id)
-      throw new BadRequestError(`Can't request certificate`, "ID is invalid");
+      throw new BadRequestError(
+        `Can't request certificate`,
+        "Ảnh căn cước không hợp lệ"
+      );
     const fullName = `${info.lastName} ${info.firstName}`.toUpperCase();
     if (fullName !== received.name)
       throw new BadRequestError(
         `Can't request certificate`,
-        "ID is invalid name"
+        "Tên không đúng với tên trong căn cước"
       );
 
     //check date of birth, nationality, home(placeOfOrigin), address
@@ -158,7 +207,7 @@ class CertificateService {
     //end
 
     const newReq = await CertRequest.create({
-      publicKey: info.publicKey,
+      publicKey: publicKey,
       firstName: info.firstName,
       lastName: info.lastName,
       address: info.address,
@@ -359,7 +408,7 @@ class CertificateService {
         "Cần cung cấp public key",
         "Cần cung cấp public key"
       );
-    await checkPublicKey(user, publicKey);
+    await checkKeyLength(user, publicKey);
 
     const foundInfo = await UserInfo.findById(user.userInfo);
     if (!foundInfo.verified)

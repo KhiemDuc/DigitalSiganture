@@ -10,7 +10,6 @@ class SigningHistoryService {
       },
     });
 
-    console.log(foundHistory);
     return foundHistory;
   }
 }
