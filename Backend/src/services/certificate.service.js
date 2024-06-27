@@ -17,7 +17,7 @@ const deletedCertModel = require("../models/deletedCert.model");
 const Subscription = require("../models/subscription.model");
 const { sendMail } = require("./email.service");
 const SigningHistory = require("../models/signingHistory.model");
-const { default: mongoose } = require("mongoose");
+const { putPubKey, getPubKey } = require("./cache.service");
 const constants = {
   idApi: "https://api.fpt.ai/vision/idr/vnm",
   faceApi: "https://api.fpt.ai/dmp/checkface/v1/",
@@ -27,26 +27,32 @@ const constants = {
 };
 
 function getModulusLength(rsaKey) {
-  const n = rsaKey.n; // Lấy modulus
-  const modulusHex = n.toString(16); // Chuyển đổi modulus thành chuỗi hex
-  const modulusLengthInBits = modulusHex.length * 4; // Mỗi ký tự hex đại diện cho 4 bits
+  const n = rsaKey.n;
+  const modulusHex = n.toString(16);
+  const modulusLengthInBits = modulusHex.length * 4;
   return modulusLengthInBits;
 }
 
-const checkPublicKey = async (user, publicKey) => {
+const checkKeyLength = async (user, publicKey) => {
   try {
     const key = forge.pki.publicKeyFromPem(publicKey);
-    console.log("publicKey::", key);
     const modLength = getModulusLength(key);
     const foundSubscription = await Subscription.findOne({
       user: user._id,
     }).populate("plan");
+    if (!foundSubscription.plan.isDefault && foundSubscription.end < Date.now())
+      throw new Error("SubEnded");
     const validModuleLength =
       foundSubscription.plan.name === "standard" ? 2048 : 4096;
-    console.log(modLength, validModuleLength);
-    if (modLength !== validModuleLength) throw new Error();
+    if (modLength < validModuleLength - 5 || modLength > validModuleLength + 5)
+      throw new Error();
+    return key;
   } catch (err) {
-    console.log(err);
+    if (err.message === "SubEnded")
+      throw new BadRequestError(
+        "Gói của bạn đã hết hạn, vui lòng huỷ hoặc gia hạn để tiếp tục sử dụng hệ thống",
+        "Gói của bạn đã hết hạn, vui lòng huỷ hoặc gia hạn để tiếp tục sử dụng hệ thống"
+      );
     throw new BadRequestError(
       "Khoá công khai không hợp lệ, vui lòng thử lại",
       "Khoá công khai không hợp lệ, vui lòng thử lại"
@@ -55,6 +61,42 @@ const checkPublicKey = async (user, publicKey) => {
 };
 
 class CertificateService {
+  static checkPublicKey = async (user, publicKey) => {
+    const publicKeyObj = await checkKeyLength(user, publicKey);
+    const originMessage = crypto.randomBytes(64).toString("hex");
+    const encryptedMessage = forge.util.encode64(
+      publicKeyObj.encrypt(originMessage)
+    );
+    const token = crypto.randomBytes(32).toString("hex");
+
+    const userIdString = user._id.toString();
+
+    const data = {
+      token,
+      publicKey: publicKey,
+      message: originMessage,
+      verified: false,
+    };
+
+    putPubKey(userIdString, data);
+
+    return { token, encryptedMessage };
+  };
+
+  static verifyMessage = async (user, decrypted) => {
+    const userIdString = user._id.toString();
+    const cachedData = getPubKey(userIdString);
+    if (cachedData !== decrypted)
+      throw new BadRequestError(
+        "Public key và private key không phải là một cặp, xin vui lòng thử lại",
+        "Public key và private key không phải là một cặp, xin vui lòng thử lại"
+      );
+
+    cachedData.verified = true;
+    putPubKey(userIdString, cachedData);
+    return true;
+  };
+
   static certificateRequest = async (user, info, { CCCD, face, CCCDBack }) => {
     const foundInfo = await UserInfo.findById(user.userInfo);
     if (foundInfo.verified)
@@ -80,23 +122,31 @@ class CertificateService {
     });
     if (foundRequest)
       throw new BadRequestError(
-        "Request sign certificate failed",
+        "Bạn đã yêu cầu 1 chứng chỉ từ trước đó rồi",
         "Bạn đã yêu cầu 1 chứng chỉ từ trước đó rồi"
       );
     const foundCert = await Certificate.findOne({ userId: user._id });
     if (foundCert && foundCert.certPem !== null)
       throw new BadRequestError(
-        "Request sign certificate failed",
+        "Bạn đã có chứng chỉ rồi, vui lòng hủy chứng chỉ cũ trước khi yêu cầu 1 chứng chỉ mới",
         "Bạn đã có chứng chỉ rồi, vui lòng hủy chứng chỉ cũ trước khi yêu cầu 1 chứng chỉ mới"
       );
+
+    const token = info.token;
+    const { publicKey, verified } = getPubKey(token);
+    if (!verified)
+      throw new BadRequestError(
+        "Public key chưa được kiểm tra",
+        "Public key chưa được kiểm tra"
+      );
     const hash = crypto.createHash("sha256");
-    hash.update(info.publicKey);
+    hash.update(publicKey);
     const result = hash.digest("hex");
     const keyUsed = await PublicKeyUsed.findOne({ publicHashed: result });
     if (keyUsed)
       throw new BadRequestError(
-        "Request certificate failed",
-        "Some thing wrong, please try again"
+        "Có lỗi xảy ra, vui lòng thử lại",
+        "Có lỗi xảy ra, vui lòng thử lại"
       );
     //face check
     const CCCD64 = fs.readFileSync(CCCD.path, "base64");
@@ -136,17 +186,20 @@ class CertificateService {
     } catch (err) {
       throw new BadRequestError(
         `Can't request certificate`,
-        "Id card id invalid"
+        "Ảnh căn cước không hợp lệ"
       );
     }
     const received = idData.data.data[0];
     if (info.IdNum !== received.id)
-      throw new BadRequestError(`Can't request certificate`, "ID is invalid");
+      throw new BadRequestError(
+        `Can't request certificate`,
+        "Ảnh căn cước không hợp lệ"
+      );
     const fullName = `${info.lastName} ${info.firstName}`.toUpperCase();
     if (fullName !== received.name)
       throw new BadRequestError(
         `Can't request certificate`,
-        "ID is invalid name"
+        "Tên không đúng với tên trong căn cước"
       );
 
     //check date of birth, nationality, home(placeOfOrigin), address
@@ -154,7 +207,7 @@ class CertificateService {
     //end
 
     const newReq = await CertRequest.create({
-      publicKey: info.publicKey,
+      publicKey: publicKey,
       firstName: info.firstName,
       lastName: info.lastName,
       address: info.address,
@@ -195,6 +248,7 @@ class CertificateService {
     const result = requests.map(({ _doc: e }, index) => {
       const element = { ...e };
       element.subscription = users[index].subscription.plan.name;
+      element.subscriptionEnd = users[index].subscription.end;
       if (e.isExtend) {
         element.firstName = users[index].userInfo.firstName;
         element.lastName = users[index].userInfo.lastName;
@@ -354,7 +408,7 @@ class CertificateService {
         "Cần cung cấp public key",
         "Cần cung cấp public key"
       );
-    await checkPublicKey(user, publicKey);
+    await checkKeyLength(user, publicKey);
 
     const foundInfo = await UserInfo.findById(user.userInfo);
     if (!foundInfo.verified)

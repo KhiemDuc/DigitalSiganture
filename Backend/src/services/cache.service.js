@@ -3,6 +3,7 @@ const cache = new NodeCache();
 
 /* 
 cache : {
+    *** cache OTPs ***
     OTPs: {
         type: string,
         ...data(value)
@@ -11,6 +12,7 @@ cache : {
         token1: userId1,
         token2: userId2,
     },
+    *** cache subscription info ***
     subscriptions: {
         userId1: {
             token: string,
@@ -20,6 +22,14 @@ cache : {
             token: string,
             plan: string
         }
+    },
+    *** cache publicKey to verify ***
+    publicKeys: {
+      userId: {
+        token,
+        publicKey,
+        originalMessage
+      }
     }
 }
 */
@@ -104,6 +114,25 @@ const delSubToken = (userId) => {
   return true;
 };
 
+const getPubKey = (userIdStr) => {
+  let cached = cache.get("publicKeys");
+  if (cached === undefined) cached = {};
+  return cached[userIdStr];
+};
+
+const putPubKey = (userIdStr, data) => {
+  let cached = cache.get("publicKeys");
+  if (cached === undefined) cached = {};
+  cached[userIdStr] = data;
+  return data;
+};
+
+const delPubKey = (userIdStr) => {
+  let cached = cache.get("publicKeys");
+  if (cached === undefined) cached = {};
+  delete cached[userIdStr];
+  return true;
+};
 module.exports = {
   putOTP,
   getOTP,
@@ -114,4 +143,7 @@ module.exports = {
   getSubToken,
   delSubToken,
   putSubToken,
+  getPubKey,
+  putPubKey,
+  delPubKey,
 };

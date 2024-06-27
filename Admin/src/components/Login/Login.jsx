@@ -54,21 +54,7 @@ export default function Login() {
   const defaultTheme = createTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [selectedValue, setSelectedValue] = useState("0");
   const dispatch = useDispatch();
-  // const arrayBufferToBinaryString = (buffer) => {
-  //   var binary = "";
-  //   var bytes = new Uint8Array(buffer);
-  //   var len = bytes.byteLength;
-  //   for (var i = 0; i < len; i++) {
-  //     binary += String.fromCharCode(bytes[i]);
-  //   }
-  //   return binary;
-  // };
-
-  const readPemFormat = (pemFile, crtFile) => {
-    console.log(pemFile, crtFile);
-  };
 
   const readPfxFormat = async (pfxFile, password) => {
     var p12Asn1;
@@ -105,19 +91,9 @@ export default function Login() {
   const formik = useFormik({
     initialValues: {},
     onSubmit: (values) => {
-      if (selectedValue === "2") {
-        if (values.pfx) {
-          readPfxFormat(values.pfx, values.password);
-        }
-      } else if (selectedValue === "1") {
-        if (values.pem && values.crt) readPemFormat(values.pem, values.crt);
-      } else return;
+      readPfxFormat(values.pfx, values.password);
     },
   });
-  const handleSelectChange = (event) => {
-    setSelectedValue(event.target.value);
-    formik.resetForm();
-  };
 
   const handleChangePfx = (event) => {
     const file = event.target?.files[0];
@@ -144,89 +120,35 @@ export default function Login() {
               <ContentBox>
                 <form onSubmit={formik.handleSubmit}>
                   <div className="form-group">
-                    <label htmlFor="form-select">Chọn định dạng</label>
-                    <select
-                      name="select"
-                      className="form-select"
-                      aria-label="Default select example"
-                      value={selectedValue}
-                      onChange={handleSelectChange}
-                    >
-                      <option value={"0"}>
-                        Chọn định dạng bạn muốn đăng nhập
-                      </option>
-                      <option value="1">PEM</option>
-                      <option value="2">PKCS12</option>
-                    </select>
-                    {selectedValue === "2" && (
-                      <>
-                        <div className="form-group">
-                          <label htmlFor="exampleInputPassword1">
-                            Nhập định dạng file .p12, .pfx
-                          </label>
-                          <input
-                            key={"pfx"}
-                            name="pfx"
-                            // value={formik.pfx?.name}
-                            className="form-control"
-                            id="exampleInputPassword1"
-                            type="file"
-                            accept=".p12, .pfx"
-                            onChange={handleChangePfx}
-                          />
-                        </div>
-
-                        <TextField
-                          onChange={formik.handleChange}
-                          fullWidth
-                          autoComplete=""
-                          size="small"
-                          name="password"
-                          type="password"
-                          label="Mật khẩu"
-                          variant="outlined"
-                          sx={{ mt: 1.5 }}
+                    <>
+                      <div className="form-group">
+                        <label htmlFor="exampleInputPassword1">
+                          Nhập định dạng file .p12, .pfx
+                        </label>
+                        <input
+                          key={"pfx"}
+                          name="pfx"
+                          // value={formik.pfx?.name}
+                          className="form-control"
+                          id="exampleInputPassword1"
+                          type="file"
+                          accept=".p12, .pfx"
+                          onChange={handleChangePfx}
                         />
-                      </>
-                    )}
+                      </div>
 
-                    {selectedValue === "1" && (
-                      <>
-                        <div className="form-group">
-                          <label htmlFor="exampleInputPassword1">
-                            Nhập định dạng file .pem
-                          </label>
-                          <input
-                            key={"pem"}
-                            onChange={(e) =>
-                              formik.setFieldValue("pem", e.target.files[0])
-                            }
-                            name="pem"
-                            className="form-control"
-                            id="exampleInputPassword1"
-                            type="file"
-                            accept=".pem, .key"
-                          />
-                        </div>
-
-                        <div className="form-group">
-                          <label htmlFor="exampleInputPassword1">
-                            Nhập định dạng file .cer hoặc .crt
-                          </label>
-                          <input
-                            key={"crt"}
-                            onChange={(e) =>
-                              formik.setFieldValue("crt", e.target.files[0])
-                            }
-                            name="crt"
-                            className="form-control"
-                            id="exampleInputPassword1"
-                            type="file"
-                            accept=".cer, .crt"
-                          />
-                        </div>
-                      </>
-                    )}
+                      <TextField
+                        onChange={formik.handleChange}
+                        fullWidth
+                        autoComplete=""
+                        size="small"
+                        name="password"
+                        type="password"
+                        label="Mật khẩu"
+                        variant="outlined"
+                        sx={{ mt: 1.5 }}
+                      />
+                    </>
                     <Button
                       type="submit"
                       loading={loading.toString()}

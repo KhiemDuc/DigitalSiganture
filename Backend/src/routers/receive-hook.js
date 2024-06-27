@@ -19,9 +19,11 @@ router.post(
     const foundSubscription = await subscriptionModel.findOne({
       user: foundOrder.user,
     });
+    const endDate = new Date(Date.now());
+    endDate.setFullYear(endDate.getFullYear() + 1);
     foundSubscription.plan = foundOrder.plan;
     foundSubscription.start = Date.now();
-    foundSubscription.end = null;
+    foundSubscription.end = endDate;
     foundSubscription.save();
     // await foundOrder.save();
     return res.json({ success: true });
